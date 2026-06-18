@@ -1,0 +1,41 @@
+from pydantic import BaseModel
+from typing import Optional, List
+from datetime import datetime
+
+class VentaDetalle(BaseModel):
+    producto_id: int
+    lote_id: Optional[int] = None
+    cantidad: int
+    precio_venta: float
+
+class VentaRegistro(BaseModel):
+    cliente_id: int
+    detalles: List[VentaDetalle]
+    metodo_pago: str = "EFECTIVO"
+    monto_pago: float
+    aplicar_igv: bool = False
+
+class VentaDetalleResponse(BaseModel):
+    id: int
+    venta_id: int
+    producto_id: int
+    lote_id: Optional[int] = None
+    cantidad: int
+    precio_venta: float
+    subtotal: float
+
+    class Config:
+        from_attributes = True
+
+class VentaResponse(BaseModel):
+    id: int
+    cliente_id: int
+    fecha_venta: Optional[datetime] = None
+    usuario_id: int
+    subtotal: float
+    igv: float
+    total: float
+    estado: str
+
+    class Config:
+        from_attributes = True

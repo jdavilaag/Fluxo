@@ -1,0 +1,146 @@
+<div class="container-fluid">
+  <!-- start page title -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box">
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><a href="javascript: void(0);">Fluxo Shop</a></li>
+            <li class="breadcrumb-item"><a href="javascript: void(0);">Inventario</a></li>
+            <li class="breadcrumb-item active">Gestión de Categorías</li>
+          </ol>
+        </div>
+        <h4 class="page-title">Gestión de Categorías</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <i class="ri-price-tag-3-line fs-4 me-2 text-primary"></i>
+            <div>
+              <p class="text-muted mb-0 fs-13 fw-semibold">
+                Complete los datos para registrar una nueva categoría.
+              </p>
+            </div>
+            <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="cat_nombre" class="form-label">Nombre Categoría <span class="text-danger">*</span></label>
+              <input class="form-control" type="text" id="cat_nombre" placeholder="Ingrese nombre de categoría" required autocomplete="off"/>
+            </div>
+            <div class="col-md-4">
+              <label for="cat_descripcion" class="form-label">Descripción</label>
+              <input class="form-control" type="text" id="cat_descripcion" placeholder="Ingrese descripción" autocomplete="off"/>
+            </div>
+            <div class="col-md-2">
+              <label for="cat_estado" class="form-label">Estado</label>
+              <select class="form-select" id="cat_estado">
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+              </select>
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-registrar-cat">
+                <i class="ri-save-line me-1"></i> Registrar Categoría
+              </button>
+              <button class="btn btn-light fw-semibold px-4" type="button" id="btn-limpiar-cat">
+                <i class="ri-refresh-line me-1"></i> Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h5 class="header-title mb-0"><i class="ri-list-check me-1"></i> Lista de Categorías</h5>
+              <p class="text-muted mb-0 fs-13">Total: <span id="total-categorias">0</span> categorías registradas</p>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+              <div class="input-group input-group-sm" style="width: 220px">
+                <span class="input-group-text"><i class="ri-search-line"></i></span>
+                <input type="text" class="form-control" id="buscador-cat" placeholder="Buscar categoría..."/>
+              </div>
+              <select class="form-select form-select-sm" id="filtro-estado-cat" style="width: 130px">
+                <option value="">Todos</option>
+                <option value="1">Activos</option>
+                <option value="0">Inactivos</option>
+              </select>
+              <button class="btn btn-sm btn-success" onclick="cargarCategorias()">
+                <i class="ri-refresh-line"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-nowrap table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 50px">#</th>
+                  <th>Nombre Categoría</th>
+                  <th>Descripción</th>
+                  <th>Estado</th>
+                  <th>Creado</th>
+                  <th style="width: 100px" class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-categorias">
+                <tr>
+                  <td colspan="6" class="text-center py-4 text-muted">
+                    <i class="ri-loader-4-line me-1"></i> Cargando categorías...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="p-3 d-flex justify-content-between align-items-center">
+            <small class="text-muted" id="info-paginacion-cat">Mostrando 0 de 0</small>
+            <div class="d-flex gap-1" id="controles-paginacion-cat"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal eliminar -->
+  <div class="modal fade" id="modalEliminarCat" tabindex="-1" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center p-4">
+          <i class="ri-error-warning-line text-danger" style="font-size: 3rem"></i>
+          <h5 class="mt-2 mb-1">¿Eliminar categoría?</h5>
+          <p class="text-muted mb-3 fs-13">Esta acción no se puede deshacer.</p>
+          <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-danger px-4" id="btn-confirmar-eliminar-cat">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  if (typeof cargarCategorias === "undefined") {
+      var s = document.createElement("script");
+      s.src = "/assets/js/categoria.js?t=" + Date.now();
+      document.body.appendChild(s);
+  } else {
+      cargarCategorias();
+  }
+  </script>
+</div>

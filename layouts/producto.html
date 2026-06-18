@@ -1,0 +1,191 @@
+<div class="container-fluid">
+  <!-- start page title -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box">
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><a href="javascript: void(0);">Fluxo Shop</a></li>
+            <li class="breadcrumb-item"><a href="javascript: void(0);">Inventario</a></li>
+            <li class="breadcrumb-item active">Gestión de Productos</li>
+          </ol>
+        </div>
+        <h4 class="page-title">Gestión de Productos</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <i class="ri-box-3-line fs-4 me-2 text-primary"></i>
+            <div>
+              <p class="text-muted mb-0 fs-13 fw-semibold">
+                Complete los datos para registrar un nuevo producto.
+              </p>
+            </div>
+            <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="prod_nombre" class="form-label">Nombre Producto <span class="text-danger">*</span></label>
+              <input class="form-control" type="text" id="prod_nombre" placeholder="Ingrese nombre del producto" autocomplete="off"/>
+            </div>
+            <div class="col-md-4">
+              <label for="prod_categoria" class="form-label">Categoría <span class="text-danger">*</span></label>
+              <select class="form-select" id="prod_categoria">
+                <option value="">Seleccione una categoría</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="prod_codigo" class="form-label">Código de Barras</label>
+              <input class="form-control" type="text" id="prod_codigo" placeholder="Ingrese código de barras" autocomplete="off"/>
+            </div>
+            <div class="col-md-3">
+              <label for="prod_precio_compra" class="form-label">Precio Compra <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text">S/</span>
+                <input class="form-control" type="number" id="prod_precio_compra" placeholder="0.00" min="0" step="0.01"/>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="prod_precio_venta" class="form-label">Precio Venta <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text">S/</span>
+                <input class="form-control" type="number" id="prod_precio_venta" placeholder="0.00" min="0" step="0.01"/>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label for="prod_stock_minimo" class="form-label">Stock Mínimo</label>
+              <input class="form-control" type="number" id="prod_stock_minimo" placeholder="0" min="0"/>
+            </div>
+            <div class="col-md-2">
+              <label for="prod_unidad" class="form-label">Unidad Medida</label>
+              <select class="form-select" id="prod_unidad">
+                <option value="UND">Unidad</option>
+                <option value="KG">Kilogramo</option>
+                <option value="LT">Litro</option>
+                <option value="MT">Metro</option>
+                <option value="CJA">Caja</option>
+                <option value="PQT">Paquete</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <label for="prod_vencimiento" class="form-label">Vencimiento</label>
+              <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" id="prod_vencimiento"/>
+              </div>
+            </div>
+            <div class="col-md-1">
+              <label for="prod_estado" class="form-label">Estado</label>
+              <select class="form-select" id="prod_estado">
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+              </select>
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-registrar-prod">
+                <i class="ri-save-line me-1"></i> Registrar Producto
+              </button>
+              <button class="btn btn-light fw-semibold px-4" type="button" id="btn-limpiar-prod">
+                <i class="ri-refresh-line me-1"></i> Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h5 class="header-title mb-0"><i class="ri-box-3-line me-1"></i> Lista de Productos</h5>
+              <p class="text-muted mb-0 fs-13">Total: <span id="total-productos">0</span> productos registrados</p>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+              <div class="input-group input-group-sm" style="width: 220px">
+                <span class="input-group-text"><i class="ri-search-line"></i></span>
+                <input type="text" class="form-control" id="buscador-prod" placeholder="Buscar producto..."/>
+              </div>
+              <select class="form-select form-select-sm" id="filtro-estado-prod" style="width: 130px">
+                <option value="">Todos</option>
+                <option value="1">Activos</option>
+                <option value="0">Inactivos</option>
+              </select>
+              <button class="btn btn-sm btn-success" onclick="cargarProductos()">
+                <i class="ri-refresh-line"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-nowrap table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 50px">#</th>
+                  <th>Nombre</th>
+                  <th>Categoría</th>
+                  <th>Código</th>
+                  <th>P. Compra</th>
+                  <th>P. Venta</th>
+                  <th>Stock</th>
+                  <th>Unidad</th>
+                  <th>Estado</th>
+                  <th style="width: 100px" class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-productos">
+                <tr>
+                  <td colspan="10" class="text-center py-4 text-muted">
+                    <i class="ri-loader-4-line me-1"></i> Cargando productos...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="p-3 d-flex justify-content-between align-items-center">
+            <small class="text-muted" id="info-paginacion-prod">Mostrando 0 de 0</small>
+            <div class="d-flex gap-1" id="controles-paginacion-prod"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal eliminar -->
+  <div class="modal fade" id="modalEliminarProd" tabindex="-1" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center p-4">
+          <i class="ri-error-warning-line text-danger" style="font-size: 3rem"></i>
+          <h5 class="mt-2 mb-1">¿Eliminar producto?</h5>
+          <p class="text-muted mb-3 fs-13">Esta acción no se puede deshacer.</p>
+          <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-danger px-4" id="btn-confirmar-eliminar-prod">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  if (typeof cargarProductos === "undefined") {
+      var s = document.createElement("script");
+      s.src = "/assets/js/producto.js?t=" + Date.now();
+      document.body.appendChild(s);
+  } else {
+      cargarProductos();
+  }
+  </script>
+</div>

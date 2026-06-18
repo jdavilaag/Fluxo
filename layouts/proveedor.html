@@ -1,0 +1,160 @@
+<div class="container-fluid">
+  <!-- start page title -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box">
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><a href="javascript: void(0);">Fluxo Shop</a></li>
+            <li class="breadcrumb-item"><a href="javascript: void(0);">Compras</a></li>
+            <li class="breadcrumb-item active">Gestión de Proveedores</li>
+          </ol>
+        </div>
+        <h4 class="page-title">Gestión de Proveedores</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <i class="ri-truck-line fs-4 me-2 text-primary"></i>
+            <div>
+              <p class="text-muted mb-0 fs-13 fw-semibold">
+                Complete los datos para registrar un nuevo proveedor.
+              </p>
+            </div>
+            <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label for="prov_ruc" class="form-label">RUC <span class="text-danger">*</span></label>
+              <input class="form-control" type="text" id="prov_ruc" placeholder="Ingrese RUC (11 dígitos)" maxlength="11" autocomplete="off"/>
+            </div>
+            <div class="col-md-5">
+              <label for="prov_razon_social" class="form-label">Razón Social <span class="text-danger">*</span></label>
+              <input class="form-control" type="text" id="prov_razon_social" placeholder="Ingrese razón social" autocomplete="off"/>
+            </div>
+            <div class="col-md-2">
+              <label for="prov_telefono" class="form-label">Teléfono</label>
+              <input class="form-control" type="text" id="prov_telefono" placeholder="Ingrese teléfono" autocomplete="off"/>
+            </div>
+            <div class="col-md-2">
+              <label for="prov_estado" class="form-label">Estado</label>
+              <select class="form-select" id="prov_estado">
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+              </select>
+            </div>
+            <div class="col-md-5">
+              <label for="prov_email" class="form-label">Email</label>
+              <input class="form-control" type="email" id="prov_email" placeholder="Ingrese email" autocomplete="off"/>
+            </div>
+            <div class="col-md-7">
+              <label for="prov_direccion" class="form-label">Dirección</label>
+              <input class="form-control" type="text" id="prov_direccion" placeholder="Ingrese dirección" autocomplete="off"/>
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-registrar-prov">
+                <i class="ri-save-line me-1"></i> Registrar Proveedor
+              </button>
+              <button class="btn btn-light fw-semibold px-4" type="button" id="btn-limpiar-prov">
+                <i class="ri-refresh-line me-1"></i> Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h5 class="header-title mb-0"><i class="ri-truck-line me-1"></i> Lista de Proveedores</h5>
+              <p class="text-muted mb-0 fs-13">Total: <span id="total-proveedores">0</span> proveedores registrados</p>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+              <div class="input-group input-group-sm" style="width: 220px">
+                <span class="input-group-text"><i class="ri-search-line"></i></span>
+                <input type="text" class="form-control" id="buscador-prov" placeholder="Buscar proveedor..."/>
+              </div>
+              <select class="form-select form-select-sm" id="filtro-estado-prov" style="width: 130px">
+                <option value="">Todos</option>
+                <option value="1">Activos</option>
+                <option value="0">Inactivos</option>
+              </select>
+              <button class="btn btn-sm btn-success" onclick="cargarProveedores()">
+                <i class="ri-refresh-line"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-nowrap table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 50px">#</th>
+                  <th>RUC</th>
+                  <th>Razón Social</th>
+                  <th>Teléfono</th>
+                  <th>Email</th>
+                  <th>Estado</th>
+                  <th>Creado</th>
+                  <th style="width: 100px" class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-proveedores">
+                <tr>
+                  <td colspan="8" class="text-center py-4 text-muted">
+                    <i class="ri-loader-4-line me-1"></i> Cargando proveedores...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="p-3 d-flex justify-content-between align-items-center">
+            <small class="text-muted" id="info-paginacion-prov">Mostrando 0 de 0</small>
+            <div class="d-flex gap-1" id="controles-paginacion-prov"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal eliminar -->
+  <div class="modal fade" id="modalEliminarProv" tabindex="-1" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center p-4">
+          <i class="ri-error-warning-line text-danger" style="font-size: 3rem"></i>
+          <h5 class="mt-2 mb-1">¿Eliminar proveedor?</h5>
+          <p class="text-muted mb-3 fs-13">Esta acción no se puede deshacer.</p>
+          <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-danger px-4" id="btn-confirmar-eliminar-prov">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  if (typeof cargarProveedores === "undefined") {
+      var s = document.createElement("script");
+      s.src = "/assets/js/proveedor.js?t=" + Date.now();
+      document.body.appendChild(s);
+  } else {
+      cargarProveedores();
+  }
+  </script>
+</div>
