@@ -80,16 +80,17 @@
 
   async function cargarHistorial() {
     try {
-      const res = await fetch("/caja/historial");
+      const res = await fetch("/caja/historial-detalle");
       const historial = await res.json();
       const tbody = document.getElementById("tabla-historial");
 
       if (historial.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">Sin historial.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">Sin historial.</td></tr>`;
       } else {
         tbody.innerHTML = historial.map((c, i) => `
           <tr>
             <td>${i + 1}</td>
+            <td>${c.usuario}</td>
             <td>${c.fecha_apertura ? new Date(c.fecha_apertura).toLocaleString("es-PE") : "-"}</td>
             <td>${c.fecha_cierre ? new Date(c.fecha_cierre).toLocaleString("es-PE") : "-"}</td>
             <td>S/ ${parseFloat(c.monto_apertura).toFixed(2)}</td>
@@ -102,7 +103,7 @@
     } catch {
       console.error("Error al cargar historial");
     }
-  }
+}
 
   function mostrarAlerta(mensaje, tipo) {
     document.getElementById("mensaje-alerta").innerHTML = `

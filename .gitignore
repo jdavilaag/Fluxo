@@ -1,0 +1,19 @@
+# Variables de entorno
+.env
+.env.local
+.env.development
+.env.production
+
+# Entornos virtuales Python
+venv/
+.venv/
+
+# Caché Python
+__pycache__/
+*.pyc
+
+# Archivos de VS Code
+.vscode/
+
+# Logs
+*.log
