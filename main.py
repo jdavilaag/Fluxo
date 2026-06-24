@@ -126,3 +126,13 @@ def ventas(request: Request):
     if not request.session.get("usuario"):
         return RedirectResponse(url="/login")
     return templates.TemplateResponse("layouts/ventas.html", {"request": request})
+
+from app.routers.kardex_rout import router as kardex_router
+
+app.include_router(kardex_router)
+
+@app.get("/kardex")
+def kardex(request: Request):
+    if not request.session.get("usuario"):
+        return RedirectResponse(url="/login")
+    return templates.TemplateResponse("layouts/kardex.html", {"request": request})

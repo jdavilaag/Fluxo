@@ -48,7 +48,7 @@
           class="side-nav-link"
         >
           <i class="ri-lock-2-line"></i>
-          <span> Autenticación </span>
+          <span> Autentificación </span>
           <span class="menu-arrow"></span>
         </a>
         <div class="collapse" id="sidebarPagesAuth">
@@ -120,7 +120,7 @@
             </li>
             <li>
               <a href="pages-profile.html"
-                ><i class="ri-user-line me-1"></i>Profile</a
+                ><i class="ri-user-line me-1"></i>Perfil</a
               >
             </li>
           </ul>
@@ -163,7 +163,7 @@
             </li>
             <li>
               <a href="pages-profile.html"
-                ><i class="ri-user-line me-1"></i> Profile</a
+                ><i class="ri-user-line me-1"></i> Perfiles</a
               >
             </li>
           </ul>
@@ -233,7 +233,12 @@
         <div class="collapse" id="sidebarReportes">
           <ul class="side-nav-second-level">
             <li>
-              <a href="pages-starter.html"
+              <a
+                href="/kardex"
+                hx-get="/kardex"
+                hx-target="#main-content"
+                hx-swap="innerHTML"
+                class="side-nav-link"
                 ><i class="ri-file-list-3-line me-1"></i>Kardex</a
               >
             </li>
@@ -244,7 +249,7 @@
             </li>
             <li>
               <a href="pages-profile.html"
-                ><i class="ri-user-line me-1"></i>Profile</a
+                ><i class="ri-user-line me-1"></i>Perfiles</a
               >
             </li>
           </ul>
@@ -260,7 +265,7 @@
           class="side-nav-link"
         >
           <i class="ri-layout-line"></i>
-          <span class="badge bg-warning float-end">New</span>
+          <span class="badge bg-warning float-end">Nuevo</span>
           <span> Layouts </span>
         </a>
         <div class="collapse" id="sidebarLayouts">
@@ -297,7 +302,7 @@
         </div>
       </li>
 
-      <li class="side-nav-title">Components</li>
+      <li class="side-nav-title">Componentes</li>
 
       <li class="side-nav-item">
         <a

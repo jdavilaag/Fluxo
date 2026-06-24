@@ -160,9 +160,12 @@
     try {
         const res = await fetch(`/caja/movimientos/${cajaActiva.id}`);
         const movimientos = await res.json();
+        console.log("Movimientos:", movimientos); // ← agrega esto
         const totalVentas = movimientos
-            .filter(m => m.tipo === "ingreso")
+            .filter(m => m.tipo === "VENTA")
             .reduce((acc, m) => acc + m.monto, 0);
+            console.log("Total ventas:", totalVentas); // ← y esto
+            console.log("Tipos:", movimientos.map(m => m.tipo));
         const totalCierre = cajaActiva.monto_apertura + totalVentas;
         
         document.getElementById("monto-cierre").value = totalCierre.toFixed(2);

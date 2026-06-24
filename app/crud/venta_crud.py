@@ -93,7 +93,7 @@ def crear_venta(db: Session, cliente_id: int, detalles: list, metodo_pago: str,
     # Movimiento caja
     movimiento_caja = CajaMovimiento(
         caja_id=caja.id,
-        tipo="ingreso",
+        tipo="VENTA",
         monto=total,
         descripcion=f"Venta #{venta.id}",
         referencia_id=venta.id
