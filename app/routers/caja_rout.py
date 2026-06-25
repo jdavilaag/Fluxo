@@ -7,20 +7,25 @@ from app.crud.caja_crud import get_caja_abierta, abrir_caja, cerrar_caja, get_mo
 from app.schema.caja_schem import AbrirCaja, CerrarCaja, CajaResponse, CajaMovimientoResponse
 from app.models.usuario_model import Usuario
 
-router = APIRouter(prefix="/caja", tags=["caja"])
+from app.dependencies import require_auth
+
+router = APIRouter(prefix="/caja", tags=["caja"], dependencies=[Depends(require_auth)])
 
 @router.post("/abrir", response_model=CajaResponse)
-def abrir(data: AbrirCaja, db: Session = Depends(get_db)):
-    caja_abierta = get_caja_abierta(db, data.usuario_id)
+def abrir(data: AbrirCaja, db: Session = Depends(get_db), usuario: dict = Depends(require_auth)):
+    usuario_id = usuario["id"]
+    caja_abierta = get_caja_abierta(db, usuario_id)
     if caja_abierta:
         raise HTTPException(status_code=400, detail="Ya existe una caja abierta para este usuario")
-    return abrir_caja(db, data.usuario_id, data.monto_apertura)
+    return abrir_caja(db, usuario_id, data.monto_apertura)
 
 @router.post("/cerrar/{caja_id}", response_model=CajaResponse)
-def cerrar(caja_id: int, data: CerrarCaja, db: Session = Depends(get_db)):
+def cerrar(caja_id: int, data: CerrarCaja, db: Session = Depends(get_db), usuario: dict = Depends(require_auth)):
     caja = db.query(Caja).filter(Caja.id == caja_id).first()
     if not caja:
         raise HTTPException(status_code=404, detail="Caja no encontrada")
+    if caja.usuario_id != usuario["id"] and usuario["rol_id"] != 1:
+        raise HTTPException(status_code=403, detail="No autorizado para cerrar esta caja")
     if caja.estado == "cerrada":
         raise HTTPException(status_code=400, detail="La caja ya está cerrada")
     return cerrar_caja(db, caja_id, data.monto_cierre)
@@ -39,17 +44,22 @@ def historial(db: Session = Depends(get_db)):
 @router.get("/movimientos/{caja_id}", response_model=List[CajaMovimientoResponse])
 def movimientos(caja_id: int, db: Session = Depends(get_db)):
     return get_movimientos(db, caja_id)
-from app.models.usuario_model import Usuario
-
 @router.get("/historial-detalle")
 def historial_detalle(db: Session = Depends(get_db)):
-    cajas = db.query(Caja).order_by(Caja.fecha_apertura.desc()).all()
+    cajas = db.query(
+        Caja,
+        Usuario.nombre_completo
+    ).outerjoin(
+        Usuario, Usuario.id == Caja.usuario_id
+    ).order_by(
+        Caja.fecha_apertura.desc()
+    ).all()
+
     resultado = []
-    for c in cajas:
-        usuario = db.query(Usuario).filter(Usuario.id == c.usuario_id).first()
+    for c, usr_nombre in cajas:
         resultado.append({
             "id": c.id,
-            "usuario": usuario.nombre_completo if usuario else "-",
+            "usuario": usr_nombre if usr_nombre else "-",
             "fecha_apertura": c.fecha_apertura,
             "fecha_cierre": c.fecha_cierre,
             "monto_apertura": c.monto_apertura,

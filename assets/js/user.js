@@ -6,6 +6,14 @@
   var modoEdicion = false;
   var usuarioEditandoId = null;
   var usuarioEliminarId = null;
+  var modalUsuarioInstance = null;
+
+  function getModalInstance() {
+    if (!modalUsuarioInstance) {
+      modalUsuarioInstance = new bootstrap.Modal(document.getElementById("modalUsuario"));
+    }
+    return modalUsuarioInstance;
+  }
 
   async function cargarUsuarios() {
     try {
@@ -92,8 +100,9 @@
     document.getElementById("btn-registrar").innerHTML = '<i class="ri-save-line me-1"></i> Actualizar Usuario';
     document.getElementById("btn-registrar").className = "btn btn-warning fw-semibold px-4";
     document.getElementById("usr_pass").placeholder = "Dejar vacío para no cambiar";
+    document.getElementById("modalUsuarioLabel").textContent = "Actualizar Usuario";
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    getModalInstance().show();
   }
 
   var modalEliminarInstance = null;
@@ -202,6 +211,7 @@
           mostrarAlerta(modoEdicion ? "Usuario actualizado correctamente." : "Usuario registrado correctamente.", "success");
           limpiarFormulario();
           cargarUsuarios();
+          getModalInstance().hide();
         } else {
           mostrarAlerta(data.detail || "Error al guardar.", "danger");
         }
@@ -233,6 +243,11 @@
   document.addEventListener("click", function (e) {
     if (e.target && (e.target.id === "btn-limpiar" || e.target.closest("#btn-limpiar"))) {
       limpiarFormulario();
+    }
+    if (e.target && (e.target.id === "btn-nuevo-usuario" || e.target.closest("#btn-nuevo-usuario"))) {
+      limpiarFormulario();
+      document.getElementById("modalUsuarioLabel").textContent = "Registrar Nuevo Usuario";
+      getModalInstance().show();
     }
   });
   document.addEventListener("input", function (e) {

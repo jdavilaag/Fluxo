@@ -14,6 +14,8 @@ class VentaRegistro(BaseModel):
     metodo_pago: str = "EFECTIVO"
     monto_pago: float
     aplicar_igv: bool = False
+    tipo_comprobante: Optional[str] = None
+    serie: Optional[str] = None
 
 class VentaDetalleResponse(BaseModel):
     id: int
@@ -30,12 +32,17 @@ class VentaDetalleResponse(BaseModel):
 class VentaResponse(BaseModel):
     id: int
     cliente_id: int
+    cliente_nombre: Optional[str] = "-"
     fecha_venta: Optional[datetime] = None
     usuario_id: int
     subtotal: float
     igv: float
     total: float
     estado: str
+    tipo_comprobante: Optional[str] = None
+    serie: Optional[str] = None
+    numero: Optional[str] = None
+    nro_comprobante: Optional[str] = None
 
     class Config:
         from_attributes = True

@@ -4,8 +4,9 @@ from sqlalchemy.orm import Session
 from app.conexion import get_db
 from app.crud.ingreso_crud import crear_ingreso, get_ingresos, get_ingreso_detalles
 from app.schema.ingreso_schem import IngresoRegistro, IngresoResponse, IngresoDetalleResponse
+from app.dependencies import require_auth
 
-router = APIRouter(prefix="/ingresos", tags=["ingresos"])
+router = APIRouter(prefix="/ingresos", tags=["ingresos"], dependencies=[Depends(require_auth)])
 
 @router.post("/", response_model=IngresoResponse)
 def registrar_ingreso(request: Request, data: IngresoRegistro, db: Session = Depends(get_db)):

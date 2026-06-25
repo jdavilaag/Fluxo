@@ -16,7 +16,9 @@ document.addEventListener("htmx:afterSettle", function(event) {
         "/clientes": "/assets/js/cliente.js",
         "/caja": "/assets/js/caja.js",
         "/ingresos": "/assets/js/ingreso.js",
-        "/ventas": "/assets/js/venta.js"
+        "/ventas": "/assets/js/venta.js",
+        "/kardex": "/assets/js/kardex.js",
+        "/comprobantes": "/assets/js/comprobantes.js"
     };
 
     var scriptSrc = scripts[path];

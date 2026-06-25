@@ -6,6 +6,14 @@
   var clienteEditandoId = null;
   var clienteEliminarId = null;
   var modalEliminarInstance = null;
+  var modalClienteInstance = null;
+
+  function getModalInstance() {
+    if (!modalClienteInstance) {
+      modalClienteInstance = new bootstrap.Modal(document.getElementById("modalCliente"));
+    }
+    return modalClienteInstance;
+  }
 
   async function cargarClientes() {
     try {
@@ -93,8 +101,9 @@
 
     document.getElementById("btn-registrar-cli").innerHTML = '<i class="ri-save-line me-1"></i> Actualizar Cliente';
     document.getElementById("btn-registrar-cli").className = "btn btn-warning fw-semibold px-4";
+    document.getElementById("modalClienteLabel").textContent = "Actualizar Cliente";
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    getModalInstance().show();
   }
 
   function eliminarCliente(id) {
@@ -116,6 +125,7 @@
     document.getElementById("cli_estado").value = "1";
     document.getElementById("btn-registrar-cli").innerHTML = '<i class="ri-save-line me-1"></i> Registrar Cliente';
     document.getElementById("btn-registrar-cli").className = "btn btn-primary fw-semibold px-4";
+    document.getElementById("modalClienteLabel").textContent = "Registrar Nuevo Cliente";
   }
 
   function mostrarAlerta(mensaje, tipo) {
@@ -164,12 +174,18 @@
           mostrarAlerta(modoEdicion ? "Cliente actualizado correctamente." : "Cliente registrado correctamente.", "success");
           limpiarFormulario();
           cargarClientes();
+          getModalInstance().hide();
         } else {
           mostrarAlerta(data.detail || "Error al guardar.", "danger");
         }
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
+    }
+
+    if (e.target && (e.target.id === "btn-nuevo-cliente" || e.target.closest("#btn-nuevo-cliente"))) {
+      limpiarFormulario();
+      getModalInstance().show();
     }
 
     if (e.target && (e.target.id === "btn-limpiar-cli" || e.target.closest("#btn-limpiar-cli"))) {

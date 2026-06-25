@@ -6,6 +6,14 @@
   var categoriaEditandoId = null;
   var categoriaEliminarId = null;
   var modalEliminarInstance = null;
+  var modalCategoriaInstance = null;
+
+  function getModalInstance() {
+    if (!modalCategoriaInstance) {
+      modalCategoriaInstance = new bootstrap.Modal(document.getElementById("modalCategoria"));
+    }
+    return modalCategoriaInstance;
+  }
 
   // ── Cargar categorías ──
   async function cargarCategorias() {
@@ -92,8 +100,9 @@
 
     document.getElementById("btn-registrar-cat").innerHTML = '<i class="ri-save-line me-1"></i> Actualizar Categoría';
     document.getElementById("btn-registrar-cat").className = "btn btn-warning fw-semibold px-4";
+    document.getElementById("modalCategoriaLabel").textContent = "Actualizar Categoría";
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    getModalInstance().show();
   }
 
   // ── Eliminar ──
@@ -159,6 +168,7 @@
           mostrarAlerta(modoEdicion ? "Categoría actualizada correctamente." : "Categoría registrada correctamente.", "success");
           limpiarFormulario();
           cargarCategorias();
+          getModalInstance().hide();
         } else {
           mostrarAlerta(data.detail || "Error al guardar.", "danger");
         }
@@ -170,6 +180,13 @@
     // Limpiar
     if (e.target && (e.target.id === "btn-limpiar-cat" || e.target.closest("#btn-limpiar-cat"))) {
       limpiarFormulario();
+    }
+
+    // Nueva Categoria
+    if (e.target && (e.target.id === "btn-nueva-categoria" || e.target.closest("#btn-nueva-categoria"))) {
+      limpiarFormulario();
+      document.getElementById("modalCategoriaLabel").textContent = "Registrar Nueva Categoría";
+      getModalInstance().show();
     }
 
     // Confirmar eliminar

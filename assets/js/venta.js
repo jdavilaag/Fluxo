@@ -2,6 +2,8 @@
   var todosClientes = [];
   var todosProductos = [];
   var detallesVenta = [];
+  var todasVentas = [];
+  var todasSeries = [];
   var paginaActual = 1;
   var porPagina = 8;
   var modalDetalleInstance = null;
@@ -9,7 +11,53 @@
   async function iniciarVenta() {
     await cargarClientes();
     await cargarProductosVenta();
+    await cargarComprobantesVenta();
     await cargarVentas();
+  }
+
+  async function cargarComprobantesVenta() {
+    try {
+      const res = await fetch("/comprobante-series/?activos=true");
+      todasSeries = await res.json();
+      actualizarSeriesVenta();
+    } catch {
+      console.error("Error al cargar series de comprobantes");
+    }
+  }
+
+  function actualizarSeriesVenta() {
+    const tipo = document.getElementById("vta_tipo_comprobante").value;
+    const selectSerie = document.getElementById("vta_serie");
+    selectSerie.innerHTML = "";
+    
+    const filtradas = todasSeries.filter(s => s.tipo_comprobante === tipo);
+    if (filtradas.length === 0) {
+      selectSerie.innerHTML = '<option value="">No hay series activas</option>';
+      document.getElementById("vta_numero").value = "00000000";
+      return;
+    }
+    
+    filtradas.forEach(s => {
+      selectSerie.innerHTML += `<option value="${s.serie}">${s.serie}</option>`;
+    });
+    
+    cargarProximoCorrelativo();
+  }
+
+  async function cargarProximoCorrelativo() {
+    const tipo = document.getElementById("vta_tipo_comprobante").value;
+    const serie = document.getElementById("vta_serie").value;
+    if (!tipo || !serie) {
+      document.getElementById("vta_numero").value = "00000000";
+      return;
+    }
+    try {
+      const res = await fetch(`/comprobante-series/next-number?tipo=${tipo}&serie=${serie}`);
+      const data = await res.json();
+      document.getElementById("vta_numero").value = data.next_number || "00000000";
+    } catch {
+      document.getElementById("vta_numero").value = "ERROR";
+    }
   }
 
   async function cargarClientes() {
@@ -39,24 +87,19 @@
   async function cargarVentas() {
     try {
       const res = await fetch("/ventas/");
-      const ventas = await res.json();
-      document.getElementById("total-ventas").textContent = ventas.length;
-      renderTablaVentas(ventas);
+      todasVentas = await res.json();
+      document.getElementById("total-ventas").textContent = todasVentas.length;
+      renderTablaVentas(todasVentas);
     } catch {
       document.getElementById("tabla-ventas").innerHTML =
-        `<tr><td colspan="8" class="text-center text-danger">Error al cargar ventas.</td></tr>`;
+        `<tr><td colspan="9" class="text-center text-danger">Error al cargar ventas.</td></tr>`;
     }
-  }
-
-  function getNombreCliente(id) {
-    const c = todosClientes.find(c => c.id === id);
-    return c ? c.nombres : "-";
   }
 
   function renderTablaVentas(ventas) {
     const q = document.getElementById("buscador-vta").value.toLowerCase();
     const filtradas = ventas.filter(v =>
-      getNombreCliente(v.cliente_id).toLowerCase().includes(q)
+      v.cliente_nombre.toLowerCase().includes(q)
     );
 
     const total = filtradas.length;
@@ -69,12 +112,13 @@
 
     const tbody = document.getElementById("tabla-ventas");
     if (pagina.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">No se encontraron ventas.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-muted">No se encontraron ventas.</td></tr>`;
     } else {
       tbody.innerHTML = pagina.map((v, i) => `
         <tr>
           <td>${inicio + i + 1}</td>
-          <td>${getNombreCliente(v.cliente_id)}</td>
+          <td><span class="fw-semibold">${v.nro_comprobante || "-"}</span></td>
+          <td>${v.cliente_nombre}</td>
           <td>${v.fecha_venta ? new Date(v.fecha_venta).toLocaleString("es-PE") : "-"}</td>
           <td>S/ ${parseFloat(v.subtotal).toFixed(2)}</td>
           <td>S/ ${parseFloat(v.igv).toFixed(2)}</td>
@@ -173,6 +217,10 @@
           </tr>`;
       }).join("");
 
+      const vta = todasVentas.find(x => x.id === ventaId);
+      const docTitle = vta && vta.nro_comprobante ? ` - ${vta.nro_comprobante}` : "";
+      document.getElementById("modalDetalleVentaLabel").innerHTML = `<i class="ri-list-check me-2"></i>Detalle de Venta${docTitle}`;
+
       const modalEl = document.getElementById("modalDetalleVenta");
       modalDetalleInstance = new bootstrap.Modal(modalEl);
       modalDetalleInstance.show();
@@ -185,6 +233,8 @@
     document.getElementById("vta_cliente").value = "";
     document.getElementById("vta_metodo_pago").value = "EFECTIVO";
     document.getElementById("vta_igv").checked = false;
+    document.getElementById("vta_tipo_comprobante").value = "BOLETA";
+    actualizarSeriesVenta();
     document.getElementById("dtl_vta_producto").value = "";
     document.getElementById("dtl_vta_stock").value = "";
     document.getElementById("dtl_vta_cantidad").value = "";
@@ -208,6 +258,12 @@
 
   // ── Eventos ──
   document.addEventListener("change", function (e) {
+    if (e.target && e.target.id === "vta_tipo_comprobante") {
+      actualizarSeriesVenta();
+    }
+    if (e.target && e.target.id === "vta_serie") {
+      cargarProximoCorrelativo();
+    }
     if (e.target && e.target.id === "dtl_vta_producto") {
       const opt = e.target.options[e.target.selectedIndex];
       const precio = opt.getAttribute("data-precio");
@@ -283,9 +339,14 @@
       const aplicar_igv = document.getElementById("vta_igv").checked;
       const monto_pago = parseFloat(document.getElementById("vta_monto_pago").value);
       const total = parseFloat(document.getElementById("vta-total").textContent.replace("S/ ", ""));
+      const tipo_comprobante = document.getElementById("vta_tipo_comprobante").value;
+      const serie = document.getElementById("vta_serie").value;
 
       if (!cliente_id) {
         mostrarAlerta("Seleccione un cliente.", "danger"); return;
+      }
+      if (!tipo_comprobante || !serie) {
+        mostrarAlerta("Debe seleccionar tipo de comprobante y serie.", "danger"); return;
       }
       if (detallesVenta.length === 0) {
         mostrarAlerta("Agregue al menos un producto.", "danger"); return;
@@ -303,6 +364,8 @@
             metodo_pago,
             aplicar_igv,
             monto_pago,
+            tipo_comprobante,
+            serie,
             detalles: detallesVenta.map(d => ({
               producto_id: d.producto_id,
               cantidad: d.cantidad,

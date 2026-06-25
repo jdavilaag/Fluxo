@@ -7,6 +7,14 @@
   var productoEditandoId = null;
   var productoEliminarId = null;
   var modalEliminarInstance = null;
+  var modalProductoInstance = null;
+
+  function getModalInstance() {
+    if (!modalProductoInstance) {
+      modalProductoInstance = new bootstrap.Modal(document.getElementById("modalProducto"));
+    }
+    return modalProductoInstance;
+  }
 
   async function cargarCategorias() {
     try {
@@ -123,8 +131,9 @@
 
     document.getElementById("btn-registrar-prod").innerHTML = '<i class="ri-save-line me-1"></i> Actualizar Producto';
     document.getElementById("btn-registrar-prod").className = "btn btn-warning fw-semibold px-4";
+    document.getElementById("modalProductoLabel").textContent = "Actualizar Producto";
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    getModalInstance().show();
   }
 
   function eliminarProducto(id) {
@@ -202,6 +211,7 @@
           mostrarAlerta(modoEdicion ? "Producto actualizado correctamente." : "Producto registrado correctamente.", "success");
           limpiarFormulario();
           cargarProductos();
+          getModalInstance().hide();
         } else {
           mostrarAlerta(data.detail || "Error al guardar.", "danger");
         }
@@ -212,6 +222,12 @@
 
     if (e.target && (e.target.id === "btn-limpiar-prod" || e.target.closest("#btn-limpiar-prod"))) {
       limpiarFormulario();
+    }
+
+    if (e.target && (e.target.id === "btn-nuevo-producto" || e.target.closest("#btn-nuevo-producto"))) {
+      limpiarFormulario();
+      document.getElementById("modalProductoLabel").textContent = "Registrar Nuevo Producto";
+      getModalInstance().show();
     }
 
     if (e.target && e.target.id === "btn-confirmar-eliminar-prod") {

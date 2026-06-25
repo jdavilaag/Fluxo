@@ -2,100 +2,46 @@
   <!-- start page title -->
   <div class="row">
     <div class="col-12">
-      <div class="page-title-box">
-        <div class="page-title-right">
-          <ol class="breadcrumb m-0">
-            <li class="breadcrumb-item">
-              <a href="javascript: void(0);">Fluxo Shop</a>
-            </li>
-            <li class="breadcrumb-item">
-              <a href="javascript: void(0);">Autenticación</a>
-            </li>
-            <li class="breadcrumb-item active">Gestión de Usuarios</li>
-          </ol>
-        </div>
-        <h4 class="page-title">Registrar Nuevo Usuario</h4>
+      <div class="page-title-box d-flex justify-content-between align-items-center">
+        <h4 class="page-title">Gestión de Usuarios</h4>
+        <button class="btn btn-primary fw-semibold" id="btn-nuevo-usuario">
+          <i class="ri-user-add-line me-1"></i> Nuevo Usuario
+        </button>
       </div>
     </div>
   </div>
   <!-- end page title -->
 
-  <!-- Formulario -->
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex align-items-center mb-3">
-            <i class="ri-user-add-line fs-4 me-2 text-primary"></i>
-            <div>
-              <p class="text-muted mb-0 fs-13 fw-semibold">
-                Complete los datos para registrar un nuevo usuario.
-              </p>
-            </div>
-            <!-- Mensaje de alerta -->
-            <div
-              id="mensaje-alerta"
-              style="
-                position: fixed;
-                top: 150px;
-                right: 30px;
-                z-index: 9999;
-                min-width: 300px;
-              "
-            ></div>
-          </div>
-
+  <!-- Modal Registro/Edición de Usuario -->
+  <div class="modal fade" id="modalUsuario" tabindex="-1" aria-labelledby="modalUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalUsuarioLabel">Registrar Nuevo Usuario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
           <div class="row g-3">
             <div class="col-md-6">
-              <label for="usr_nombre" class="form-label"
-                >Nombre Completo <span class="text-danger">*</span></label
-              >
-              <input
-                class="form-control"
-                type="text"
-                id="usr_nombre"
-                placeholder="Ingrese nombre completo"
-                required autocomplete="off"
-              />
+              <label for="usr_nombre" class="form-label">Nombre Completo <span class="text-danger">*</span></label>
+              <input class="form-control" type="text" id="usr_nombre" placeholder="Ingrese nombre completo" required autocomplete="off"/>
             </div>
             <div class="col-md-6">
-              <label for="emailaddress" class="form-label"
-                >Email <span class="text-danger" autocomplete="off">*</span></label
-              >
-            
-              <input
-                class="form-control"
-                type="email"
-                id="usr_email"
-                placeholder="Ingrese email"
-                required autocomplete="off"
-              />
+              <label for="usr_email" class="form-label">Email <span class="text-danger" autocomplete="off">*</span></label>
+              <input class="form-control" type="email" id="usr_email" placeholder="Ingrese email" required autocomplete="off"/>
             </div>
             <div class="col-md-4">
-              <label for="password"  class="form-label"
-                >Contraseña <span class="text-danger">*</span></label
-              >
+              <label for="usr_pass" class="form-label">Contraseña <span class="text-danger">*</span></label>
               <div class="input-group">
-                <input
-                  class="form-control"
-                  type="password"
-                  id="usr_pass"
-                  placeholder="Ingrese contraseña"
-                  required autocomplete="off"
-                />
-                <button
-                  class="btn btn-outline-secondary"
-                  type="button"
-                  id="toggle-password"
-                >
+                <input class="form-control" type="password" id="usr_pass" placeholder="Ingrese contraseña" required autocomplete="off"/>
+                <button class="btn btn-outline-secondary" type="button" id="toggle-password">
                   <i class="ri-eye-line"></i>
                 </button>
               </div>
             </div>
             <div class="col-md-4">
-              <label for="rol" class="form-label"
-                >Rol <span class="text-danger">*</span></label
-              >
+              <label for="rol" class="form-label">Rol <span class="text-danger">*</span></label>
               <select class="form-select" id="rol" required>
                 <option value="">Seleccione un rol</option>
                 <option value="1">Administrador</option>
@@ -110,23 +56,15 @@
                 <option value="0">Inactivo</option>
               </select>
             </div>
-            <div class="col-12 d-flex gap-2">
-              <button
-                class="btn btn-primary fw-semibold px-4"
-                type="button"
-                id="btn-registrar"
-              >
-                <i class="ri-save-line me-1"></i> Registrar Usuario
-              </button>
-              <button
-                class="btn btn-light fw-semibold px-4"
-                type="button"
-                id="btn-limpiar"
-              >
-                <i class="ri-refresh-line me-1"></i> Limpiar
-              </button>
-            </div>
           </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-light fw-semibold px-4" type="button" id="btn-limpiar">
+            <i class="ri-refresh-line me-1"></i> Limpiar
+          </button>
+          <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-registrar">
+            <i class="ri-save-line me-1"></i> Registrar Usuario
+          </button>
         </div>
       </div>
     </div>

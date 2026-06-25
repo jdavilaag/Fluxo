@@ -1,0 +1,147 @@
+<div class="container-fluid">
+  <!-- start page title -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-flex justify-content-between align-items-center">
+        <h4 class="page-title">Series y Comprobantes</h4>
+        <button class="btn btn-primary fw-semibold" id="btn-nuevo-comprobante">
+          <i class="ri-file-settings-line me-1"></i> Nueva Serie
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- end page title -->
+
+  <!-- Modal Registro/Edición de Comprobante -->
+  <div class="modal fade" id="modalComprobante" tabindex="-1" aria-labelledby="modalComprobanteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalComprobanteLabel">Registrar Nueva Serie</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label for="comp_tipo" class="form-label">Tipo Comprobante <span class="text-danger">*</span></label>
+              <select class="form-select" id="comp_tipo">
+                <option value="BOLETA">Boleta de Venta</option>
+                <option value="FACTURA">Factura</option>
+                <option value="TICKET">Ticket</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="comp_serie" class="form-label">Serie <span class="text-danger">*</span></label>
+              <input class="form-control" type="text" id="comp_serie" placeholder="Ej: F001 o B001" maxlength="10" autocomplete="off"/>
+            </div>
+            <div class="col-md-6">
+              <label for="comp_correlativo" class="form-label">Correlativo Actual <span class="text-danger">*</span></label>
+              <input class="form-control" type="number" id="comp_correlativo" placeholder="0" min="0" value="0"/>
+            </div>
+            <div class="col-md-12">
+              <label for="comp_estado" class="form-label">Estado</label>
+              <select class="form-select" id="comp_estado">
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-light fw-semibold px-4" type="button" id="btn-limpiar-comp">
+            <i class="ri-refresh-line me-1"></i> Limpiar
+          </button>
+          <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-registrar-comp">
+            <i class="ri-save-line me-1"></i> Registrar Serie
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h5 class="header-title mb-0"><i class="ri-file-list-3-line me-1"></i> Lista de Series</h5>
+              <p class="text-muted mb-0 fs-13">Total: <span id="total-comprobantes">0</span> series configuradas</p>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+              <div class="input-group input-group-sm" style="width: 220px">
+                <span class="input-group-text"><i class="ri-search-line"></i></span>
+                <input type="text" class="form-control" id="buscador-comp" placeholder="Buscar serie..."/>
+              </div>
+              <select class="form-select form-select-sm" id="filtro-estado-comp" style="width: 130px">
+                <option value="">Todos</option>
+                <option value="1">Activos</option>
+                <option value="0">Inactivos</option>
+              </select>
+              <button class="btn btn-sm btn-success" onclick="cargarComprobantes()">
+                <i class="ri-refresh-line"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-nowrap table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 50px">#</th>
+                  <th>Tipo Comprobante</th>
+                  <th>Serie</th>
+                  <th>Correlativo Actual</th>
+                  <th>Próximo Correlativo</th>
+                  <th>Estado</th>
+                  <th style="width: 100px" class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-comprobantes">
+                <tr>
+                  <td colspan="7" class="text-center py-4 text-muted">
+                    <i class="ri-loader-4-line me-1"></i> Cargando series de comprobantes...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="p-3 d-flex justify-content-between align-items-center">
+            <small class="text-muted" id="info-paginacion-comp">Mostrando 0 de 0</small>
+            <div class="d-flex gap-1" id="controles-paginacion-comp"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal eliminar -->
+  <div class="modal fade" id="modalEliminarComp" tabindex="-1" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center p-4">
+          <i class="ri-error-warning-line text-danger" style="font-size: 3rem"></i>
+          <h5 class="mt-2 mb-1">¿Desactivar serie?</h5>
+          <p class="text-muted mb-3 fs-13">La serie cambiará de estado a inactivo.</p>
+          <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-danger px-4" id="btn-confirmar-eliminar-comp">Desactivar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  if (typeof cargarComprobantes === "undefined") {
+      var s = document.createElement("script");
+      s.src = "/assets/js/comprobantes.js?t=" + Date.now();
+      document.body.appendChild(s);
+  } else {
+      cargarComprobantes();
+  }
+  </script>
+</div>

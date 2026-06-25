@@ -5,8 +5,9 @@ from app.conexion import get_db
 from app.models.producto_model import Producto
 from app.crud.producto_crud import get_producto_by_nombre, get_producto_by_codigo, get_productos, crear_producto
 from app.schema.producto_schem import ProductoRegistro, ProductoResponse, ProductoUpdate
+from app.dependencies import require_auth
 
-router = APIRouter(prefix="/productos", tags=["productos"])
+router = APIRouter(prefix="/productos", tags=["productos"], dependencies=[Depends(require_auth)])
 
 @router.post("/", response_model=ProductoResponse)
 def registrar_producto(data: ProductoRegistro, db: Session = Depends(get_db)):
@@ -36,6 +37,6 @@ def eliminar_producto(producto_id: int, db: Session = Depends(get_db)):
     producto = db.query(Producto).filter(Producto.id == producto_id).first()
     if not producto:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
-    db.delete(producto)
+    producto.estado = 0
     db.commit()
-    return {"mensaje": "Producto eliminado"}
+    return {"mensaje": "Producto desactivado"}

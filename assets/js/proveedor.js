@@ -6,6 +6,14 @@
   var proveedorEditandoId = null;
   var proveedorEliminarId = null;
   var modalEliminarInstance = null;
+  var modalProveedorInstance = null;
+
+  function getModalInstance() {
+    if (!modalProveedorInstance) {
+      modalProveedorInstance = new bootstrap.Modal(document.getElementById("modalProveedor"));
+    }
+    return modalProveedorInstance;
+  }
 
   async function cargarProveedores() {
     try {
@@ -93,8 +101,9 @@
 
     document.getElementById("btn-registrar-prov").innerHTML = '<i class="ri-save-line me-1"></i> Actualizar Proveedor';
     document.getElementById("btn-registrar-prov").className = "btn btn-warning fw-semibold px-4";
+    document.getElementById("modalProveedorLabel").textContent = "Actualizar Proveedor";
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    getModalInstance().show();
   }
 
   function eliminarProveedor(id) {
@@ -116,6 +125,7 @@
     document.getElementById("prov_estado").value = "1";
     document.getElementById("btn-registrar-prov").innerHTML = '<i class="ri-save-line me-1"></i> Registrar Proveedor';
     document.getElementById("btn-registrar-prov").className = "btn btn-primary fw-semibold px-4";
+    document.getElementById("modalProveedorLabel").textContent = "Registrar Nuevo Proveedor";
   }
 
   function mostrarAlerta(mensaje, tipo) {
@@ -164,12 +174,18 @@
           mostrarAlerta(modoEdicion ? "Proveedor actualizado correctamente." : "Proveedor registrado correctamente.", "success");
           limpiarFormulario();
           cargarProveedores();
+          getModalInstance().hide();
         } else {
           mostrarAlerta(data.detail || "Error al guardar.", "danger");
         }
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
+    }
+
+    if (e.target && (e.target.id === "btn-nuevo-proveedor" || e.target.closest("#btn-nuevo-proveedor"))) {
+      limpiarFormulario();
+      getModalInstance().show();
     }
 
     if (e.target && (e.target.id === "btn-limpiar-prov" || e.target.closest("#btn-limpiar-prov"))) {

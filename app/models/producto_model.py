@@ -6,7 +6,7 @@ class Producto(Base):
     __tablename__ = "productos"
 
     id = Column(Integer, primary_key=True, index=True)
-    categoria_id = Column(Integer, ForeignKey("categorias.id"))
+    categoria_id = Column(Integer, ForeignKey("categorias.id"), index=True)
     codigo_barras = Column(String(100), unique=True)
     nombre_producto = Column(String(255))
     precio_compra = Column(Float, default=0)
@@ -16,4 +16,4 @@ class Producto(Base):
     stock_minimo = Column(Integer, default=0)
     unidad_medida = Column(String(50))
     estado = Column(Integer, default=1)
-    creado_en = Column(DateTime, server_default=func.now())
+    creado_en = Column(DateTime, server_default=func.now(), index=True)

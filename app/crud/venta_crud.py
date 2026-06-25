@@ -5,10 +5,12 @@ from app.models.lote_model import Lote
 from app.models.kardex_model import KardexMovimiento
 from app.models.caja_model import CajaMovimiento
 from app.crud.caja_crud import get_caja_activa
+from app.crud.comprobante_crud import incrementar_correlativo
 from fastapi import HTTPException
 
 def crear_venta(db: Session, cliente_id: int, detalles: list, metodo_pago: str,
-                monto_pago: float, aplicar_igv: bool, usuario_id: int):
+                monto_pago: float, aplicar_igv: bool, usuario_id: int,
+                tipo_comprobante: str = None, serie: str = None):
 
     # Verificar caja abierta
     caja = get_caja_activa(db)
@@ -23,6 +25,15 @@ def crear_venta(db: Session, cliente_id: int, detalles: list, metodo_pago: str,
     if monto_pago < total:
         raise HTTPException(status_code=400, detail=f"Monto insuficiente. Total: S/ {total}")
 
+    # Validar e incrementar correlativo de comprobante
+    numero = None
+    nro_comprobante = None
+    if tipo_comprobante or serie:
+        if not (tipo_comprobante and serie):
+            raise HTTPException(status_code=400, detail="Debe especificar tipo de comprobante y serie.")
+        numero = incrementar_correlativo(db, tipo_comprobante, serie)
+        nro_comprobante = f"{serie}-{numero}"
+
     # Crear cabecera
     venta = VentaHdr(
         cliente_id=cliente_id,
@@ -30,7 +41,11 @@ def crear_venta(db: Session, cliente_id: int, detalles: list, metodo_pago: str,
         subtotal=subtotal,
         igv=igv,
         total=total,
-        estado="activo"
+        estado="activo",
+        tipo_comprobante=tipo_comprobante,
+        serie=serie,
+        numero=numero,
+        nro_comprobante=nro_comprobante
     )
     db.add(venta)
     db.flush()
@@ -104,8 +119,23 @@ def crear_venta(db: Session, cliente_id: int, detalles: list, metodo_pago: str,
     db.refresh(venta)
     return venta
 
+from app.models.cliente_model import Cliente
+
 def get_ventas(db: Session):
-    return db.query(VentaHdr).order_by(VentaHdr.fecha_venta.desc()).all()
+    results = db.query(
+        VentaHdr,
+        Cliente.nombres
+    ).outerjoin(
+        Cliente, Cliente.id == VentaHdr.cliente_id
+    ).order_by(
+        VentaHdr.fecha_venta.desc()
+    ).all()
+
+    ventas = []
+    for v, cliente_nombre in results:
+        v.cliente_nombre = cliente_nombre if cliente_nombre else "-"
+        ventas.append(v)
+    return ventas
 
 def get_venta_detalles(db: Session, venta_id: int):
     return db.query(VentaDtl).filter(VentaDtl.venta_id == venta_id).all()

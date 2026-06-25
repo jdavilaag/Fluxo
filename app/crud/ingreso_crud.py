@@ -72,8 +72,23 @@ def crear_ingreso(db: Session, proveedor_id: int, tipo_comprobante: str, serie: 
     db.refresh(ingreso)
     return ingreso
 
+from app.models.proveedor_model import Proveedor
+
 def get_ingresos(db: Session):
-    return db.query(IngresoHdr).order_by(IngresoHdr.fecha_registro.desc()).all()
+    results = db.query(
+        IngresoHdr,
+        Proveedor.razon_social
+    ).outerjoin(
+        Proveedor, Proveedor.id == IngresoHdr.proveedor_id
+    ).order_by(
+        IngresoHdr.fecha_registro.desc()
+    ).all()
+
+    ingresos = []
+    for ing, prov_nombre in results:
+        ing.proveedor_nombre = prov_nombre if prov_nombre else "-"
+        ingresos.append(ing)
+    return ingresos
 
 def get_ingreso_detalles(db: Session, ingreso_id: int):
     return db.query(IngresoDtl).filter(IngresoDtl.ingreso_id == ingreso_id).all()

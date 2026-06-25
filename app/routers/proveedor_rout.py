@@ -5,8 +5,9 @@ from app.conexion import get_db
 from app.models.proveedor_model import Proveedor
 from app.crud.proveedor_crud import get_proveedor_by_ruc, get_proveedores, crear_proveedor
 from app.schema.proveedor_schem import ProveedorRegistro, ProveedorResponse, ProveedorUpdate
+from app.dependencies import require_auth
 
-router = APIRouter(prefix="/proveedores", tags=["proveedores"])
+router = APIRouter(prefix="/proveedores", tags=["proveedores"], dependencies=[Depends(require_auth)])
 
 @router.post("/", response_model=ProveedorResponse)
 def registrar_proveedor(data: ProveedorRegistro, db: Session = Depends(get_db)):
@@ -38,6 +39,6 @@ def eliminar_proveedor(proveedor_id: int, db: Session = Depends(get_db)):
     proveedor = db.query(Proveedor).filter(Proveedor.id == proveedor_id).first()
     if not proveedor:
         raise HTTPException(status_code=404, detail="Proveedor no encontrado")
-    db.delete(proveedor)
+    proveedor.estado = 0
     db.commit()
-    return {"mensaje": "Proveedor eliminado"}
+    return {"mensaje": "Proveedor desactivado"}

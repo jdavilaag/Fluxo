@@ -2,34 +2,26 @@
   <!-- start page title -->
   <div class="row">
     <div class="col-12">
-      <div class="page-title-box">
-        <div class="page-title-right">
-          <ol class="breadcrumb m-0">
-            <li class="breadcrumb-item"><a href="javascript: void(0);">Fluxo Shop</a></li>
-            <li class="breadcrumb-item"><a href="javascript: void(0);">Inventario</a></li>
-            <li class="breadcrumb-item active">Gestión de Categorías</li>
-          </ol>
-        </div>
+      <div class="page-title-box d-flex justify-content-between align-items-center">
         <h4 class="page-title">Gestión de Categorías</h4>
+        <button class="btn btn-primary fw-semibold" id="btn-nueva-categoria">
+          <i class="ri-price-tag-3-line me-1"></i> Nueva Categoría
+        </button>
       </div>
     </div>
   </div>
+  <!-- end page title -->
 
-  <!-- Formulario -->
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex align-items-center mb-3">
-            <i class="ri-price-tag-3-line fs-4 me-2 text-primary"></i>
-            <div>
-              <p class="text-muted mb-0 fs-13 fw-semibold">
-                Complete los datos para registrar una nueva categoría.
-              </p>
-            </div>
-            <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
-          </div>
-
+  <!-- Modal Registro/Edición de Categoría -->
+  <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalCategoriaLabel">Registrar Nueva Categoría</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
           <div class="row g-3">
             <div class="col-md-6">
               <label for="cat_nombre" class="form-label">Nombre Categoría <span class="text-danger">*</span></label>
@@ -46,15 +38,15 @@
                 <option value="0">Inactivo</option>
               </select>
             </div>
-            <div class="col-12 d-flex gap-2">
-              <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-registrar-cat">
-                <i class="ri-save-line me-1"></i> Registrar Categoría
-              </button>
-              <button class="btn btn-light fw-semibold px-4" type="button" id="btn-limpiar-cat">
-                <i class="ri-refresh-line me-1"></i> Limpiar
-              </button>
-            </div>
           </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-light fw-semibold px-4" type="button" id="btn-limpiar-cat">
+            <i class="ri-refresh-line me-1"></i> Limpiar
+          </button>
+          <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-registrar-cat">
+            <i class="ri-save-line me-1"></i> Registrar Categoría
+          </button>
         </div>
       </div>
     </div>

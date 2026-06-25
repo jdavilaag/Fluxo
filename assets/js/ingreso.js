@@ -58,15 +58,10 @@ async function cargarProductos() {
     }
   }
 
-  function getNombreProveedor(id) {
-    const p = todosProveedores.find(p => p.id === id);
-    return p ? p.razon_social : "-";
-  }
-
   function ingresosFiltrados() {
     const q = document.getElementById("buscador-ing").value.toLowerCase();
     return todosIngresos.filter(i =>
-      getNombreProveedor(i.proveedor_id).toLowerCase().includes(q) ||
+      i.proveedor_nombre.toLowerCase().includes(q) ||
       (i.nro_comprobante && i.nro_comprobante.toLowerCase().includes(q))
     );
   }
@@ -88,7 +83,7 @@ async function cargarProductos() {
       tbody.innerHTML = pagina.map((ing, i) => `
         <tr>
           <td>${inicio + i + 1}</td>
-          <td>${getNombreProveedor(ing.proveedor_id)}</td>
+          <td>${ing.proveedor_nombre}</td>
           <td>${ing.tipo_comprobante} ${ing.nro_comprobante || ""}</td>
           <td>${ing.fecha_compra ? new Date(ing.fecha_compra).toLocaleDateString("es-PE") : "-"}</td>
           <td>S/ ${parseFloat(ing.total).toFixed(2)}</td>

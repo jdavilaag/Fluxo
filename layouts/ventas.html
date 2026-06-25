@@ -26,13 +26,13 @@
             <p class="text-muted mb-0 fs-13 fw-semibold">Complete los datos de la venta.</p>
           </div>
           <div class="row g-3">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <label class="form-label">Cliente <span class="text-danger">*</span></label>
               <select class="form-select" id="vta_cliente">
                 <option value="">Seleccione un cliente</option>
               </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <label class="form-label">Método de Pago <span class="text-danger">*</span></label>
               <select class="form-select" id="vta_metodo_pago">
                 <option value="EFECTIVO">Efectivo</option>
@@ -42,12 +42,30 @@
                 <option value="PLIN">Plin</option>
               </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
               <label class="form-label">Aplicar IGV (18%)</label>
               <div class="form-check form-switch mt-2">
-                <input class="form-check-input" type="checkbox" id="vta_igv"/>
+                <input class="form-check-input" type="checkbox" id="vta_igv" />
                 <label class="form-check-label">Incluir IGV</label>
               </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Tipo Comprobante <span class="text-danger">*</span></label>
+              <select class="form-select" id="vta_tipo_comprobante">
+                <option value="BOLETA">Boleta de Venta</option>
+                <option value="FACTURA">Factura</option>
+                <option value="TICKET">Ticket</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Serie <span class="text-danger">*</span></label>
+              <select class="form-select" id="vta_serie">
+                <option value="">Seleccione serie</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Correlativo</label>
+              <input class="form-control" type="text" id="vta_numero" readonly placeholder="00000000" />
             </div>
           </div>
         </div>
@@ -75,17 +93,17 @@
             </div>
             <div class="col-md-2">
               <label class="form-label">Stock disponible</label>
-              <input class="form-control" type="text" id="dtl_vta_stock" readonly placeholder="0"/>
+              <input class="form-control" type="text" id="dtl_vta_stock" readonly placeholder="0" />
             </div>
             <div class="col-md-2">
               <label class="form-label">Cantidad <span class="text-danger">*</span></label>
-              <input class="form-control" type="number" id="dtl_vta_cantidad" placeholder="0" min="1"/>
+              <input class="form-control" type="number" id="dtl_vta_cantidad" placeholder="0" min="1" />
             </div>
             <div class="col-md-2">
               <label class="form-label">Precio Venta</label>
               <div class="input-group">
                 <span class="input-group-text">S/</span>
-                <input class="form-control" type="number" id="dtl_vta_precio" placeholder="0.00" readonly/>
+                <input class="form-control" type="number" id="dtl_vta_precio" placeholder="0.00" readonly />
               </div>
             </div>
             <div class="col-md-1 d-flex align-items-end">
@@ -136,7 +154,7 @@
               <label class="form-label">Monto Recibido <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text">S/</span>
-                <input class="form-control" type="number" id="vta_monto_pago" placeholder="0.00" min="0" step="0.01"/>
+                <input class="form-control" type="number" id="vta_monto_pago" placeholder="0.00" min="0" step="0.01" />
               </div>
             </div>
             <div class="col-md-3 d-flex align-items-end">
@@ -144,7 +162,7 @@
                 <label class="form-label">Vuelto</label>
                 <div class="input-group">
                   <span class="input-group-text">S/</span>
-                  <input class="form-control" type="text" id="vta_vuelto" readonly placeholder="0.00"/>
+                  <input class="form-control" type="text" id="vta_vuelto" readonly placeholder="0.00" />
                 </div>
               </div>
             </div>
@@ -175,7 +193,7 @@
             <div class="d-flex gap-2 align-items-center">
               <div class="input-group input-group-sm" style="width: 220px">
                 <span class="input-group-text"><i class="ri-search-line"></i></span>
-                <input type="text" class="form-control" id="buscador-vta" placeholder="Buscar venta..."/>
+                <input type="text" class="form-control" id="buscador-vta" placeholder="Buscar venta..." />
               </div>
               <button class="btn btn-sm btn-success" onclick="cargarVentas()">
                 <i class="ri-refresh-line"></i>
@@ -188,6 +206,7 @@
               <thead class="table-light">
                 <tr>
                   <th>#</th>
+                  <th>Comprobante</th>
                   <th>Cliente</th>
                   <th>Fecha</th>
                   <th>Subtotal</th>
@@ -221,7 +240,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title"><i class="ri-list-check me-2"></i>Detalle de Venta</h5>
+          <h5 class="modal-title" id="modalDetalleVentaLabel"><i class="ri-list-check me-2"></i>Detalle de Venta</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -248,14 +267,14 @@
   </div>
 
   <script>
-  if (typeof cargarVentas === "undefined") {
+    if (typeof cargarVentas === "undefined") {
       var s = document.createElement("script");
       s.src = "/assets/js/venta.js?t=" + Date.now();
       document.body.appendChild(s);
-  } else {
+    } else {
       cargarClientes();
       cargarProductosVenta();
       cargarVentas();
-  }
+    }
   </script>
 </div>

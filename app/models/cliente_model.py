@@ -12,4 +12,4 @@ class Cliente(Base):
     email = Column(String(255))
     direccion = Column(String(255))
     estado = Column(Integer, default=1)
-    creado_en = Column(DateTime, server_default=func.now())
+    creado_en = Column(DateTime, server_default=func.now(), index=True)

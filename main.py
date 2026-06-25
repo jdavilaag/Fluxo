@@ -11,6 +11,9 @@ from app.routers.producto_rout import router as producto_router
 from app.routers.cliente_rout import router as cliente_router
 from app.routers.caja_rout import router as caja_router
 from app.routers.venta_rout import router as venta_router
+from app.routers.kardex_rout import router as kardex_router
+from app.routers.ingreso_rout import router as ingreso_router
+from app.routers.comprobante_rout import router as comprobante_router
 import os
 from dotenv import load_dotenv
 
@@ -45,6 +48,7 @@ app.include_router(producto_router)
 app.include_router(cliente_router)
 app.include_router(caja_router)
 app.include_router(venta_router)
+app.include_router(comprobante_router)
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 templates = Jinja2Templates(directory=".")
 
@@ -136,3 +140,9 @@ def kardex(request: Request):
     if not request.session.get("usuario"):
         return RedirectResponse(url="/login")
     return templates.TemplateResponse("layouts/kardex.html", {"request": request})
+
+@app.get("/comprobantes")
+def comprobantes(request: Request):
+    if not request.session.get("usuario"):
+        return RedirectResponse(url="/login")
+    return templates.TemplateResponse("layouts/comprobantes.html", {"request": request})

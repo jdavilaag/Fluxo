@@ -6,12 +6,12 @@ class KardexMovimiento(Base):
     __tablename__ = "kardex_movimientos"
 
     id = Column(Integer, primary_key=True, index=True)
-    producto_id = Column(Integer, ForeignKey("productos.id"))
+    producto_id = Column(Integer, ForeignKey("productos.id"), index=True)
     lote_id = Column(Integer, ForeignKey("lotes.id"), nullable=True)
     tipo_movimiento = Column(String(20))
     cantidad = Column(Integer)
     stock_anterior = Column(Integer)
     stock_posterior = Column(Integer)
-    usuario_id = Column(Integer, ForeignKey("usuarios.id"))
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), index=True)
     observacion = Column(String(255))
-    fecha_registro = Column(DateTime, server_default=func.now())
+    fecha_registro = Column(DateTime, server_default=func.now(), index=True)

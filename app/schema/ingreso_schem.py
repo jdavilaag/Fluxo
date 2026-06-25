@@ -31,6 +31,7 @@ class IngresoDetalleResponse(BaseModel):
 class IngresoResponse(BaseModel):
     id: int
     proveedor_id: int
+    proveedor_nombre: Optional[str] = "-"
     tipo_comprobante: str
     serie: Optional[str] = ""
     numero: Optional[str] = ""

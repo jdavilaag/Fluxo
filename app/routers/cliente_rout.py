@@ -5,8 +5,9 @@ from app.conexion import get_db
 from app.models.cliente_model import Cliente
 from app.crud.cliente_crud import get_cliente_by_documento, get_clientes, crear_cliente
 from app.schema.cliente_schem import ClienteRegistro, ClienteResponse, ClienteUpdate
+from app.dependencies import require_auth
 
-router = APIRouter(prefix="/clientes", tags=["clientes"])
+router = APIRouter(prefix="/clientes", tags=["clientes"], dependencies=[Depends(require_auth)])
 
 @router.post("/", response_model=ClienteResponse)
 def registrar_cliente(data: ClienteRegistro, db: Session = Depends(get_db)):
@@ -38,6 +39,6 @@ def eliminar_cliente(cliente_id: int, db: Session = Depends(get_db)):
     cliente = db.query(Cliente).filter(Cliente.id == cliente_id).first()
     if not cliente:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    db.delete(cliente)
+    cliente.estado = 0
     db.commit()
-    return {"mensaje": "Cliente eliminado"}
+    return {"mensaje": "Cliente desactivado"}
