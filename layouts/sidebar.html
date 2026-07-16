@@ -1,6 +1,9 @@
+{% set user = request.session.get("usuario") %}
+{% set is_admin = user and user.get("rol_id") == 1 %}
+{% set user_perms = user.get("permisos", []) if user else [] %}
 <div class="leftside-menu">
   <!-- Brand Logo Light -->
-  <a href="index.html" class="logo logo-light">
+  <a href="/dashboard" hx-get="/dashboard" hx-target="#main-content" hx-swap="innerHTML" class="logo logo-light">
     <span class="logo-lg">
       <img src="assets/images/logo.png" alt="logo" />
     </span>
@@ -10,7 +13,7 @@
   </a>
 
   <!-- Brand Logo Dark -->
-  <a href="index.html" class="logo logo-dark">
+  <a href="/dashboard" hx-get="/dashboard" hx-target="#main-content" hx-swap="innerHTML" class="logo logo-dark">
     <span class="logo-lg">
       <img src="assets/images/logo-dark.png" alt="dark logo" />
     </span>
@@ -23,257 +26,203 @@
   <div class="h-100" id="leftside-menu-container" data-simplebar>
     <!--- Sidemenu -->
     <ul class="side-nav">
-      <li class="side-nav-title">Menu</li>
+      <li class="side-nav-title">Menú</li>
 
+      {% if is_admin or 'modulo:dashboard' in user_perms %}
       <li class="side-nav-item">
-        <a
-          href="/dashboard"
-          hx-get="/dashboard"
-          hx-target="#main-content"
-          class="side-nav-link"
-          hx-swap="innerHTML"
-        >
+        <a href="/dashboard" hx-get="/dashboard" hx-target="#main-content" class="side-nav-link" hx-swap="innerHTML">
           <i class="ri-dashboard-3-line"></i>
-          <span class="badge bg-success float-end">9+</span>
           <span> Dashboard </span>
         </a>
       </li>
+      {% endif %}
 
+      {% if is_admin or 'modulo:usuarios' in user_perms or 'modulo:roles' in user_perms %}
       <li class="side-nav-item">
-        <a
-          data-bs-toggle="collapse"
-          href="#sidebarPagesAuth"
-          aria-expanded="false"
-          aria-controls="sidebarPagesAuth"
-          class="side-nav-link"
-        >
+        <a data-bs-toggle="collapse" href="#sidebarPagesAuth" aria-expanded="false" aria-controls="sidebarPagesAuth"
+          class="side-nav-link">
           <i class="ri-lock-2-line"></i>
           <span> Autentificación </span>
           <span class="menu-arrow"></span>
         </a>
         <div class="collapse" id="sidebarPagesAuth">
           <ul class="side-nav-second-level">
+            {% if is_admin or 'modulo:usuarios' in user_perms %}
             <li>
-              <a
-                href="/users"
-                hx-get="/users"
-                hx-target="#main-content"
-                hx-swap="innerHTML"
-                class="side-nav-link"
-                ><i class="ri-list-unordered me-1"> </i>Lista de Usuarios</a
-              >
-            </li>
-            <li>
-              <a
-                href="/users"
-                hx-get="/users"
-                hx-target="#main-content"
-                hx-swap="innerHTML"
-                class="side-nav-link"
-              >
-                <i class="ri-user-line me-1"></i>Usuarios
+              <a href="/users" hx-get="/users" hx-target="#main-content" hx-swap="innerHTML" class="side-nav-link">
+                <i class="ri-list-unordered me-1"> </i>Lista de Usuarios
               </a>
             </li>
+            {% endif %}
+            {% if is_admin or 'modulo:roles' in user_perms %}
             <li>
-              <a href="layouts/auth-forgotpw.html"
-                ><i class="ri-key-2-line me-1"></i>Roles</a
-              >
+              <a href="/roles" hx-get="/roles" hx-target="#main-content" hx-swap="innerHTML" class="side-nav-link">
+                <i class="ri-key-2-line me-1"></i>Roles y Permisos
+              </a>
             </li>
+            {% endif %}
           </ul>
         </div>
       </li>
+      {% endif %}
 
+      {% if is_admin or 'modulo:categorias' in user_perms or 'modulo:productos' in user_perms or 'modulo:ajustes' in
+      user_perms %}
       <li class="side-nav-item">
-        <a
-          data-bs-toggle="collapse"
-          href="#sidebarPages"
-          aria-expanded="false"
-          aria-controls="sidebarPages"
-          class="side-nav-link"
-        >
+        <a data-bs-toggle="collapse" href="#sidebarPages" aria-expanded="false" aria-controls="sidebarPages"
+          class="side-nav-link">
           <i class="ri-store-line"></i>
           <span> Inventario </span>
           <span class="menu-arrow"></span>
         </a>
         <div class="collapse" id="sidebarPages">
           <ul class="side-nav-second-level">
+            {% if is_admin or 'modulo:categorias' in user_perms %}
             <li>
-              <a
-                href="/categorias"
-                hx-get="/categorias"
-                hx-target="#main-content"
-                hx-swap="innerHTML"
-                class="side-nav-link"
-              >
+              <a href="/categorias" hx-get="/categorias" hx-target="#main-content" hx-swap="innerHTML"
+                class="side-nav-link">
                 <i class="ri-price-tag-3-line me-1"> </i>Categorías
               </a>
             </li>
+            {% endif %}
+            {% if is_admin or 'modulo:productos' in user_perms %}
             <li>
-              <a
-                href="/productos"
-                hx-get="/productos"
-                hx-target="#main-content"
-                hx-swap="innerHTML"
-                class="side-nav-link"
-                ><i class="ri-shopping-cart-2-line me-1"></i>Productos</a
-              >
+              <a href="/productos" hx-get="/productos" hx-target="#main-content" hx-swap="innerHTML"
+                class="side-nav-link"><i class="ri-shopping-cart-2-line me-1"></i>Productos</a>
             </li>
+            {% endif %}
+            {% if is_admin or 'modulo:ajustes' in user_perms %}
             <li>
-              <a href="pages-profile.html"
-                ><i class="ri-user-line me-1"></i>Perfil</a
-              >
+              <a href="/ajustes" hx-get="/ajustes" hx-target="#main-content" hx-swap="innerHTML" class="side-nav-link">
+                <i class="ri-equalizer-line me-1"></i>Ajustes de Stock
+              </a>
             </li>
+            {% endif %}
           </ul>
         </div>
       </li>
+      {% endif %}
 
+      {% if is_admin or 'modulo:proveedores' in user_perms or 'modulo:ingresos' in user_perms %}
       <li class="side-nav-item">
-        <a
-          data-bs-toggle="collapse"
-          href="#sidebarCompras"
-          aria-expanded="false"
-          aria-controls="sidebarCompras"
-          class="side-nav-link"
-        >
+        <a data-bs-toggle="collapse" href="#sidebarCompras" aria-expanded="false" aria-controls="sidebarCompras"
+          class="side-nav-link">
           <i class="ri-shopping-cart-line"></i>
           <span> Compras </span>
           <span class="menu-arrow"></span>
         </a>
         <div class="collapse" id="sidebarCompras">
           <ul class="side-nav-second-level">
+            {% if is_admin or 'modulo:proveedores' in user_perms %}
             <li>
-              <a
-                href="/proveedor"
-                hx-get="/proveedor"
-                hx-target="#main-content"
-                hx-swap="innerHTML"
-                class="side-nav-link"
-                ><i class="ri-user-line me-1"></i>Proveedores</a
-              >
+              <a href="/proveedor" hx-get="/proveedor" hx-target="#main-content" hx-swap="innerHTML"
+                class="side-nav-link"><i class="ri-user-line me-1"></i>Proveedores</a>
             </li>
+            {% endif %}
+            {% if is_admin or 'modulo:ingresos' in user_perms %}
             <li>
-              <a
-                href="/ingresos"
-                hx-get="/ingresos"
-                hx-target="#main-content"
-                hx-swap="innerHTML"
-                class="side-nav-link"
-                ><i class="ri-file-list-3-line me-1"></i>Ingresos</a
-              >
+              <a href="/ingresos" hx-get="/ingresos" hx-target="#main-content" hx-swap="innerHTML"
+                class="side-nav-link"><i class="ri-file-list-3-line me-1"></i>Ingresos</a>
             </li>
+            {% endif %}
+            {% if is_admin %}
             <li>
-              <a href="pages-profile.html"
-                ><i class="ri-user-line me-1"></i> Perfiles</a
-              >
+              <a href="pages-profile.html"><i class="ri-user-line me-1"></i> Perfiles</a>
             </li>
+            {% endif %}
           </ul>
         </div>
       </li>
+      {% endif %}
 
+      {% if is_admin or 'modulo:clientes' in user_perms or 'modulo:caja' in user_perms or 'modulo:ventas' in user_perms
+      or 'modulo:comprobantes' in user_perms %}
       <li class="side-nav-item">
-        <a
-          data-bs-toggle="collapse"
-          href="#sidebarVentas"
-          aria-expanded="false"
-          aria-controls="sidebarVentas"
-          class="side-nav-link"
-        >
+        <a data-bs-toggle="collapse" href="#sidebarVentas" aria-expanded="false" aria-controls="sidebarVentas"
+          class="side-nav-link">
           <i class="ri-safe-2-line"></i>
           <span> Ventas </span>
           <span class="menu-arrow"></span>
         </a>
         <div class="collapse" id="sidebarVentas">
           <ul class="side-nav-second-level">
+            {% if is_admin or 'modulo:clientes' in user_perms %}
             <li>
-              <a
-                href="/clientes"
-                hx-get="/clientes"
-                hx-target="#main-content"
-                hx-swap="innerHTML"
-                class="side-nav-link"
-                ><i class="ri-user-line me-1"></i>Clientes</a
-              >
+              <a href="/clientes" hx-get="/clientes" hx-target="#main-content" hx-swap="innerHTML"
+                class="side-nav-link"><i class="ri-user-line me-1"></i>Clientes</a>
             </li>
+            {% endif %}
+            {% if is_admin or 'modulo:caja' in user_perms %}
             <li>
-              <a
-                href="/caja"
-                hx-get="/caja"
-                hx-target="#main-content"
-                hx-swap="innerHTML"
-                class="side-nav-link"
-                ><i class="ri-money-dollar-circle-line me-1"></i>Caja</a
-              >
+              <a href="/caja" hx-get="/caja" hx-target="#main-content" hx-swap="innerHTML" class="side-nav-link"><i
+                  class="ri-money-dollar-circle-line me-1"></i>Caja</a>
             </li>
+            {% endif %}
+            {% if is_admin or 'modulo:ventas' in user_perms %}
             <li>
-              <a
-                href="/ventas"
-                hx-get="/ventas"
-                hx-target="#main-content"
-                hx-swap="innerHTML"
-                class="side-nav-link"
-                ><i class="ri-shopping-cart-2-line me-1"></i>Ventas</a
-              >
+              <a href="/ventas" hx-get="/ventas" hx-target="#main-content" hx-swap="innerHTML" class="side-nav-link"><i
+                  class="ri-shopping-cart-2-line me-1"></i>Ventas</a>
             </li>
+            {% endif %}
+            {% if is_admin or 'modulo:comprobantes' in user_perms %}
             <li>
-              <a
-                href="/comprobantes"
-                hx-get="/comprobantes"
-                hx-target="#main-content"
-                hx-swap="innerHTML"
-                class="side-nav-link"
-                ><i class="ri-file-text-line me-1"></i>Comprobantes</a
-              >
+              <a href="/comprobantes" hx-get="/comprobantes" hx-target="#main-content" hx-swap="innerHTML"
+                class="side-nav-link"><i class="ri-file-text-line me-1"></i>Correlativo</a>
             </li>
+            {% endif %}
           </ul>
         </div>
       </li>
+      {% endif %}
 
+      {% if is_admin or 'modulo:devoluciones' in user_perms %}
       <li class="side-nav-item">
-        <a
-          data-bs-toggle="collapse"
-          href="#sidebarReportes"
-          aria-expanded="false"
-          aria-controls="sidebarReportes"
-          class="side-nav-link"
-        >
+        <a href="/devoluciones" hx-get="/devoluciones" hx-target="#main-content" hx-swap="innerHTML"
+          class="side-nav-link">
+          <i class="ri-refund-2-line"></i>
+          <span> Devoluciones </span>
+        </a>
+      </li>
+      {% endif %}
+
+      {% if is_admin or 'reporte:kardex' in user_perms or 'reporte:movimientos' in user_perms %}
+      <li class="side-nav-item">
+        <a data-bs-toggle="collapse" href="#sidebarReportes" aria-expanded="false" aria-controls="sidebarReportes"
+          class="side-nav-link">
           <i class="ri-bar-chart-line"></i>
           <span> Reportes </span>
           <span class="menu-arrow"></span>
         </a>
         <div class="collapse" id="sidebarReportes">
           <ul class="side-nav-second-level">
+            {% if is_admin or 'reporte:kardex' in user_perms %}
             <li>
-              <a
-                href="/kardex"
-                hx-get="/kardex"
-                hx-target="#main-content"
-                hx-swap="innerHTML"
-                class="side-nav-link"
-                ><i class="ri-file-list-3-line me-1"></i>Kardex</a
-              >
+              <a href="/kardex" hx-get="/kardex" hx-target="#main-content" hx-swap="innerHTML" class="side-nav-link"><i
+                  class="ri-file-list-3-line me-1"></i>Kardex</a>
             </li>
+            {% endif %}
+            {% if is_admin or 'reporte:movimientos' in user_perms %}
             <li>
-              <a href="pages-contact-list.html"
-                ><i class="ri-file-list-3-line me-1"></i>Movimientos</a
-              >
+              <a href="/movimientos" hx-get="/movimientos" hx-target="#main-content" hx-swap="innerHTML"
+                class="side-nav-link">
+                <i class="ri-file-list-3-line me-1"></i>Movimientos
+              </a>
             </li>
+            {% endif %}
+            {% if is_admin %}
             <li>
-              <a href="pages-profile.html"
-                ><i class="ri-user-line me-1"></i>Perfiles</a
-              >
+              <a href="pages-profile.html"><i class="ri-user-line me-1"></i>Perfiles</a>
             </li>
+            {% endif %}
           </ul>
         </div>
       </li>
+      {% endif %}
 
+      {% if is_admin %}
       <li class="side-nav-item">
-        <a
-          data-bs-toggle="collapse"
-          href="#sidebarLayouts"
-          aria-expanded="false"
-          aria-controls="sidebarLayouts"
-          class="side-nav-link"
-        >
+        <a data-bs-toggle="collapse" href="#sidebarLayouts" aria-expanded="false" aria-controls="sidebarLayouts"
+          class="side-nav-link">
           <i class="ri-layout-line"></i>
           <span class="badge bg-warning float-end">Nuevo</span>
           <span> Layouts </span>
@@ -284,44 +233,32 @@
               <a href="layouts-horizontal.html" target="_blank">Horizontal</a>
             </li>
             <li>
-              <a href="layouts-light-sidebar.html" target="_blank"
-                ><i class="ri-layout-line me-1"></i>Light Sidebar</a
-              >
+              <a href="layouts-light-sidebar.html" target="_blank"><i class="ri-layout-line me-1"></i>Light Sidebar</a>
             </li>
             <li>
-              <a href="layouts-sm-sidebar.html" target="_blank"
-                ><i class="ri-layout-line me-1"></i>Small Sidebar</a
-              >
+              <a href="layouts-sm-sidebar.html" target="_blank"><i class="ri-layout-line me-1"></i>Small Sidebar</a>
             </li>
             <li>
-              <a href="layouts-collapsed-sidebar.html" target="_blank"
-                ><i class="ri-layout-line me-1"></i>Collapsed Sidebar</a
-              >
+              <a href="layouts-collapsed-sidebar.html" target="_blank"><i class="ri-layout-line me-1"></i>Collapsed
+                Sidebar</a>
             </li>
             <li>
-              <a href="layouts-unsticky-layout.html" target="_blank"
-                ><i class="ri-layout-line me-1"></i>Unsticky Layout</a
-              >
+              <a href="layouts-unsticky-layout.html" target="_blank"><i class="ri-layout-line me-1"></i>Unsticky
+                Layout</a>
             </li>
             <li>
-              <a href="layouts-boxed.html" target="_blank"
-                ><i class="ri-layout-line me-1"></i>Boxed Layout</a
-              >
+              <a href="layouts-boxed.html" target="_blank"><i class="ri-layout-line me-1"></i>Boxed Layout</a>
             </li>
           </ul>
         </div>
       </li>
+      {% endif %}
 
       <li class="side-nav-title">Componentes</li>
 
       <li class="side-nav-item">
-        <a
-          data-bs-toggle="collapse"
-          href="#sidebarBaseUI"
-          aria-expanded="false"
-          aria-controls="sidebarBaseUI"
-          class="side-nav-link"
-        >
+        <a data-bs-toggle="collapse" href="#sidebarBaseUI" aria-expanded="false" aria-controls="sidebarBaseUI"
+          class="side-nav-link">
           <i class="ri-briefcase-line"></i>
           <span> Base UI </span>
           <span class="menu-arrow"></span>

@@ -5,7 +5,7 @@ from app.conexion import Base
 class Categoria(Base):
     __tablename__ = "categorias"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column("categoria_id", Integer, primary_key=True, index=True)
     nombre_categoria = Column(String(255), unique=True)
     descripcion = Column(String(255))
     estado = Column(Integer, default=1)

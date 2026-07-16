@@ -141,8 +141,9 @@
     setTimeout(() => document.getElementById("mensaje-alerta").innerHTML = "", 5000);
   }
 
-  document.addEventListener("click", async function (e) {
-    if (e.target && (e.target.id === "btn-registrar-comp" || e.target.closest("#btn-registrar-comp"))) {
+  const btnRegistrar = document.getElementById("btn-registrar-comp");
+  if (btnRegistrar) {
+    btnRegistrar.onclick = async function () {
       const tipo_comprobante = document.getElementById("comp_tipo").value;
       const serie = document.getElementById("comp_serie").value.trim().toUpperCase();
       const correlativo_actual = parseInt(document.getElementById("comp_correlativo").value) || 0;
@@ -183,18 +184,27 @@
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
+    };
+  }
 
-    if (e.target && (e.target.id === "btn-nuevo-comprobante" || e.target.closest("#btn-nuevo-comprobante"))) {
+  const btnNuevo = document.getElementById("btn-nuevo-comprobante");
+  if (btnNuevo) {
+    btnNuevo.onclick = function () {
       limpiarFormulario();
       getModalInstance().show();
-    }
+    };
+  }
 
-    if (e.target && (e.target.id === "btn-limpiar-comp" || e.target.closest("#btn-limpiar-comp"))) {
+  const btnLimpiar = document.getElementById("btn-limpiar-comp");
+  if (btnLimpiar) {
+    btnLimpiar.onclick = function () {
       limpiarFormulario();
-    }
+    };
+  }
 
-    if (e.target && e.target.id === "btn-confirmar-eliminar-comp") {
+  const btnConfirmarEliminar = document.getElementById("btn-confirmar-eliminar-comp");
+  if (btnConfirmarEliminar) {
+    btnConfirmarEliminar.onclick = async function () {
       if (modalEliminarInstance) modalEliminarInstance.hide();
       try {
         const res = await fetch(`/comprobante-series/${serieEliminarId}`, { method: "DELETE" });
@@ -203,20 +213,22 @@
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
-  });
+    };
+  }
 
-  document.addEventListener("input", function (e) {
-    if (e.target && e.target.id === "buscador-comp") {
+  const buscador = document.getElementById("buscador-comp");
+  if (buscador) {
+    buscador.oninput = function () {
       paginaActual = 1; renderTabla();
-    }
-  });
+    };
+  }
 
-  document.addEventListener("change", function (e) {
-    if (e.target && e.target.id === "filtro-estado-comp") {
+  const filtroEstado = document.getElementById("filtro-estado-comp");
+  if (filtroEstado) {
+    filtroEstado.onchange = function () {
       paginaActual = 1; renderTabla();
-    }
-  });
+    };
+  }
 
   window.editarSerie = editarSerie;
   window.eliminarSerie = eliminarSerie;

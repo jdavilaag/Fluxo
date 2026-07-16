@@ -5,7 +5,7 @@ from app.conexion import Base
 class Usuario(Base):
     __tablename__ = "usuarios"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column("usuario_id", Integer, primary_key=True, index=True)
     rol_id = Column(Integer)
     nombre_completo = Column(String(255))
     email = Column(String(255), unique=True)

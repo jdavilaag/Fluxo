@@ -137,8 +137,9 @@
     setTimeout(() => document.getElementById("mensaje-alerta").innerHTML = "", 5000);
   }
 
-  document.addEventListener("click", async function (e) {
-    if (e.target && (e.target.id === "btn-registrar-cli" || e.target.closest("#btn-registrar-cli"))) {
+  const btnRegistrar = document.getElementById("btn-registrar-cli");
+  if (btnRegistrar) {
+    btnRegistrar.onclick = async function () {
       const documento = document.getElementById("cli_documento").value.trim();
       const nombres = document.getElementById("cli_nombres").value.trim();
       const telefono = document.getElementById("cli_telefono").value.trim();
@@ -181,18 +182,27 @@
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
+    };
+  }
 
-    if (e.target && (e.target.id === "btn-nuevo-cliente" || e.target.closest("#btn-nuevo-cliente"))) {
+  const btnNuevo = document.getElementById("btn-nuevo-cliente");
+  if (btnNuevo) {
+    btnNuevo.onclick = function () {
       limpiarFormulario();
       getModalInstance().show();
-    }
+    };
+  }
 
-    if (e.target && (e.target.id === "btn-limpiar-cli" || e.target.closest("#btn-limpiar-cli"))) {
+  const btnLimpiar = document.getElementById("btn-limpiar-cli");
+  if (btnLimpiar) {
+    btnLimpiar.onclick = function () {
       limpiarFormulario();
-    }
+    };
+  }
 
-    if (e.target && e.target.id === "btn-confirmar-eliminar-cli") {
+  const btnConfirmarEliminar = document.getElementById("btn-confirmar-eliminar-cli");
+  if (btnConfirmarEliminar) {
+    btnConfirmarEliminar.onclick = async function () {
       if (modalEliminarInstance) modalEliminarInstance.hide();
       try {
         const res = await fetch(`/clientes/${clienteEliminarId}`, { method: "DELETE" });
@@ -201,20 +211,22 @@
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
-  });
+    };
+  }
 
-  document.addEventListener("input", function (e) {
-    if (e.target && e.target.id === "buscador-cli") {
+  const buscador = document.getElementById("buscador-cli");
+  if (buscador) {
+    buscador.oninput = function () {
       paginaActual = 1; renderTabla();
-    }
-  });
+    };
+  }
 
-  document.addEventListener("change", function (e) {
-    if (e.target && e.target.id === "filtro-estado-cli") {
+  const filtroEstado = document.getElementById("filtro-estado-cli");
+  if (filtroEstado) {
+    filtroEstado.onchange = function () {
       paginaActual = 1; renderTabla();
-    }
-  });
+    };
+  }
 
   window.editarCliente = editarCliente;
   window.eliminarCliente = eliminarCliente;

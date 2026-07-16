@@ -137,8 +137,9 @@
     setTimeout(() => document.getElementById("mensaje-alerta").innerHTML = "", 5000);
   }
 
-  document.addEventListener("click", async function (e) {
-    if (e.target && (e.target.id === "btn-registrar-prov" || e.target.closest("#btn-registrar-prov"))) {
+  const btnRegistrar = document.getElementById("btn-registrar-prov");
+  if (btnRegistrar) {
+    btnRegistrar.onclick = async function () {
       const ruc = document.getElementById("prov_ruc").value.trim();
       const razon_social = document.getElementById("prov_razon_social").value.trim();
       const telefono = document.getElementById("prov_telefono").value.trim();
@@ -181,18 +182,27 @@
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
+    };
+  }
 
-    if (e.target && (e.target.id === "btn-nuevo-proveedor" || e.target.closest("#btn-nuevo-proveedor"))) {
+  const btnNuevo = document.getElementById("btn-nuevo-proveedor");
+  if (btnNuevo) {
+    btnNuevo.onclick = function () {
       limpiarFormulario();
       getModalInstance().show();
-    }
+    };
+  }
 
-    if (e.target && (e.target.id === "btn-limpiar-prov" || e.target.closest("#btn-limpiar-prov"))) {
+  const btnLimpiar = document.getElementById("btn-limpiar-prov");
+  if (btnLimpiar) {
+    btnLimpiar.onclick = function () {
       limpiarFormulario();
-    }
+    };
+  }
 
-    if (e.target && e.target.id === "btn-confirmar-eliminar-prov") {
+  const btnConfirmarEliminar = document.getElementById("btn-confirmar-eliminar-prov");
+  if (btnConfirmarEliminar) {
+    btnConfirmarEliminar.onclick = async function () {
       if (modalEliminarInstance) modalEliminarInstance.hide();
       try {
         const res = await fetch(`/proveedores/${proveedorEliminarId}`, { method: "DELETE" });
@@ -201,20 +211,22 @@
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
-  });
+    };
+  }
 
-  document.addEventListener("input", function (e) {
-    if (e.target && e.target.id === "buscador-prov") {
+  const buscador = document.getElementById("buscador-prov");
+  if (buscador) {
+    buscador.oninput = function () {
       paginaActual = 1; renderTabla();
-    }
-  });
+    };
+  }
 
-  document.addEventListener("change", function (e) {
-    if (e.target && e.target.id === "filtro-estado-prov") {
+  const filtroEstado = document.getElementById("filtro-estado-prov");
+  if (filtroEstado) {
+    filtroEstado.onchange = function () {
       paginaActual = 1; renderTabla();
-    }
-  });
+    };
+  }
 
   window.editarProveedor = editarProveedor;
   window.eliminarProveedor = eliminarProveedor;

@@ -5,9 +5,13 @@ from app.conexion import get_db
 from app.models.categoria_model import Categoria
 from app.crud.categoria_crud import get_categoria_by_nombre, get_categorias, crear_categoria
 from app.schema.categoria_schem import CategoriaRegistro, CategoriaResponse, CategoriaUpdate
-from app.dependencies import require_auth
+from app.dependencies import require_permission
 
-router = APIRouter(prefix="/categorias", tags=["categorias"], dependencies=[Depends(require_auth)])
+router = APIRouter(
+    prefix="/categorias",
+    tags=["categorias"],
+    dependencies=[Depends(require_permission("modulo:categorias"))]
+)
 
 @router.post("/", response_model=CategoriaResponse)
 def registrar_categoria(data: CategoriaRegistro, db: Session = Depends(get_db)):

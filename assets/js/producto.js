@@ -169,8 +169,9 @@
     setTimeout(() => document.getElementById("mensaje-alerta").innerHTML = "", 5000);
   }
 
-  document.addEventListener("click", async function (e) {
-    if (e.target && (e.target.id === "btn-registrar-prod" || e.target.closest("#btn-registrar-prod"))) {
+  const btnRegistrar = document.getElementById("btn-registrar-prod");
+  if (btnRegistrar) {
+    btnRegistrar.onclick = async function () {
       const nombre = document.getElementById("prod_nombre").value.trim();
       const categoria_id = document.getElementById("prod_categoria").value;
       const codigo_barras = document.getElementById("prod_codigo").value.trim();
@@ -218,19 +219,28 @@
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
+    };
+  }
 
-    if (e.target && (e.target.id === "btn-limpiar-prod" || e.target.closest("#btn-limpiar-prod"))) {
+  const btnLimpiar = document.getElementById("btn-limpiar-prod");
+  if (btnLimpiar) {
+    btnLimpiar.onclick = function () {
       limpiarFormulario();
-    }
+    };
+  }
 
-    if (e.target && (e.target.id === "btn-nuevo-producto" || e.target.closest("#btn-nuevo-producto"))) {
+  const btnNuevo = document.getElementById("btn-nuevo-producto");
+  if (btnNuevo) {
+    btnNuevo.onclick = function () {
       limpiarFormulario();
       document.getElementById("modalProductoLabel").textContent = "Registrar Nuevo Producto";
       getModalInstance().show();
-    }
+    };
+  }
 
-    if (e.target && e.target.id === "btn-confirmar-eliminar-prod") {
+  const btnConfirmarEliminar = document.getElementById("btn-confirmar-eliminar-prod");
+  if (btnConfirmarEliminar) {
+    btnConfirmarEliminar.onclick = async function () {
       if (modalEliminarInstance) modalEliminarInstance.hide();
       try {
         const res = await fetch(`/productos/${productoEliminarId}`, { method: "DELETE" });
@@ -239,20 +249,22 @@
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
-  });
+    };
+  }
 
-  document.addEventListener("input", function (e) {
-    if (e.target && e.target.id === "buscador-prod") {
+  const buscador = document.getElementById("buscador-prod");
+  if (buscador) {
+    buscador.oninput = function () {
       paginaActual = 1; renderTabla();
-    }
-  });
+    };
+  }
 
-  document.addEventListener("change", function (e) {
-    if (e.target && e.target.id === "filtro-estado-prod") {
+  const filtroEstado = document.getElementById("filtro-estado-prod");
+  if (filtroEstado) {
+    filtroEstado.onchange = function () {
       paginaActual = 1; renderTabla();
-    }
-  });
+    };
+  }
 
   window.editarProducto = editarProducto;
   window.eliminarProducto = eliminarProducto;

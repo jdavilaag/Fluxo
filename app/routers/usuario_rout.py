@@ -1,18 +1,19 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
+from app.security import obtener_password_hash
 
 from app.conexion import get_db
 from app.models.usuario_model import Usuario
 from app.crud.usuario_crud import get_usuario_by_email, crear_usuario, verificar_password, get_usuarios
 from app.schema.usuario_schem import UsuarioRegistro, UsuarioLogin, UsuarioResponse, UsuarioUpdate
+from app.crud.rol_crud import get_permisos_by_rol
+from app.dependencies import require_auth, require_permission
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 @router.post("/registro", response_model=UsuarioResponse)
-def registro(data: UsuarioRegistro, db: Session = Depends(get_db)):
+def registro(data: UsuarioRegistro, db: Session = Depends(get_db), usuario: dict = Depends(require_permission("modulo:usuarios"))):
     if get_usuario_by_email(db, data.email):
         raise HTTPException(status_code=400, detail="Email ya registrado")
     # Validar nombre duplicado
@@ -31,21 +32,26 @@ def login(request: Request, data: UsuarioLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
     if usuario.estado == 0:
         raise HTTPException(status_code=403, detail="Usuario inactivo")
+    
+    # Obtener los permisos del rol
+    permisos = get_permisos_by_rol(db, usuario.rol_id)
+    
     request.session["usuario"] = {
         "id": usuario.id,
         "nombre": usuario.nombre_completo,
         "email": usuario.email,
-        "rol_id": usuario.rol_id
+        "rol_id": usuario.rol_id,
+        "permisos": permisos
     }
     print("Sesión guardada:", request.session.get("usuario"))
     return {"mensaje": "Login exitoso", "nombre": usuario.nombre_completo}
 
 @router.get("/usuarios", response_model=List[UsuarioResponse])
-def listar_usuarios(db: Session = Depends(get_db)):
+def listar_usuarios(db: Session = Depends(get_db), usuario: dict = Depends(require_permission("modulo:usuarios"))):
     return get_usuarios(db)
 
 @router.put("/usuarios/{usuario_id}", response_model=UsuarioResponse)
-def actualizar_usuario(usuario_id: int, data: UsuarioUpdate, db: Session = Depends(get_db)):
+def actualizar_usuario(usuario_id: int, data: UsuarioUpdate, db: Session = Depends(get_db), usuario: dict = Depends(require_permission("modulo:usuarios"))):
     usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
@@ -54,13 +60,13 @@ def actualizar_usuario(usuario_id: int, data: UsuarioUpdate, db: Session = Depen
     usuario.rol_id = data.rol_id
     usuario.estado = data.estado
     if data.password:
-        usuario.password_hash = pwd_context.hash(data.password)
+        usuario.password_hash = obtener_password_hash(data.password)
     db.commit()
     db.refresh(usuario)
     return usuario
 
 @router.delete("/usuarios/{usuario_id}")
-def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db)):
+def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db), usuario: dict = Depends(require_permission("modulo:usuarios"))):
     usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
@@ -70,8 +76,5 @@ def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/sesion")
-def obtener_sesion(request: Request):
-    usuario = request.session.get("usuario")
-    if not usuario:
-        raise HTTPException(status_code=401, detail="No hay sesión activa")
+def obtener_sesion(usuario: dict = Depends(require_auth)):
     return usuario

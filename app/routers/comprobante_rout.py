@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.conexion import get_db
-from app.dependencies import require_auth
+from app.dependencies import require_auth, require_permission
 from app.crud.comprobante_crud import (
     get_comprobante_series,
     get_comprobante_serie_by_id,
@@ -13,7 +13,11 @@ from app.crud.comprobante_crud import (
 )
 from app.schema.comprobante_schem import ComprobanteSerieCreate, ComprobanteSerieResponse
 
-router = APIRouter(prefix="/comprobante-series", tags=["comprobantes"], dependencies=[Depends(require_auth)])
+router = APIRouter(
+    prefix="/comprobante-series",
+    tags=["comprobantes"],
+    dependencies=[Depends(require_permission("modulo:comprobantes"))]
+)
 
 @router.get("/", response_model=List[ComprobanteSerieResponse])
 def listar_series(activos: bool = False, db: Session = Depends(get_db)):

@@ -136,9 +136,9 @@
   }
 
   // ── Eventos ──
-  document.addEventListener("click", async function (e) {
-    // Registrar o actualizar
-    if (e.target && (e.target.id === "btn-registrar-cat" || e.target.closest("#btn-registrar-cat"))) {
+  const btnRegistrar = document.getElementById("btn-registrar-cat");
+  if (btnRegistrar) {
+    btnRegistrar.onclick = async function () {
       const nombre = document.getElementById("cat_nombre").value.trim();
       const descripcion = document.getElementById("cat_descripcion").value.trim();
       const estado = document.getElementById("cat_estado").value;
@@ -175,22 +175,28 @@
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
+    };
+  }
 
-    // Limpiar
-    if (e.target && (e.target.id === "btn-limpiar-cat" || e.target.closest("#btn-limpiar-cat"))) {
+  const btnLimpiar = document.getElementById("btn-limpiar-cat");
+  if (btnLimpiar) {
+    btnLimpiar.onclick = function () {
       limpiarFormulario();
-    }
+    };
+  }
 
-    // Nueva Categoria
-    if (e.target && (e.target.id === "btn-nueva-categoria" || e.target.closest("#btn-nueva-categoria"))) {
+  const btnNueva = document.getElementById("btn-nueva-categoria");
+  if (btnNueva) {
+    btnNueva.onclick = function () {
       limpiarFormulario();
       document.getElementById("modalCategoriaLabel").textContent = "Registrar Nueva Categoría";
       getModalInstance().show();
-    }
+    };
+  }
 
-    // Confirmar eliminar
-    if (e.target && e.target.id === "btn-confirmar-eliminar-cat") {
+  const btnConfirmarEliminar = document.getElementById("btn-confirmar-eliminar-cat");
+  if (btnConfirmarEliminar) {
+    btnConfirmarEliminar.onclick = async function () {
       if (modalEliminarInstance) modalEliminarInstance.hide();
       try {
         const res = await fetch(`/categorias/${categoriaEliminarId}`, { method: "DELETE" });
@@ -199,20 +205,22 @@
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
-  });
+    };
+  }
 
-  document.addEventListener("input", function (e) {
-    if (e.target && e.target.id === "buscador-cat") {
+  const buscador = document.getElementById("buscador-cat");
+  if (buscador) {
+    buscador.oninput = function () {
       paginaActual = 1; renderTabla();
-    }
-  });
+    };
+  }
 
-  document.addEventListener("change", function (e) {
-    if (e.target && e.target.id === "filtro-estado-cat") {
+  const filtroEstado = document.getElementById("filtro-estado-cat");
+  if (filtroEstado) {
+    filtroEstado.onchange = function () {
       paginaActual = 1; renderTabla();
-    }
-  });
+    };
+  }
 
   window.editarCategoria = editarCategoria;
   window.eliminarCategoria = eliminarCategoria;

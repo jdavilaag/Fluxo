@@ -70,7 +70,19 @@
 
     return todosMovimientos.filter(m => {
       const coincideProducto = prod === "" || m.producto === prod;
-      const coincideTipo = tipo === "" || m.tipo_movimiento === tipo;
+      let coincideTipo = false;
+      if (tipo === "") {
+        coincideTipo = true;
+      } else {
+        const mTipo = m.tipo_movimiento ? m.tipo_movimiento.toLowerCase() : "";
+        if (tipo === "ingreso") {
+          coincideTipo = (mTipo === "ingreso" || mTipo === "entrada");
+        } else if (tipo === "salida") {
+          coincideTipo = (mTipo === "salida");
+        } else {
+          coincideTipo = (mTipo === tipo.toLowerCase());
+        }
+      }
 
       // Extract date YYYY-MM-DD from fecha_registro
       const mFecha = m.fecha_registro ? m.fecha_registro.substring(0, 10) : "";
@@ -112,9 +124,10 @@
     } else {
       tbody.innerHTML = pagina.map((m, i) => {
         let badgeTipo = "";
-        if (m.tipo_movimiento === "ingreso") {
+        const tipo = m.tipo_movimiento ? m.tipo_movimiento.toLowerCase() : "";
+        if (tipo === "ingreso") {
           badgeTipo = '<span class="badge bg-success-subtle text-success"><i class="ri-arrow-left-down-line me-1"></i>Ingreso</span>';
-        } else if (m.tipo_movimiento === "salida") {
+        } else if (tipo === "salida") {
           badgeTipo = '<span class="badge bg-danger-subtle text-danger"><i class="ri-arrow-right-up-line me-1"></i>Salida</span>';
         } else {
           badgeTipo = `<span class="badge bg-secondary-subtle text-secondary">${m.tipo_movimiento}</span>`;
@@ -179,28 +192,29 @@
     }
   }
 
-  // Event Listeners
-  document.addEventListener("input", function (e) {
-    if (e.target && e.target.id === "buscador-kardex") {
-      paginaActual = 1;
-      renderTabla();
+  const buscador = document.getElementById("buscador-kardex");
+  if (buscador) {
+    buscador.oninput = function () {
+      paginaActual = 1; renderTabla();
+    };
+  }
+
+  const ids = ["filtro-producto-kardex", "filtro-tipo-kardex", "filtro-fecha-desde", "filtro-fecha-hasta"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.onchange = function () {
+        paginaActual = 1; renderTabla();
+      };
     }
   });
 
-  document.addEventListener("change", function (e) {
-    const ids = ["filtro-producto-kardex", "filtro-tipo-kardex", "filtro-fecha-desde", "filtro-fecha-hasta"];
-    if (e.target && ids.includes(e.target.id)) {
-      paginaActual = 1;
-      renderTabla();
-    }
-  });
-
-  document.addEventListener("click", function (e) {
-    if (e.target && (e.target.id === "btn-filtrar-kardex" || e.target.closest("#btn-filtrar-kardex"))) {
-      paginaActual = 1;
-      renderTabla();
-    }
-  });
+  const btnFiltrar = document.getElementById("btn-filtrar-kardex");
+  if (btnFiltrar) {
+    btnFiltrar.onclick = function () {
+      paginaActual = 1; renderTabla();
+    };
+  }
 
   // Expose global function
   window.cargarKardex = cargarKardex;

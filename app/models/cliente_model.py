@@ -5,7 +5,7 @@ from app.conexion import Base
 class Cliente(Base):
     __tablename__ = "clientes"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column("cliente_id", Integer, primary_key=True, index=True)
     documento = Column(String(20), unique=True)
     nombres = Column(String(255))
     telefono = Column(String(20))

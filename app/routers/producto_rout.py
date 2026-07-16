@@ -5,9 +5,13 @@ from app.conexion import get_db
 from app.models.producto_model import Producto
 from app.crud.producto_crud import get_producto_by_nombre, get_producto_by_codigo, get_productos, crear_producto
 from app.schema.producto_schem import ProductoRegistro, ProductoResponse, ProductoUpdate
-from app.dependencies import require_auth
+from app.dependencies import require_permission
 
-router = APIRouter(prefix="/productos", tags=["productos"], dependencies=[Depends(require_auth)])
+router = APIRouter(
+    prefix="/productos",
+    tags=["productos"],
+    dependencies=[Depends(require_permission("modulo:productos"))]
+)
 
 @router.post("/", response_model=ProductoResponse)
 def registrar_producto(data: ProductoRegistro, db: Session = Depends(get_db)):
@@ -32,6 +36,8 @@ def actualizar_producto(producto_id: int, data: ProductoUpdate, db: Session = De
     db.refresh(producto)
     return producto
 
+from app.models.lote_model import Lote
+
 @router.delete("/{producto_id}")
 def eliminar_producto(producto_id: int, db: Session = Depends(get_db)):
     producto = db.query(Producto).filter(Producto.id == producto_id).first()
@@ -40,3 +46,10 @@ def eliminar_producto(producto_id: int, db: Session = Depends(get_db)):
     producto.estado = 0
     db.commit()
     return {"mensaje": "Producto desactivado"}
+
+@router.get("/{producto_id}/lotes")
+def listar_lotes_producto(producto_id: int, db: Session = Depends(get_db)):
+    return db.query(Lote).filter(
+        Lote.producto_id == producto_id,
+        Lote.estado == 1
+    ).all()

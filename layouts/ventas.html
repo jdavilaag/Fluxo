@@ -49,6 +49,19 @@
                 <label class="form-check-label">Incluir IGV</label>
               </div>
             </div>
+            <div class="col-md-3" id="div-proveedor-pago" style="display: none;">
+              <label class="form-label">Pasarela / Proveedor</label>
+              <select class="form-select" id="vta_proveedor_pago">
+                <option value="OTRO">Otro / Transferencia</option>
+                <option value="CULQI">Culqi</option>
+                <option value="MERCADO_PAGO">Mercado Pago</option>
+                <option value="STRIPE">Stripe</option>
+              </select>
+            </div>
+            <div class="col-md-4" id="div-transaccion-pago" style="display: none;">
+              <label class="form-label">ID Transacción API / Ref.</label>
+              <input class="form-control" type="text" id="vta_id_transaccion_api" placeholder="Ej. TXN-123456" />
+            </div>
             <div class="col-md-4">
               <label class="form-label">Tipo Comprobante <span class="text-danger">*</span></label>
               <select class="form-select" id="vta_tipo_comprobante">
@@ -244,6 +257,26 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
+          <!-- Información del Pago -->
+          <div class="row g-3 mb-3 p-3 bg-light rounded-3 border mx-0" id="seccion-detalle-pago" style="display: none;">
+            <div class="col-md-3">
+              <span class="text-muted d-block fs-11 text-uppercase fw-semibold">Método de Pago</span>
+              <span id="det-pago-metodo" class="fs-13 fw-bold text-dark"></span>
+            </div>
+            <div class="col-md-3">
+              <span class="text-muted d-block fs-11 text-uppercase fw-semibold">Proveedor</span>
+              <span id="det-pago-proveedor" class="fs-13 fw-bold text-dark">-</span>
+            </div>
+            <div class="col-md-3">
+              <span class="text-muted d-block fs-11 text-uppercase fw-semibold">ID Transacción API</span>
+              <span id="det-pago-transaccion" class="fs-13 fw-bold text-dark">-</span>
+            </div>
+            <div class="col-md-3">
+              <span class="text-muted d-block fs-11 text-uppercase fw-semibold">Estado de Pago</span>
+              <span id="det-pago-estado" class="fs-13 fw-semibold"></span>
+            </div>
+          </div>
+          
           <div class="table-responsive">
             <table class="table table-nowrap mb-0">
               <thead class="table-light">
@@ -260,8 +293,68 @@
           </div>
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btn-imprimir-ticket">
+            <i class="ri-printer-line me-1"></i> Imprimir Ticket
+          </button>
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
         </div>
+
+  <!-- Modal Pago QR Dinámico Yape -->
+  <div class="modal fade" id="modalYapeQR" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+      <div class="modal-content" style="border-radius: 20px; overflow: hidden; border: none;">
+        <!-- Cabecera estilizada Yape -->
+        <div class="p-3 text-center text-white" style="background-color: #74227C; position: relative;">
+          <h5 class="modal-title text-white fw-bold mb-0">
+            <img src="https://logodownload.org/wp-content/uploads/2021/06/yape-logo.png" style="height: 30px; margin-right: 8px; vertical-align: middle;" alt="Yape" onerror="this.style.display='none';">
+            Pago QR Dinámico
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" style="position: absolute; right: 15px; top: 20px;" id="btn-cerrar-yape-modal"></button>
+        </div>
+        <div class="modal-body text-center p-4">
+          <!-- Pantalla de Pago Pendiente -->
+          <div id="yape-pantalla-pendiente">
+            <p class="text-muted fs-13 mb-3">Escanea este código QR único con tu celular para completar el pago.</p>
+            
+            <!-- Contenedor del QR -->
+            <div class="bg-light p-3 rounded-4 d-inline-block border mb-3">
+              <img id="yape-qr-img" src="" alt="QR Yape" style="width: 200px; height: 200px; display: block; margin: 0 auto;">
+            </div>
+
+            <div class="mb-2">
+              <span class="text-muted d-block fs-11 text-uppercase fw-semibold">MONTO A COBRAR</span>
+              <h3 class="fw-extrabold text-primary mb-0" id="yape-monto-cobro">S/ 0.00</h3>
+            </div>
+
+            <!-- Loader de estado de confirmación -->
+            <div class="alert alert-warning-subtle text-warning border-warning-subtle py-2 px-3 rounded-3 d-inline-flex align-items-center gap-2 mb-3">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span class="fs-12 fw-semibold">Esperando yapeo en tiempo real...</span>
+            </div>
+
+            <div class="divider border-top my-3"></div>
+            
+            <!-- Botón simulador para PC -->
+            <button type="button" class="btn btn-sm btn-outline-secondary w-100 border-dashed" id="btn-yape-simular-pc">
+              <i class="ri-computer-line me-1"></i> Simular Confirmación de Pago
+            </button>
+          </div>
+
+          <!-- Pantalla de Pago Exitoso -->
+          <div id="yape-pantalla-exito" style="display: none;">
+            <div class="mb-3 text-success" style="font-size: 64px; line-height: 1;">
+              <i class="ri-checkbox-circle-fill"></i>
+            </div>
+            <h4 class="fw-bold text-success mb-1">¡Yapeo Confirmado!</h4>
+            <p class="text-muted fs-13">El pago ha sido validado y procesado de forma inalámbrica.</p>
+            <div class="bg-success-subtle text-success p-2 rounded-3 fs-13 mb-2" id="yape-ref-label">
+              <strong>Referencia:</strong> YAP-000000
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
       </div>
     </div>
   </div>

@@ -5,8 +5,8 @@ from app.conexion import Base
 class Lote(Base):
     __tablename__ = "lotes"
 
-    id = Column(Integer, primary_key=True, index=True)
-    producto_id = Column(Integer, ForeignKey("productos.id"), index=True)
+    id = Column("lote_id", Integer, primary_key=True, index=True)
+    producto_id = Column(Integer, ForeignKey("productos.producto_id"), index=True)
     fecha_vencimiento = Column(DateTime, nullable=True)
     nro_lote = Column(String(50))
     stock_lote = Column(Integer, default=0)

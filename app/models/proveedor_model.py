@@ -5,7 +5,7 @@ from app.conexion import Base
 class Proveedor(Base):
     __tablename__ = "proveedores"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column("proveedor_id", Integer, primary_key=True, index=True)
     ruc = Column(String(20), unique=True)
     razon_social = Column(String(255))
     telefono = Column(String(20))

@@ -7,6 +7,9 @@
   var paginaActual = 1;
   var porPagina = 8;
   var modalDetalleInstance = null;
+  var pollingYapeInterval = null;
+  var currentYapeToken = null;
+  var modalYapeQRInstance = null;
 
   async function iniciarVenta() {
     await cargarClientes();
@@ -200,6 +203,181 @@
     renderDetallesVenta();
   }
 
+  function imprimirTicketVenta(ventaId) {
+    const vta = todasVentas.find(x => x.id === ventaId);
+    if (!vta) {
+      mostrarAlerta("No se encontró la información de la venta.", "danger");
+      return;
+    }
+
+    // Cargar detalles de la venta
+    fetch(`/ventas/${ventaId}/detalles`)
+      .then(res => res.json())
+      .then(detalles => {
+        // Cargar pagos
+        fetch(`/ventas/${ventaId}/pagos`)
+          .then(resPagos => resPagos.json())
+          .then(pagos => {
+            const pago = pagos && pagos.length > 0 ? pagos[0] : null;
+            const metodo = pago ? pago.metodo_pago : "EFECTIVO";
+            const montoRecibido = pago ? pago.monto : vta.total;
+            const vuelto = montoRecibido - vta.total;
+
+            let itemsHtml = "";
+            detalles.forEach(d => {
+              const prod = todosProductos.find(p => p.id === d.producto_id);
+              const name = prod ? prod.nombre_producto : `Prod ID ${d.producto_id}`;
+              itemsHtml += `
+                <tr>
+                  <td style="text-align: left; padding: 2px 0;">${name}<br><small>${d.cantidad} x S/ ${parseFloat(d.precio_venta).toFixed(2)}</small></td>
+                  <td style="text-align: right; vertical-align: bottom; padding: 2px 0;">S/ ${parseFloat(d.subtotal).toFixed(2)}</td>
+                </tr>`;
+            });
+
+            const fechaFormat = new Date(vta.fecha_venta).toLocaleString("es-PE");
+
+            const printContent = `
+              <!DOCTYPE html>
+              <html>
+              <head>
+                <meta charset="utf-8">
+                <title>Ticket - ${vta.nro_comprobante || 'Venta'}</title>
+                <style>
+                  @page {
+                    size: 80mm auto;
+                    margin: 0;
+                  }
+                  body {
+                    font-family: 'Courier New', Courier, monospace;
+                    font-size: 11px;
+                    width: 72mm;
+                    margin: 0 auto;
+                    padding: 10px 0;
+                    color: #000;
+                    line-height: 1.2;
+                  }
+                  .text-center { text-align: center; }
+                  .text-right { text-align: right; }
+                  .header { margin-bottom: 8px; }
+                  .header h2 { margin: 0 0 3px 0; font-size: 14px; text-transform: uppercase; }
+                  .header p { margin: 1px 0; font-size: 10px; }
+                  .divider { border-top: 1px dashed #000; margin: 6px 0; }
+                  .info-table, .items-table { width: 100%; border-collapse: collapse; }
+                  .info-table td { padding: 1px 0; font-size: 10px; }
+                  .items-table th { border-bottom: 1px dashed #000; padding: 2px 0; font-size: 10px; }
+                  .totals-table { width: 100%; margin-top: 4px; }
+                  .totals-table td { padding: 1px 0; font-size: 10px; }
+                  .footer { margin-top: 12px; font-size: 9px; }
+                </style>
+              </head>
+              <body>
+                <div class="header text-center">
+                  <h2>FLUXO SHOOP</h2>
+                  <p>R.U.C. 20123456789</p>
+                  <p>Av. Larco 123, Miraflores, Lima</p>
+                  <p>Teléfono: (01) 444-5555</p>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="text-center" style="font-weight: bold; font-size: 12px;">
+                  ${vta.tipo_comprobante || 'TICKET'}
+                </div>
+                <div class="text-center" style="font-weight: bold; font-size: 11px;">
+                  Nro: ${vta.nro_comprobante || '000-00000000'}
+                </div>
+
+                <div class="divider"></div>
+
+                <table class="info-table">
+                  <tr>
+                    <td>FECHA:</td>
+                    <td class="text-right">${fechaFormat}</td>
+                  </tr>
+                  <tr>
+                    <td>CLIENTE:</td>
+                    <td class="text-right">${vta.cliente_nombre || 'PÚBLICO GENERAL'}</td>
+                  </tr>
+                  <tr>
+                    <td>MÉTODO PAGO:</td>
+                    <td class="text-right">${metodo}</td>
+                  </tr>
+                </table>
+
+                <div class="divider"></div>
+
+                <table class="items-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align: left;">DESCRIPCIÓN</th>
+                      <th style="text-align: right;">TOTAL</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${itemsHtml}
+                  </tbody>
+                </table>
+
+                <div class="divider"></div>
+
+                <table class="totals-table">
+                  <tr>
+                    <td>SUBTOTAL:</td>
+                    <td class="text-right">S/ ${parseFloat(vta.subtotal).toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                    <td>I.G.V. (18%):</td>
+                    <td class="text-right">S/ ${parseFloat(vta.igv).toFixed(2)}</td>
+                  </tr>
+                  <tr style="font-weight: bold; font-size: 12px;">
+                    <td>TOTAL:</td>
+                    <td class="text-right">S/ ${parseFloat(vta.total).toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2"><div class="divider"></div></td>
+                  </tr>
+                  <tr>
+                    <td>EFECTIVO ENTREGADO:</td>
+                    <td class="text-right">S/ ${parseFloat(montoRecibido).toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                    <td>VUELTO:</td>
+                    <td class="text-right">S/ ${vuelto >= 0 ? vuelto.toFixed(2) : '0.00'}</td>
+                  </tr>
+                </table>
+
+                <div class="divider"></div>
+
+                <div class="footer text-center">
+                  <p>¡Gracias por su preferencia!</p>
+                  <p>Desarrollado por FLUXO ERP</p>
+                </div>
+
+                <script>
+                  window.onload = function() {
+                    window.print();
+                    setTimeout(function() { window.close(); }, 500);
+                  };
+                <\/script>
+              </body>
+              </html>
+            `;
+
+            const printWindow = window.open("", "_blank", "width=600,height=600");
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+          })
+          .catch(err => {
+            console.error("Error al cargar pagos para impresión:", err);
+            mostrarAlerta("Error al cargar datos del pago para impresión.", "danger");
+          });
+      })
+      .catch(err => {
+        console.error("Error al cargar detalles para impresión:", err);
+        mostrarAlerta("Error al cargar detalles de la venta para impresión.", "danger");
+      });
+  }
+
   async function verDetalleVenta(ventaId) {
     try {
       const res = await fetch(`/ventas/${ventaId}/detalles`);
@@ -217,9 +395,44 @@
           </tr>`;
       }).join("");
 
+      // Fetch payment details
+      try {
+        const resPagos = await fetch(`/ventas/${ventaId}/pagos`);
+        const pagos = await resPagos.json();
+        const divPago = document.getElementById("seccion-detalle-pago");
+        if (pagos && pagos.length > 0) {
+          const p = pagos[0];
+          document.getElementById("det-pago-metodo").textContent = p.metodo_pago;
+          document.getElementById("det-pago-proveedor").textContent = p.proveedor_pago || "Ninguno / Por defecto";
+          document.getElementById("det-pago-transaccion").textContent = p.id_transaccion_api || "Ninguno / Por defecto";
+          
+          const badgeEstado = document.getElementById("det-pago-estado");
+          badgeEstado.textContent = p.estado_pago.toUpperCase();
+          if (p.estado_pago === "completado") {
+            badgeEstado.className = "badge bg-success-subtle text-success fs-13";
+          } else {
+            badgeEstado.className = "badge bg-warning-subtle text-warning fs-13";
+          }
+          divPago.style.display = "flex";
+        } else {
+          document.getElementById("seccion-detalle-pago").style.display = "none";
+        }
+      } catch (err) {
+        console.error("Error al cargar detalles de pago:", err);
+        document.getElementById("seccion-detalle-pago").style.display = "none";
+      }
+
       const vta = todasVentas.find(x => x.id === ventaId);
       const docTitle = vta && vta.nro_comprobante ? ` - ${vta.nro_comprobante}` : "";
       document.getElementById("modalDetalleVentaLabel").innerHTML = `<i class="ri-list-check me-2"></i>Detalle de Venta${docTitle}`;
+
+      // Enlazar botón de imprimir ticket
+      const btnImprimir = document.getElementById("btn-imprimir-ticket");
+      if (btnImprimir) {
+        btnImprimir.onclick = function () {
+          imprimirTicketVenta(ventaId);
+        };
+      }
 
       const modalEl = document.getElementById("modalDetalleVenta");
       modalDetalleInstance = new bootstrap.Modal(modalEl);
@@ -230,8 +443,13 @@
   }
 
   function limpiarFormulario() {
+    cancelarYape();
     document.getElementById("vta_cliente").value = "";
     document.getElementById("vta_metodo_pago").value = "EFECTIVO";
+    document.getElementById("vta_proveedor_pago").value = "";
+    document.getElementById("vta_id_transaccion_api").value = "";
+    document.getElementById("div-proveedor-pago").style.display = "none";
+    document.getElementById("div-transaccion-pago").style.display = "none";
     document.getElementById("vta_igv").checked = false;
     document.getElementById("vta_tipo_comprobante").value = "BOLETA";
     actualizarSeriesVenta();
@@ -256,40 +474,163 @@
     setTimeout(() => document.getElementById("mensaje-alerta").innerHTML = "", 5000);
   }
 
-  // ── Eventos ──
-  document.addEventListener("change", function (e) {
-    if (e.target && e.target.id === "vta_tipo_comprobante") {
+  // ── Yape QR Dinámico Lógica
+  function abrirModalYapeQR() {
+    const total = parseFloat(document.getElementById("vta-total").textContent.replace("S/ ", "")) || 0;
+    if (total <= 0) {
+      mostrarAlerta("Debe agregar productos para iniciar el pago.", "danger");
+      document.getElementById("vta_metodo_pago").value = "EFECTIVO";
+      document.getElementById("vta_metodo_pago").dispatchEvent(new Event("change"));
+      return;
+    }
+
+    document.getElementById("yape-pantalla-pendiente").style.display = "block";
+    document.getElementById("yape-pantalla-exito").style.display = "none";
+    document.getElementById("yape-monto-cobro").textContent = `S/ ${total.toFixed(2)}`;
+    document.getElementById("yape-qr-img").src = "";
+
+    const modalEl = document.getElementById("modalYapeQR");
+    modalYapeQRInstance = new bootstrap.Modal(modalEl);
+    modalYapeQRInstance.show();
+
+    fetch(`/yape/crear-token?monto=${total}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.token) {
+          currentYapeToken = data.token;
+          const qrUrl = `/yape/qr/${data.token}?monto=${total}`;
+          document.getElementById("yape-qr-img").src = qrUrl;
+
+          iniciarPollingYape(data.token);
+        } else {
+          mostrarAlerta("Error al generar token de pago Yape.", "danger");
+          modalYapeQRInstance.hide();
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        mostrarAlerta("Error de conexión al iniciar Yape.", "danger");
+        modalYapeQRInstance.hide();
+      });
+  }
+
+  function iniciarPollingYape(token) {
+    if (pollingYapeInterval) clearInterval(pollingYapeInterval);
+
+    pollingYapeInterval = setInterval(() => {
+      fetch(`/yape/status/${token}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.pagado) {
+            confirmarPagoYapeExitoso(data.codigo_referencia);
+          }
+        })
+        .catch(err => console.error("Error polling Yape:", err));
+    }, 2000);
+  }
+
+  function confirmarPagoYapeExitoso(ref) {
+    if (pollingYapeInterval) clearInterval(pollingYapeInterval);
+    pollingYapeInterval = null;
+
+    document.getElementById("yape-pantalla-pendiente").style.display = "none";
+    document.getElementById("yape-pantalla-exito").style.display = "block";
+    document.getElementById("yape-ref-label").innerHTML = `<strong>Referencia:</strong> ${ref}`;
+
+    document.getElementById("vta_proveedor_pago").value = "OTRO";
+    document.getElementById("vta_id_transaccion_api").value = ref;
+    const total = parseFloat(document.getElementById("vta-total").textContent.replace("S/ ", "")) || 0;
+    document.getElementById("vta_monto_pago").value = total.toFixed(2);
+    calcularVuelto();
+
+    setTimeout(async () => {
+      await enviarRegistroVenta();
+      if (modalYapeQRInstance) {
+        modalYapeQRInstance.hide();
+      }
+    }, 1500);
+  }
+
+  function cancelarYape() {
+    if (pollingYapeInterval) clearInterval(pollingYapeInterval);
+    pollingYapeInterval = null;
+    currentYapeToken = null;
+  }
+
+  // ── Eventos
+  const selectComprobante = document.getElementById("vta_tipo_comprobante");
+  if (selectComprobante) {
+    selectComprobante.onchange = function () {
       actualizarSeriesVenta();
-    }
-    if (e.target && e.target.id === "vta_serie") {
+    };
+  }
+
+  const selectMetodoPago = document.getElementById("vta_metodo_pago");
+  if (selectMetodoPago) {
+    selectMetodoPago.onchange = function () {
+      const metodo = this.value;
+      const divProv = document.getElementById("div-proveedor-pago");
+      const divTxn = document.getElementById("div-transaccion-pago");
+      
+      if (metodo === "EFECTIVO") {
+        divProv.style.display = "none";
+        divTxn.style.display = "none";
+        document.getElementById("vta_proveedor_pago").value = "";
+        document.getElementById("vta_id_transaccion_api").value = "";
+      } else {
+        divProv.style.display = "block";
+        divTxn.style.display = "block";
+        
+        if (metodo === "YAPE") {
+          abrirModalYapeQR();
+        }
+      }
+    };
+  }
+
+  const selectSerie = document.getElementById("vta_serie");
+  if (selectSerie) {
+    selectSerie.onchange = function () {
       cargarProximoCorrelativo();
-    }
-    if (e.target && e.target.id === "dtl_vta_producto") {
-      const opt = e.target.options[e.target.selectedIndex];
+    };
+  }
+
+  const selectProducto = document.getElementById("dtl_vta_producto");
+  if (selectProducto) {
+    selectProducto.onchange = function () {
+      const opt = this.options[this.selectedIndex];
       const precio = opt.getAttribute("data-precio");
       const stock = opt.getAttribute("data-stock");
       document.getElementById("dtl_vta_precio").value = precio || "";
       document.getElementById("dtl_vta_stock").value = stock || "";
       document.getElementById("dtl_vta_cantidad").max = stock || "";
-    }
+    };
+  }
 
-    if (e.target && e.target.id === "vta_igv") {
+  const checkIgv = document.getElementById("vta_igv");
+  if (checkIgv) {
+    checkIgv.onchange = function () {
       calcularTotales();
-    }
-  });
+    };
+  }
 
-  document.addEventListener("input", function (e) {
-    if (e.target && e.target.id === "vta_monto_pago") {
+  const inputMonto = document.getElementById("vta_monto_pago");
+  if (inputMonto) {
+    inputMonto.oninput = function () {
       calcularVuelto();
-    }
-    if (e.target && e.target.id === "buscador-vta") {
-      paginaActual = 1; cargarVentas();
-    }
-  });
+    };
+  }
 
-  document.addEventListener("click", async function (e) {
-    // Agregar detalle
-    if (e.target && (e.target.id === "btn-agregar-vta" || e.target.closest("#btn-agregar-vta"))) {
+  const buscador = document.getElementById("buscador-vta");
+  if (buscador) {
+    buscador.oninput = function () {
+      paginaActual = 1; cargarVentas();
+    };
+  }
+
+  const btnAgregarVta = document.getElementById("btn-agregar-vta");
+  if (btnAgregarVta) {
+    btnAgregarVta.onclick = function () {
       const productoId = parseInt(document.getElementById("dtl_vta_producto").value);
       const cantidad = parseInt(document.getElementById("dtl_vta_cantidad").value);
       const precio = parseFloat(document.getElementById("dtl_vta_precio").value);
@@ -330,68 +671,109 @@
       document.getElementById("dtl_vta_stock").value = "";
       document.getElementById("dtl_vta_cantidad").value = "";
       document.getElementById("dtl_vta_precio").value = "";
+    };
+  }
+
+  async function enviarRegistroVenta() {
+    const cliente_id = document.getElementById("vta_cliente").value;
+    const metodo_pago = document.getElementById("vta_metodo_pago").value;
+    const proveedor_pago = document.getElementById("vta_proveedor_pago").value;
+    const id_transaccion_api = document.getElementById("vta_id_transaccion_api").value.trim();
+    const aplicar_igv = document.getElementById("vta_igv").checked;
+    const monto_pago = parseFloat(document.getElementById("vta_monto_pago").value);
+    const total = parseFloat(document.getElementById("vta-total").textContent.replace("S/ ", ""));
+    const tipo_comprobante = document.getElementById("vta_tipo_comprobante").value;
+    const serie = document.getElementById("vta_serie").value;
+
+    if (!cliente_id) {
+      mostrarAlerta("Seleccione un cliente.", "danger"); return false;
+    }
+    if (!tipo_comprobante || !serie) {
+      mostrarAlerta("Debe seleccionar tipo de comprobante y serie.", "danger"); return false;
+    }
+    if (detallesVenta.length === 0) {
+      mostrarAlerta("Agregue al menos un producto.", "danger"); return false;
+    }
+    if (!monto_pago || monto_pago < total) {
+      mostrarAlerta(`Monto insuficiente. Total: S/ ${total.toFixed(2)}`, "danger"); return false;
     }
 
-    // Guardar venta
-    if (e.target && (e.target.id === "btn-guardar-venta" || e.target.closest("#btn-guardar-venta"))) {
-      const cliente_id = document.getElementById("vta_cliente").value;
-      const metodo_pago = document.getElementById("vta_metodo_pago").value;
-      const aplicar_igv = document.getElementById("vta_igv").checked;
-      const monto_pago = parseFloat(document.getElementById("vta_monto_pago").value);
-      const total = parseFloat(document.getElementById("vta-total").textContent.replace("S/ ", ""));
-      const tipo_comprobante = document.getElementById("vta_tipo_comprobante").value;
-      const serie = document.getElementById("vta_serie").value;
+    try {
+      const res = await fetch("/ventas/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cliente_id: parseInt(cliente_id),
+          metodo_pago,
+          id_transaccion_api: metodo_pago === "EFECTIVO" ? null : (id_transaccion_api || null),
+          proveedor_pago: metodo_pago === "EFECTIVO" ? null : (proveedor_pago || "OTRO"),
+          aplicar_igv,
+          monto_pago,
+          tipo_comprobante,
+          serie,
+          detalles: detallesVenta.map(d => ({
+            producto_id: d.producto_id,
+            cantidad: d.cantidad,
+            precio_venta: d.precio_venta
+          }))
+        })
+      });
 
-      if (!cliente_id) {
-        mostrarAlerta("Seleccione un cliente.", "danger"); return;
-      }
-      if (!tipo_comprobante || !serie) {
-        mostrarAlerta("Debe seleccionar tipo de comprobante y serie.", "danger"); return;
-      }
-      if (detallesVenta.length === 0) {
-        mostrarAlerta("Agregue al menos un producto.", "danger"); return;
-      }
-      if (!monto_pago || monto_pago < total) {
-        mostrarAlerta(`Monto insuficiente. Total: S/ ${total.toFixed(2)}`, "danger"); return;
-      }
-
-      try {
-        const res = await fetch("/ventas/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            cliente_id: parseInt(cliente_id),
-            metodo_pago,
-            aplicar_igv,
-            monto_pago,
-            tipo_comprobante,
-            serie,
-            detalles: detallesVenta.map(d => ({
-              producto_id: d.producto_id,
-              cantidad: d.cantidad,
-              precio_venta: d.precio_venta
-            }))
-          })
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          mostrarAlerta(`Venta registrada. Vuelto: S/ ${(monto_pago - total).toFixed(2)}`, "success");
-          limpiarFormulario();
-          cargarVentas();
-        } else {
-          mostrarAlerta(data.detail || "Error al guardar.", "danger");
+      const data = await res.json();
+      if (res.ok) {
+        mostrarAlerta(`Venta registrada. Vuelto: S/ ${(monto_pago - total).toFixed(2)}`, "success");
+        if (data && data.id) {
+          imprimirTicketVenta(data.id);
         }
-      } catch {
-        mostrarAlerta("Error de conexión.", "danger");
+        limpiarFormulario();
+        cargarVentas();
+        return true;
+      } else {
+        mostrarAlerta(data.detail || "Error al guardar.", "danger");
+        return false;
       }
+    } catch {
+      mostrarAlerta("Error de conexión.", "danger");
+      return false;
     }
+  }
 
-    // Limpiar
-    if (e.target && (e.target.id === "btn-limpiar-venta" || e.target.closest("#btn-limpiar-venta"))) {
+  const btnGuardarVenta = document.getElementById("btn-guardar-venta");
+  if (btnGuardarVenta) {
+    btnGuardarVenta.onclick = async function () {
+      await enviarRegistroVenta();
+    };
+  }
+
+  const btnLimpiarVenta = document.getElementById("btn-limpiar-venta");
+  if (btnLimpiarVenta) {
+    btnLimpiarVenta.onclick = function () {
       limpiarFormulario();
-    }
-  });
+    };
+  }
+
+  const btnCerrarYape = document.getElementById("btn-cerrar-yape-modal");
+  if (btnCerrarYape) {
+    btnCerrarYape.onclick = function () {
+      cancelarYape();
+    };
+  }
+
+  const btnSimularYape = document.getElementById("btn-yape-simular-pc");
+  if (btnSimularYape) {
+    btnSimularYape.onclick = function () {
+      if (currentYapeToken) {
+        fetch(`/yape/confirmar/${currentYapeToken}`, { method: "POST" })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              confirmarPagoYapeExitoso(data.codigo_referencia);
+            }
+          })
+          .catch(err => console.error("Error confirming simulated Yape:", err));
+      }
+    };
+  }
 
   window.cargarVentas = cargarVentas;
   window.verDetalleVenta = verDetalleVenta;

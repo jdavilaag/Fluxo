@@ -1,0 +1,256 @@
+<div class="container-fluid">
+  <!-- start page title -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-flex justify-content-between align-items-center">
+        <h4 class="page-title">Gestión de Devoluciones</h4>
+        <button class="btn btn-primary fw-semibold" id="btn-nueva-devolucion">
+          <i class="ri-refund-2-line me-1"></i> Registrar Devolución
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- end page title -->
+
+  <!-- Modal Registrar Devolución -->
+  <div class="modal fade" id="modalDevolucion" tabindex="-1" aria-labelledby="modalDevolucionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalDevolucionLabel">Registrar Nueva Devolución</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div id="mensaje-alerta-devolucion" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+          
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="dev_tipo" class="form-label">Tipo de Devolución <span class="text-danger">*</span></label>
+              <select class="form-select" id="dev_tipo" required>
+                <option value="">Seleccione el tipo</option>
+                <option value="VENTA">Devolución de Venta (Retorno de Cliente)</option>
+                <option value="COMPRA">Devolución de Compra (Retorno a Proveedor)</option>
+              </select>
+            </div>
+            
+            <div class="col-md-6">
+              <label for="dev_documento" class="form-label">Documento Origen <span class="text-danger">*</span></label>
+              <select class="form-select" id="dev_documento" required disabled>
+                <option value="">Seleccione primero el tipo...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-12">
+              <label for="dev_motivo" class="form-label">Motivo de la Devolución <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="dev_motivo" placeholder="Ej. Producto defectuoso, vencimiento, cambio de talla..." required autocomplete="off"/>
+            </div>
+          </div>
+
+          <!-- Tabla de ítems a devolver -->
+          <div class="row g-3" id="seccion-items-devolucion" style="display: none;">
+            <div class="col-12">
+              <h5 class="header-title fs-14 mb-2 text-secondary border-bottom pb-2">Selección de Ítems y Cantidades a Devolver</h5>
+              <div class="table-responsive" style="max-height: 250px;">
+                <table class="table table-sm table-bordered table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Producto</th>
+                      <th>Lote</th>
+                      <th style="width: 120px;" class="text-center">Cant. Original</th>
+                      <th style="width: 140px;" class="text-center">Cant. a Devolver</th>
+                      <th style="width: 110px;" class="text-end">P. Unitario</th>
+                      <th style="width: 110px;" class="text-end">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-items-devolucion">
+                    <!-- Dinámico -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer bg-light">
+          <button class="btn btn-light fw-semibold px-4" type="button" id="btn-limpiar-devolucion">
+            <i class="ri-refresh-line me-1"></i> Limpiar
+          </button>
+          <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-registrar-devolucion" disabled>
+            <i class="ri-save-line me-1"></i> Registrar Devolución
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end modal registrar -->
+
+  <!-- Modal Ver Detalle Devolución -->
+  <div class="modal fade" id="modalVerDevolucion" tabindex="-1" aria-labelledby="modalVerDevolucionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalVerDevolucionLabel">Detalle de Devolución #<span id="det-id" class="text-primary"></span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row g-3 mb-4">
+            <div class="col-md-3">
+              <span class="text-muted d-block fs-12 uppercase font-semibold">Tipo</span>
+              <span id="det-tipo" class="fs-14 fw-bold"></span>
+            </div>
+            <div class="col-md-3">
+              <span class="text-muted d-block fs-12 uppercase font-semibold">Ref. Documento</span>
+              <span id="det-referencia" class="fs-14 fw-bold text-dark"></span>
+            </div>
+            <div class="col-md-3">
+              <span class="text-muted d-block fs-12 uppercase font-semibold">Registrado Por</span>
+              <span id="det-usuario" class="fs-14 fw-bold text-dark"></span>
+            </div>
+            <div class="col-md-3">
+              <span class="text-muted d-block fs-12 uppercase font-semibold">Fecha</span>
+              <span id="det-fecha" class="fs-14 fw-bold text-dark"></span>
+            </div>
+            <div class="col-12 mt-2">
+              <span class="text-muted d-block fs-12 uppercase font-semibold">Motivo</span>
+              <span id="det-motivo" class="fs-14 fw-bold text-dark"></span>
+            </div>
+            <div class="col-12 mt-2">
+              <span class="text-muted d-block fs-12 uppercase font-semibold">Estado</span>
+              <span id="det-estado" class="fs-14"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <h5 class="header-title fs-14 mb-2 text-secondary border-bottom pb-2">Artículos Retornados</h5>
+              <div class="table-responsive">
+                <table class="table table-bordered table-sm mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Producto</th>
+                      <th>Lote</th>
+                      <th class="text-center" style="width: 100px;">Cantidad</th>
+                      <th class="text-end" style="width: 120px;">P. Unitario</th>
+                      <th class="text-end" style="width: 120px;">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-detalles-items">
+                    <!-- Dinámico -->
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="4" class="text-end fw-bold">Total Retornado:</td>
+                      <td class="text-end fw-bold text-success" id="det-total-suma">S/. 0.00</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary fw-semibold px-4" type="button" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end modal ver -->
+
+  <!-- Tabla de Devoluciones -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h5 class="header-title mb-0">
+                <i class="ri-refund-2-line me-1"></i> Lista de Devoluciones Registradas
+              </h5>
+              <p class="text-muted mb-0 fs-13">
+                Total: <span id="total-devoluciones">0</span> devoluciones
+              </p>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+              <div class="input-group input-group-sm" style="width: 200px">
+                <span class="input-group-text"><i class="ri-search-line"></i></span>
+                <input type="text" class="form-control" id="buscador-devoluciones" placeholder="Buscar motivo o ref..."/>
+              </div>
+              <select class="form-select form-select-sm" id="filtro-tipo" style="width: 130px">
+                <option value="">Todos los tipos</option>
+                <option value="VENTA">Ventas</option>
+                <option value="COMPRA">Compras</option>
+              </select>
+              <button class="btn btn-sm btn-success" onclick="cargarDevoluciones()">
+                <i class="ri-refresh-line"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-nowrap table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 50px">#</th>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                  <th>Documento Origen</th>
+                  <th>Operador</th>
+                  <th>Motivo</th>
+                  <th>Estado</th>
+                  <th style="width: 120px" class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-devoluciones">
+                <tr>
+                  <td colspan="8" class="text-center py-4 text-muted">
+                    <i class="ri-loader-4-line me-1"></i> Cargando devoluciones...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginación -->
+          <div class="p-3 d-flex justify-content-between align-items-center">
+            <small class="text-muted" id="info-paginacion-devoluciones">Mostrando 0 de 0</small>
+            <div class="d-flex gap-1" id="controles-paginacion-devoluciones"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end tabla -->
+
+  <!-- Modal confirmar anulación de devolución -->
+  <div class="modal fade" id="modalAnularDevolucion" tabindex="-1" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center p-4">
+          <i class="ri-error-warning-line text-danger" style="font-size: 3rem"></i>
+          <h5 class="mt-2 mb-1">¿Anular Devolución?</h5>
+          <p class="text-muted mb-3 fs-13">Se revertirán los cambios en el stock. Esta acción no se puede deshacer.</p>
+          <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">
+              Cancelar
+            </button>
+            <button type="button" class="btn btn-danger px-4" id="btn-confirmar-anular-devolucion">
+              Anular
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  if (typeof cargarDevoluciones === "undefined") {
+      var s = document.createElement("script");
+      s.src = "/assets/js/devoluciones.js?t=" + Date.now();
+      document.body.appendChild(s);
+  } else {
+      cargarDevoluciones();
+  }
+  </script>
+</div>

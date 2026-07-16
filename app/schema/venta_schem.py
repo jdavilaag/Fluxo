@@ -16,6 +16,21 @@ class VentaRegistro(BaseModel):
     aplicar_igv: bool = False
     tipo_comprobante: Optional[str] = None
     serie: Optional[str] = None
+    id_transaccion_api: Optional[str] = None
+    proveedor_pago: Optional[str] = None
+
+class VentaPagoResponse(BaseModel):
+    id: int
+    venta_id: int
+    metodo_pago: str
+    id_transaccion_api: Optional[str] = None
+    proveedor_pago: Optional[str] = None
+    monto: float
+    estado_pago: str
+    fecha_pago: datetime
+
+    class Config:
+        from_attributes = True
 
 class VentaDetalleResponse(BaseModel):
     id: int

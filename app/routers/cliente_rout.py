@@ -5,9 +5,13 @@ from app.conexion import get_db
 from app.models.cliente_model import Cliente
 from app.crud.cliente_crud import get_cliente_by_documento, get_clientes, crear_cliente
 from app.schema.cliente_schem import ClienteRegistro, ClienteResponse, ClienteUpdate
-from app.dependencies import require_auth
+from app.dependencies import require_permission
 
-router = APIRouter(prefix="/clientes", tags=["clientes"], dependencies=[Depends(require_auth)])
+router = APIRouter(
+    prefix="/clientes",
+    tags=["clientes"],
+    dependencies=[Depends(require_permission("modulo:clientes"))]
+)
 
 @router.post("/", response_model=ClienteResponse)
 def registrar_cliente(data: ClienteRegistro, db: Session = Depends(get_db)):

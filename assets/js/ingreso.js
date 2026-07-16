@@ -190,31 +190,48 @@ async function cargarProductos() {
   }
 
   // Auto-llenar precio al seleccionar producto
-  document.addEventListener("change", function (e) {
-    if (e.target && e.target.id === "dtl_producto") {
-      const opt = e.target.options[e.target.selectedIndex];
+  const selectProducto = document.getElementById("dtl_producto");
+  if (selectProducto) {
+    selectProducto.onchange = function () {
+      const opt = this.options[this.selectedIndex];
       const precio = opt.getAttribute("data-precio");
       if (precio) document.getElementById("dtl_precio").value = precio;
 
       const vencimiento = opt.getAttribute("data-vencimiento");
       document.getElementById("dtl_vencimiento").disabled = vencimiento != "1";
       if (vencimiento != "1") document.getElementById("dtl_vencimiento").value = "";
-    }
+    };
+  }
 
-    if (e.target && e.target.id === "buscador-ing") {
+  // Auto-formatear serie a mayúsculas
+  const ingSerie = document.getElementById("ing_serie");
+  if (ingSerie) {
+    ingSerie.oninput = function () {
+      this.value = this.value.toUpperCase().trim();
+    };
+  }
+
+  // Relleno de ceros a la izquierda para número de 8 dígitos
+  const ingNumero = document.getElementById("ing_numero");
+  if (ingNumero) {
+    ingNumero.onblur = function () {
+      let val = this.value.trim();
+      if (val && !isNaN(val)) {
+        this.value = val.padStart(8, '0');
+      }
+    };
+  }
+
+  const buscador = document.getElementById("buscador-ing");
+  if (buscador) {
+    buscador.oninput = function () {
       paginaActual = 1; renderTabla();
-    }
-  });
+    };
+  }
 
-  document.addEventListener("input", function (e) {
-    if (e.target && e.target.id === "buscador-ing") {
-      paginaActual = 1; renderTabla();
-    }
-  });
-
-  document.addEventListener("click", async function (e) {
-    // Agregar detalle
-    if (e.target && (e.target.id === "btn-agregar-detalle" || e.target.closest("#btn-agregar-detalle"))) {
+  const btnAgregarDetalle = document.getElementById("btn-agregar-detalle");
+  if (btnAgregarDetalle) {
+    btnAgregarDetalle.onclick = function () {
       const productoId = parseInt(document.getElementById("dtl_producto").value);
       const cantidad = parseInt(document.getElementById("dtl_cantidad").value);
       const precio = parseFloat(document.getElementById("dtl_precio").value);
@@ -252,10 +269,12 @@ async function cargarProductos() {
       document.getElementById("dtl_cantidad").value = "";
       document.getElementById("dtl_precio").value = "";
       document.getElementById("dtl_vencimiento").value = "";
-    }
+    };
+  }
 
-    // Guardar ingreso
-    if (e.target && (e.target.id === "btn-guardar-ingreso" || e.target.closest("#btn-guardar-ingreso"))) {
+  const btnGuardarIngreso = document.getElementById("btn-guardar-ingreso");
+  if (btnGuardarIngreso) {
+    btnGuardarIngreso.onclick = async function () {
       const proveedor_id = document.getElementById("ing_proveedor").value;
       const tipo_comprobante = document.getElementById("ing_tipo_comprobante").value;
       const serie = document.getElementById("ing_serie").value.trim();
@@ -299,13 +318,15 @@ async function cargarProductos() {
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
+    };
+  }
 
-    // Limpiar
-    if (e.target && (e.target.id === "btn-limpiar-ingreso" || e.target.closest("#btn-limpiar-ingreso"))) {
+  const btnLimpiarIngreso = document.getElementById("btn-limpiar-ingreso");
+  if (btnLimpiarIngreso) {
+    btnLimpiarIngreso.onclick = function () {
       limpiarFormulario();
-    }
-  });
+    };
+  }
 
   window.cargarIngresos = cargarIngresos;
   window.verDetalle = verDetalle;

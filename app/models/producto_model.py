@@ -5,8 +5,8 @@ from app.conexion import Base
 class Producto(Base):
     __tablename__ = "productos"
 
-    id = Column(Integer, primary_key=True, index=True)
-    categoria_id = Column(Integer, ForeignKey("categorias.id"), index=True)
+    id = Column("producto_id", Integer, primary_key=True, index=True)
+    categoria_id = Column(Integer, ForeignKey("categorias.categoria_id"), index=True)
     codigo_barras = Column(String(100), unique=True)
     nombre_producto = Column(String(255))
     precio_compra = Column(Float, default=0)

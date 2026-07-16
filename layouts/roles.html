@@ -1,0 +1,324 @@
+<div class="container-fluid">
+  <!-- start page title -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-flex justify-content-between align-items-center">
+        <h4 class="page-title">Gestión de Roles y Permisos</h4>
+        <button class="btn btn-primary fw-semibold" id="btn-nuevo-rol">
+          <i class="ri-key-line me-1"></i> Nuevo Rol
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- end page title -->
+
+  <!-- Modal Registro/Edición de Rol -->
+  <div class="modal fade" id="modalRol" tabindex="-1" aria-labelledby="modalRolLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalRolLabel">Registrar Nuevo Rol</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="mensaje-alerta-rol" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="rol_nombre" class="form-label">Nombre del Rol <span class="text-danger">*</span></label>
+              <input class="form-control" type="text" id="rol_nombre" placeholder="Ingrese el nombre del rol" required autocomplete="off"/>
+            </div>
+            <div class="col-md-6">
+              <label for="rol_jefatura" class="form-label">¿Jefatura / Dirección?</label>
+              <select class="form-select" id="rol_jefatura">
+                <option value="0">NO</option>
+                <option value="1">SI</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="rol_estado" class="form-label">Estado</label>
+              <select class="form-select" id="rol_estado">
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-light fw-semibold px-4" type="button" id="btn-limpiar-rol">
+            <i class="ri-refresh-line me-1"></i> Limpiar
+          </button>
+          <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-registrar-rol">
+            <i class="ri-save-line me-1"></i> Registrar Rol
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end formulario rol -->
+
+  <!-- Modal Editar Permisos -->
+  <div class="modal fade" id="modalPermisos" tabindex="-1" aria-labelledby="modalPermisosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalPermisosLabel">Formulario de Editar Permisos y accesos de <span id="nombre-rol-permisos" class="fw-bold text-primary"></span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div id="mensaje-alerta-permisos" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+          
+          <div class="row">
+            <!-- Panel Izquierdo: Reportes -->
+            <div class="col-md-6 border-end">
+              <h5 class="header-title mb-3 text-secondary border-bottom pb-2">
+                <i class="ri-bar-chart-line me-1"></i> Reportes
+              </h5>
+              <div class="d-flex flex-column gap-2 overflow-y-auto" style="max-height: 350px;">
+                <div class="form-check form-checkbox-card p-2 border rounded-2 d-flex align-items-center">
+                  <input class="form-check-input ms-1 me-2 permiso-chk" type="checkbox" value="reporte:kardex" id="chk_rep_kardex">
+                  <label class="form-check-label w-100 fs-14 fw-medium text-dark cursor-pointer" for="chk_rep_kardex">
+                    Kardex <span class="text-muted fs-12">(Reporte)</span>
+                  </label>
+                </div>
+                <div class="form-check form-checkbox-card p-2 border rounded-2 d-flex align-items-center">
+                  <input class="form-check-input ms-1 me-2 permiso-chk" type="checkbox" value="reporte:movimientos" id="chk_rep_movimientos">
+                  <label class="form-check-label w-100 fs-14 fw-medium text-dark cursor-pointer" for="chk_rep_movimientos">
+                    Movimientos de Stock <span class="text-muted fs-12">(Reporte)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel Derecho: Aplicaciones/Módulos -->
+            <div class="col-md-6 ps-md-4">
+              <h5 class="header-title mb-3 text-secondary border-bottom pb-2">
+                <i class="ri-apps-2-line me-1"></i> Aplicaciones / Módulos
+              </h5>
+              <div class="overflow-y-auto" style="max-height: 350px;">
+                
+                <!-- Dashboard -->
+                <div class="mb-3">
+                  <div class="d-flex align-items-center bg-light p-2 rounded-2 border">
+                    <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:dashboard" id="chk_mod_dashboard">
+                    <label class="form-check-label fw-bold text-dark fs-13 mb-0" for="chk_mod_dashboard">
+                      DASHBOARD (Módulo)
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Autenticación -->
+                <div class="mb-3">
+                  <div class="d-flex align-items-center bg-light p-2 rounded-2 border mb-2">
+                    <label class="fw-bold text-dark fs-13 mb-0">
+                      AUTENTICACIÓN
+                    </label>
+                  </div>
+                  <div class="ps-3 d-flex flex-column gap-2">
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:usuarios" id="chk_mod_usuarios">
+                      <label class="form-check-label fs-13" for="chk_mod_usuarios">
+                        Usuarios (Acceso)
+                      </label>
+                    </div>
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:roles" id="chk_mod_roles">
+                      <label class="form-check-label fs-13" for="chk_mod_roles">
+                        Roles y Permisos (Acceso)
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Inventario -->
+                <div class="mb-3">
+                  <div class="d-flex align-items-center bg-light p-2 rounded-2 border mb-2">
+                    <label class="fw-bold text-dark fs-13 mb-0">
+                      INVENTARIO
+                    </label>
+                  </div>
+                  <div class="ps-3 d-flex flex-column gap-2">
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:categorias" id="chk_mod_categorias">
+                      <label class="form-check-label fs-13" for="chk_mod_categorias">
+                        Categorías (Acceso)
+                      </label>
+                    </div>
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:productos" id="chk_mod_productos">
+                      <label class="form-check-label fs-13" for="chk_mod_productos">
+                        Productos (Acceso)
+                      </label>
+                    </div>
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:ajustes" id="chk_mod_ajustes">
+                      <label class="form-check-label fs-13" for="chk_mod_ajustes">
+                        Ajustes de Stock (Acceso)
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Compras -->
+                <div class="mb-3">
+                  <div class="d-flex align-items-center bg-light p-2 rounded-2 border mb-2">
+                    <label class="fw-bold text-dark fs-13 mb-0">
+                      COMPRAS
+                    </label>
+                  </div>
+                  <div class="ps-3 d-flex flex-column gap-2">
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:proveedores" id="chk_mod_proveedores">
+                      <label class="form-check-label fs-13" for="chk_mod_proveedores">
+                        Proveedores (Acceso)
+                      </label>
+                    </div>
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:ingresos" id="chk_mod_ingresos">
+                      <label class="form-check-label fs-13" for="chk_mod_ingresos">
+                        Ingresos (Acceso)
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ventas -->
+                <div class="mb-3">
+                  <div class="d-flex align-items-center bg-light p-2 rounded-2 border mb-2">
+                    <label class="fw-bold text-dark fs-13 mb-0">
+                      VENTAS
+                    </label>
+                  </div>
+                  <div class="ps-3 d-flex flex-column gap-2">
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:clientes" id="chk_mod_clientes">
+                      <label class="form-check-label fs-13" for="chk_mod_clientes">
+                        Clientes (Acceso)
+                      </label>
+                    </div>
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:caja" id="chk_mod_caja">
+                      <label class="form-check-label fs-13" for="chk_mod_caja">
+                        Caja (Acceso)
+                      </label>
+                    </div>
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:ventas" id="chk_mod_ventas">
+                      <label class="form-check-label fs-13" for="chk_mod_ventas">
+                        Ventas (Acceso)
+                      </label>
+                    </div>
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input me-2 permiso-chk" type="checkbox" value="modulo:comprobantes" id="chk_mod_comprobantes">
+                      <label class="form-check-label fs-13" for="chk_mod_comprobantes">
+                        Correlativo (Acceso)
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light border-top d-flex justify-content-end">
+          <button class="btn btn-secondary fw-semibold px-4" type="button" data-bs-dismiss="modal">
+            Cancelar
+          </button>
+          <button class="btn btn-success fw-semibold px-4" type="button" id="btn-guardar-permisos">
+            <i class="ri-save-line me-1"></i> Guardar cambios
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end formulario permisos -->
+
+  <!-- Tabla de roles -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h5 class="header-title mb-0">
+                <i class="ri-key-2-line me-1"></i> Lista de Roles
+              </h5>
+              <p class="text-muted mb-0 fs-13">
+                Total: <span id="total-roles">0</span> roles registrados
+              </p>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+              <div class="input-group input-group-sm" style="width: 220px">
+                <span class="input-group-text"><i class="ri-search-line"></i></span>
+                <input type="text" class="form-control" id="buscador-roles" placeholder="Buscar rol..."/>
+              </div>
+              <button class="btn btn-sm btn-success" onclick="cargarRoles()">
+                <i class="ri-refresh-line"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-nowrap table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 50px">#</th>
+                  <th>Nombre del Rol</th>
+                  <th>¿Jefatura?</th>
+                  <th>Estado</th>
+                  <th>Creado</th>
+                  <th style="width: 150px" class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-roles">
+                <tr>
+                  <td colspan="6" class="text-center py-4 text-muted">
+                    <i class="ri-loader-4-line me-1"></i> Cargando roles...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginación -->
+          <div class="p-3 d-flex justify-content-between align-items-center">
+            <small class="text-muted" id="info-paginacion-roles">Mostrando 0 de 0</small>
+            <div class="d-flex gap-1" id="controles-paginacion-roles"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end tabla -->
+
+  <!-- Modal confirmar eliminación de rol -->
+  <div class="modal fade" id="modalEliminarRol" tabindex="-1" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center p-4">
+          <i class="ri-error-warning-line text-danger" style="font-size: 3rem"></i>
+          <h5 class="mt-2 mb-1">¿Eliminar rol?</h5>
+          <p class="text-muted mb-3 fs-13">Esta acción no se puede deshacer y fallará si hay usuarios con este rol asignado.</p>
+          <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">
+              Cancelar
+            </button>
+            <button type="button" class="btn btn-danger px-4" id="btn-confirmar-eliminar-rol">
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  if (typeof cargarRoles === "undefined") {
+      var s = document.createElement("script");
+      s.src = "/assets/js/roles.js?t=" + Date.now();
+      document.body.appendChild(s);
+  } else {
+      cargarRoles();
+  }
+  </script>
+</div>

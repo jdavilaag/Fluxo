@@ -1,5 +1,5 @@
 (function () {
-  var ROLES = { 1: "Administrador", 2: "Vendedor", 3: "Almacén" };
+  var ROLES = {};
   var todosUsuarios = [];
   var paginaActual = 1;
   var porPagina = 8;
@@ -13,6 +13,27 @@
       modalUsuarioInstance = new bootstrap.Modal(document.getElementById("modalUsuario"));
     }
     return modalUsuarioInstance;
+  }
+
+  async function inicializarRoles() {
+    try {
+      const res = await fetch("/auth/roles");
+      if (res.ok) {
+        const data = await res.json();
+        ROLES = {};
+        data.forEach(r => {
+          ROLES[r.id] = r.nombre_rol;
+        });
+        const selectRol = document.getElementById("rol");
+        if (selectRol) {
+          selectRol.innerHTML = '<option value="">Seleccione un rol</option>' +
+            data.filter(r => r.estado == 1).map(r => `<option value="${r.id}">${r.nombre_rol}</option>`).join("");
+        }
+      }
+    } catch (err) {
+      console.error("Error al inicializar roles:", err);
+    }
+    await cargarUsuarios();
   }
 
   async function cargarUsuarios() {
@@ -114,18 +135,7 @@
     modalEliminarInstance = new bootstrap.Modal(modalEl);
     modalEliminarInstance.show();
   }
-  document.addEventListener("click", function (e) {
-    if (e.target && e.target.id === "btn-confirmar-eliminar") {
-      console.log("Confirmar eliminar clicked, id:", usuarioEliminarId);
-      if (modalEliminarInstance) modalEliminarInstance.hide();
-      fetch(`/auth/usuarios/${usuarioEliminarId}`, { method: "DELETE" })
-        .then(res => {
-          if (res.ok) { mostrarAlerta("Usuario eliminado correctamente.", "success"); cargarUsuarios(); }
-          else mostrarAlerta("Error al eliminar.", "danger");
-        })
-        .catch(() => mostrarAlerta("Error de conexión.", "danger"));
-    }
-  });
+
 
   function limpiarFormulario() {
     modoEdicion = false;
@@ -150,26 +160,24 @@
   }
 
   // ── Eventos con onclick para evitar duplicados ──
-  document.addEventListener("click", async function (e) {
-    if (e.target && (e.target.id === "btn-registrar" || e.target.closest("#btn-registrar"))) {
+  const btnRegistrar = document.getElementById("btn-registrar");
+  if (btnRegistrar) {
+    btnRegistrar.onclick = async function () {
       const nombre = document.getElementById("usr_nombre").value.trim();
       const email = document.getElementById("usr_email").value.trim();
       const password = document.getElementById("usr_pass").value;
       const rol_id = document.getElementById("rol").value;
       const estado = document.getElementById("estado").value;
 
-      // onclick de btn-registrar
       if (!nombre || !email || !rol_id) {
         mostrarAlerta("Por favor complete todos los campos.", "danger"); return;
       }
 
-      // Validar email
       const emailRegex = /^[\w\.-]+@[\w\.-]+\.\w+$/;
       if (!emailRegex.test(email)) {
         mostrarAlerta("Ingrese un email válido.", "danger"); return;
       }
 
-      // Validar contraseña solo al registrar
       if (!modoEdicion && !password) {
         mostrarAlerta("La contraseña es obligatoria.", "danger"); return;
       }
@@ -218,55 +226,69 @@
       } catch {
         mostrarAlerta("Error de conexión.", "danger");
       }
-    }
-  });
+    };
+  }
 
-  document.getElementById("btn-confirmar-eliminar").onclick = async function () {
-    const modal = bootstrap.Modal.getInstance(document.getElementById("modalEliminar"));
-    modal.hide();
-    try {
-      const res = await fetch(`/auth/usuarios/${usuarioEliminarId}`, { method: "DELETE" });
-      if (res.ok) { mostrarAlerta("Usuario eliminado correctamente.", "success"); cargarUsuarios(); }
-      else mostrarAlerta("Error al eliminar.", "danger");
-    } catch {
-      mostrarAlerta("Error de conexión.", "danger");
-    }
-  };
+  const btnConfirmarEliminar = document.getElementById("btn-confirmar-eliminar");
+  if (btnConfirmarEliminar) {
+    btnConfirmarEliminar.onclick = async function () {
+      const modal = bootstrap.Modal.getInstance(document.getElementById("modalEliminar"));
+      if (modal) modal.hide();
+      try {
+        const res = await fetch(`/auth/usuarios/${usuarioEliminarId}`, { method: "DELETE" });
+        if (res.ok) { mostrarAlerta("Usuario eliminado correctamente.", "success"); cargarUsuarios(); }
+        else mostrarAlerta("Error al eliminar.", "danger");
+      } catch {
+        mostrarAlerta("Error de conexión.", "danger");
+      }
+    };
+  }
 
-  document.getElementById("toggle-password").onclick = function () {
-    const input = document.getElementById("usr_pass");
-    const icon = this.querySelector("i");
-    input.type = input.type === "password" ? "text" : "password";
-    icon.className = input.type === "password" ? "ri-eye-line" : "ri-eye-off-line";
-  };
+  const togglePassword = document.getElementById("toggle-password");
+  if (togglePassword) {
+    togglePassword.onclick = function () {
+      const input = document.getElementById("usr_pass");
+      const icon = this.querySelector("i");
+      if (input && icon) {
+        input.type = input.type === "password" ? "text" : "password";
+        icon.className = input.type === "password" ? "ri-eye-line" : "ri-eye-off-line";
+      }
+    };
+  }
 
-  document.addEventListener("click", function (e) {
-    if (e.target && (e.target.id === "btn-limpiar" || e.target.closest("#btn-limpiar"))) {
+  const btnLimpiar = document.getElementById("btn-limpiar");
+  if (btnLimpiar) {
+    btnLimpiar.onclick = function () {
       limpiarFormulario();
-    }
-    if (e.target && (e.target.id === "btn-nuevo-usuario" || e.target.closest("#btn-nuevo-usuario"))) {
+    };
+  }
+
+  const btnNuevo = document.getElementById("btn-nuevo-usuario");
+  if (btnNuevo) {
+    btnNuevo.onclick = function () {
       limpiarFormulario();
       document.getElementById("modalUsuarioLabel").textContent = "Registrar Nuevo Usuario";
       getModalInstance().show();
-    }
-  });
-  document.addEventListener("input", function (e) {
-    if (e.target && e.target.id === "buscador") {
-      paginaActual = 1;
-      renderTabla();
-    }
-  });
+    };
+  }
 
-  document.addEventListener("change", function (e) {
-    if (e.target && e.target.id === "filtro-estado") {
-      paginaActual = 1;
-      renderTabla();
-    }
-  });
+  const buscador = document.getElementById("buscador");
+  if (buscador) {
+    buscador.oninput = function () {
+      paginaActual = 1; renderTabla();
+    };
+  }
+
+  const filtroEstado = document.getElementById("filtro-estado");
+  if (filtroEstado) {
+    filtroEstado.onchange = function () {
+      paginaActual = 1; renderTabla();
+    };
+  }
 
   window.editarUsuario = editarUsuario;
   window.eliminarUsuario = eliminarUsuario;
   window.cargarUsuarios = cargarUsuarios;
-  cargarUsuarios();
+  inicializarRoles();
   limpiarFormulario();
 })();

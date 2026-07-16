@@ -5,7 +5,7 @@ from app.conexion import Base
 class ComprobanteSerie(Base):
     __tablename__ = "comprobante_series"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column("comprobante_serie_id", Integer, primary_key=True, index=True)
     tipo_comprobante = Column(String(50), nullable=False)
     serie = Column(String(10), nullable=False, unique=True)
     correlativo_actual = Column(Integer, nullable=False, default=0)

@@ -16,24 +16,25 @@
 
   <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
 
-  <!-- Cabecera -->
+  <!-- Formulario de Compra (2 Columnas) -->
   <div class="row">
-    <div class="col-12">
-      <div class="card">
+    <!-- Columna Izquierda: Cabecera del Comprobante -->
+    <div class="col-xl-4 col-lg-5 mb-3">
+      <div class="card h-100 mb-0">
         <div class="card-body">
-          <div class="d-flex align-items-center mb-3">
-            <i class="ri-shopping-cart-line fs-4 me-2 text-primary"></i>
-            <p class="text-muted mb-0 fs-13 fw-semibold">Complete los datos del comprobante de compra.</p>
+          <div class="d-flex align-items-center mb-3 pb-2 border-bottom">
+            <i class="ri-article-line fs-3 me-2 text-primary"></i>
+            <h5 class="header-title mb-0">Datos del Comprobante</h5>
           </div>
           <div class="row g-3">
-            <div class="col-md-4">
-              <label class="form-label">Proveedor <span class="text-danger">*</span></label>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Proveedor <span class="text-danger">*</span></label>
               <select class="form-select" id="ing_proveedor">
                 <option value="">Seleccione un proveedor</option>
               </select>
             </div>
-            <div class="col-md-2">
-              <label class="form-label">Tipo Comprobante <span class="text-danger">*</span></label>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Tipo Comprobante <span class="text-danger">*</span></label>
               <select class="form-select" id="ing_tipo_comprobante">
                 <option value="FACTURA">Factura</option>
                 <option value="BOLETA">Boleta</option>
@@ -41,100 +42,95 @@
                 <option value="NOTA">Nota de Pedido</option>
               </select>
             </div>
-            <div class="col-md-2">
-              <label class="form-label">Serie</label>
+            <div class="col-6">
+              <label class="form-label fw-semibold">Serie</label>
               <input class="form-control" type="text" id="ing_serie" placeholder="Ej: F001" autocomplete="off"/>
             </div>
-            <div class="col-md-2">
-              <label class="form-label">Número</label>
+            <div class="col-6">
+              <label class="form-label fw-semibold">Número</label>
               <input class="form-control" type="text" id="ing_numero" placeholder="Ej: 00001234" autocomplete="off"/>
             </div>
-            <div class="col-md-2">
-              <label class="form-label">Fecha Compra <span class="text-danger">*</span></label>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Fecha Compra <span class="text-danger">*</span></label>
               <input class="form-control" type="date" id="ing_fecha_compra"/>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Detalle -->
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <div class="d-flex align-items-center">
-              <i class="ri-list-check fs-4 me-2 text-primary"></i>
-              <p class="text-muted mb-0 fs-13 fw-semibold">Agregue los productos del comprobante.</p>
+    <!-- Columna Derecha: Detalle de Productos -->
+    <div class="col-xl-8 col-lg-7 mb-3">
+      <div class="card h-100 mb-0">
+        <div class="card-body d-flex flex-column justify-content-between">
+          <div>
+            <div class="d-flex align-items-center mb-3 pb-2 border-bottom">
+              <i class="ri-list-check fs-3 me-2 text-success"></i>
+              <h5 class="header-title mb-0">Detalle de Artículos</h5>
             </div>
-          </div>
 
-          <!-- Agregar producto -->
-          <div class="row g-3 mb-3 pb-3 border-bottom">
-            <div class="col-md-4">
-              <label class="form-label">Producto <span class="text-danger">*</span></label>
-              <select class="form-select" id="dtl_producto">
-                <option value="">Seleccione un producto</option>
-              </select>
-            </div>
-            <div class="col-md-2">
-              <label class="form-label">Cantidad <span class="text-danger">*</span></label>
-              <input class="form-control" type="number" id="dtl_cantidad" placeholder="0" min="1"/>
-            </div>
-            <div class="col-md-2">
-              <label class="form-label">Precio Costo <span class="text-danger">*</span></label>
-              <div class="input-group">
-                <span class="input-group-text">S/</span>
-                <input class="form-control" type="number" id="dtl_precio" placeholder="0.00" readonly/>
+            <!-- Agregar producto -->
+            <div class="row g-2 mb-3">
+              <div class="col-md-5">
+                <label class="form-label fw-semibold">Producto <span class="text-danger">*</span></label>
+                <select class="form-select" id="dtl_producto">
+                  <option value="">Seleccione un producto</option>
+                </select>
+              </div>
+              <div class="col-md-2 col-6">
+                <label class="form-label fw-semibold">Cantidad <span class="text-danger">*</span></label>
+                <input class="form-control" type="number" id="dtl_cantidad" placeholder="0" min="1"/>
+              </div>
+              <div class="col-md-2 col-6">
+                <label class="form-label fw-semibold">P. Costo (S/) <span class="text-danger">*</span></label>
+                <input class="form-control" type="number" id="dtl_precio" placeholder="0.00" step="0.01"/>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">Vencimiento</label>
+                <input class="form-control" type="date" id="dtl_vencimiento"/>
               </div>
             </div>
-            <div class="col-md-3">
-              <label class="form-label">Fecha Vencimiento</label>
-              <input class="form-control" type="date" id="dtl_vencimiento"/>
-            </div>
-            <div class="col-md-1 d-flex align-items-end">
-              <button class="btn btn-success w-100" type="button" id="btn-agregar-detalle">
-                <i class="ri-add-line"></i>
+            <div class="d-flex justify-content-end mb-3 pb-3 border-bottom">
+              <button class="btn btn-soft-success fw-semibold px-3" type="button" id="btn-agregar-detalle">
+                <i class="ri-add-line me-1"></i> Agregar a la Lista
               </button>
             </div>
+
+            <!-- Tabla detalle -->
+            <div class="table-responsive">
+              <table class="table table-nowrap table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Costo</th>
+                    <th>Subtotal</th>
+                    <th>Vencimiento</th>
+                    <th class="text-center">Quitar</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-detalle">
+                  <tr id="fila-vacia">
+                    <td colspan="7" class="text-center py-3 text-muted">No hay productos agregados.</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr class="table-light">
+                    <td colspan="4" class="text-end fw-semibold">Total:</td>
+                    <td colspan="3" class="fw-bold text-primary fs-16" id="total-ingreso">S/ 0.00</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
           </div>
 
-          <!-- Tabla detalle -->
-          <div class="table-responsive">
-            <table class="table table-nowrap table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>#</th>
-                  <th>Producto</th>
-                  <th>Cantidad</th>
-                  <th>Precio Costo</th>
-                  <th>Subtotal</th>
-                  <th>Vencimiento</th>
-                  <th class="text-center">Quitar</th>
-                </tr>
-              </thead>
-              <tbody id="tabla-detalle">
-                <tr id="fila-vacia">
-                  <td colspan="7" class="text-center py-3 text-muted">No hay productos agregados.</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr class="table-light">
-                  <td colspan="4" class="text-end fw-semibold">Total:</td>
-                  <td colspan="3" class="fw-bold text-primary fs-16" id="total-ingreso">S/ 0.00</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-
-          <div class="col-12 d-flex gap-2 mt-3">
-            <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-guardar-ingreso">
-              <i class="ri-save-line me-1"></i> Guardar Ingreso
-            </button>
-            <button class="btn btn-light fw-semibold px-4" type="button" id="btn-limpiar-ingreso">
+          <div class="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
+            <button class="btn btn-light fw-semibold px-3" type="button" id="btn-limpiar-ingreso">
               <i class="ri-refresh-line me-1"></i> Limpiar
+            </button>
+            <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-guardar-ingreso">
+              <i class="ri-save-3-line me-1"></i> Registrar Ingreso
             </button>
           </div>
         </div>

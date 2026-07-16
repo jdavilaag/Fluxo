@@ -5,9 +5,13 @@ from app.conexion import get_db
 from app.models.proveedor_model import Proveedor
 from app.crud.proveedor_crud import get_proveedor_by_ruc, get_proveedores, crear_proveedor
 from app.schema.proveedor_schem import ProveedorRegistro, ProveedorResponse, ProveedorUpdate
-from app.dependencies import require_auth
+from app.dependencies import require_permission
 
-router = APIRouter(prefix="/proveedores", tags=["proveedores"], dependencies=[Depends(require_auth)])
+router = APIRouter(
+    prefix="/proveedores",
+    tags=["proveedores"],
+    dependencies=[Depends(require_permission("modulo:proveedores"))]
+)
 
 @router.post("/", response_model=ProveedorResponse)
 def registrar_proveedor(data: ProveedorRegistro, db: Session = Depends(get_db)):

@@ -7,9 +7,13 @@ from app.crud.caja_crud import get_caja_abierta, abrir_caja, cerrar_caja, get_mo
 from app.schema.caja_schem import AbrirCaja, CerrarCaja, CajaResponse, CajaMovimientoResponse
 from app.models.usuario_model import Usuario
 
-from app.dependencies import require_auth
+from app.dependencies import require_auth, require_permission
 
-router = APIRouter(prefix="/caja", tags=["caja"], dependencies=[Depends(require_auth)])
+router = APIRouter(
+    prefix="/caja",
+    tags=["caja"],
+    dependencies=[Depends(require_permission("modulo:caja"))]
+)
 
 @router.post("/abrir", response_model=CajaResponse)
 def abrir(data: AbrirCaja, db: Session = Depends(get_db), usuario: dict = Depends(require_auth)):

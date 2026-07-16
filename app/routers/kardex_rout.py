@@ -5,9 +5,13 @@ from app.conexion import get_db
 from app.models.kardex_model import KardexMovimiento
 from app.models.producto_model import Producto
 from app.models.usuario_model import Usuario
-from app.dependencies import require_auth
+from app.dependencies import require_permission
 
-router = APIRouter(prefix="/kardex", tags=["kardex"], dependencies=[Depends(require_auth)])
+router = APIRouter(
+    prefix="/kardex",
+    tags=["kardex"],
+    dependencies=[Depends(require_permission("reporte:kardex"))]
+)
 
 @router.get("/")
 def listar_kardex(db: Session = Depends(get_db)):
