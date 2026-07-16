@@ -27,9 +27,13 @@ def registro(data: UsuarioRegistro, db: Session = Depends(get_db), usuario: dict
 
 @router.post("/login")
 def login(request: Request, data: UsuarioLogin, db: Session = Depends(get_db)):
-    usuario = get_usuario_by_email(db, data.email)
+    # Normalizamos el email: quitamos espacios y lo pasamos a minúsculas
+    email_limpio = data.email.strip().lower()
+    
+    usuario = get_usuario_by_email(db, email_limpio)
     if not usuario or not verificar_password(data.password, usuario.password_hash):
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
+    
     if usuario.estado == 0:
         raise HTTPException(status_code=403, detail="Usuario inactivo")
     
