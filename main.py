@@ -23,7 +23,6 @@ from app.routers.dashboard_rout import router as dashboard_api_router
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 app = FastAPI()
@@ -93,18 +92,17 @@ def respuesta_no_autorizado(request: Request):
     return RedirectResponse(url="/")
 
 
-
 @app.get("/")
 def index(request: Request):
     if not request.session.get("usuario"):
         return RedirectResponse(url="/login")
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 @app.get("/login")
 def login_page(request: Request):
     if request.session.get("usuario"):
         return RedirectResponse(url="/")
-    return templates.TemplateResponse("layouts/login.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/login.html")
 
 @app.get("/dashboard")
 def dashboard(request: Request):
@@ -112,7 +110,7 @@ def dashboard(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:dashboard"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/dashboard.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/dashboard.html")
 
 @app.get("/users")
 def users(request: Request):
@@ -120,7 +118,7 @@ def users(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:usuarios"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/users.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/users.html")
 
 @app.get("/roles")
 def roles(request: Request):
@@ -128,7 +126,7 @@ def roles(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:roles"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/roles.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/roles.html")
 
 @app.get("/logout")
 def logout(request: Request):
@@ -145,7 +143,7 @@ def categorias(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:categorias"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/categorias.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/categorias.html")
 
 @app.get("/proveedor")
 def proveedores(request: Request):
@@ -153,7 +151,7 @@ def proveedores(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:proveedores"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/proveedor.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/proveedor.html")
 
 @app.get("/productos")
 def productos(request: Request):
@@ -161,7 +159,7 @@ def productos(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:productos"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/producto.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/producto.html")
 
 @app.get("/clientes")
 def clientes(request: Request):
@@ -169,7 +167,7 @@ def clientes(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:clientes"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/cliente.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/cliente.html")
 
 @app.get("/caja")
 def caja(request: Request):
@@ -177,7 +175,7 @@ def caja(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:caja"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/caja.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/caja.html")
 
 from app.routers.ingreso_rout import router as ingreso_router
 
@@ -189,7 +187,7 @@ def ingresos(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:ingresos"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/ingresos.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/ingresos.html")
 
 @app.get("/ventas")
 def ventas(request: Request):
@@ -197,7 +195,7 @@ def ventas(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:ventas"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/ventas.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/ventas.html")
 
 from app.routers.kardex_rout import router as kardex_router
 
@@ -209,7 +207,7 @@ def kardex(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "reporte:kardex"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/kardex.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/kardex.html")
 
 @app.get("/comprobantes")
 def comprobantes(request: Request):
@@ -217,7 +215,7 @@ def comprobantes(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:comprobantes"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/comprobantes.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/comprobantes.html")
 
 @app.get("/ajustes")
 def ajustes(request: Request):
@@ -225,7 +223,7 @@ def ajustes(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:ajustes"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/ajustes.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/ajustes.html")
 
 @app.get("/devoluciones")
 def devoluciones(request: Request):
@@ -233,7 +231,7 @@ def devoluciones(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "modulo:devoluciones"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/devoluciones.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/devoluciones.html")
 
 @app.get("/movimientos")
 def movimientos(request: Request):
@@ -241,4 +239,4 @@ def movimientos(request: Request):
         return RedirectResponse(url="/login")
     if not verificar_permiso(request, "reporte:movimientos"):
         return respuesta_no_autorizado(request)
-    return templates.TemplateResponse("layouts/movimientos.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="layouts/movimientos.html")
