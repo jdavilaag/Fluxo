@@ -149,6 +149,9 @@ Agrega aquí imágenes de las pantallas principales, por ejemplo:
 ### Proveedores
 ![alt text](image-10.png)
 
+### Ingresos
+![alt text](image-11.png)
+
 ### Punto de venta
 ![alt text](image.png)
 
