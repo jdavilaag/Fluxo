@@ -3,22 +3,26 @@
 {% set user_perms = user.get("permisos", []) if user else [] %}
 <div class="leftside-menu">
   <!-- Brand Logo Light -->
-  <a href="/dashboard" hx-get="/dashboard" hx-target="#main-content" hx-swap="innerHTML" class="logo logo-light">
-    <span class="logo-lg">
-      <img src="assets/images/logo.png" alt="logo" />
+  <a href="/dashboard" hx-get="/dashboard" hx-target="#main-content" hx-swap="innerHTML" class="logo logo-light"
+    style="text-decoration: none; overflow: hidden;">
+    <span class="logo-lg" style="line-height: 70px; white-space: nowrap; overflow: hidden; text-overflow: clip;">
+      <span class="text-white fs-20 fw-bold tracking-wide notranslate" translate="no"
+        style="font-family: 'Outfit', sans-serif;">FLUXO SHOP</span>
     </span>
-    <span class="logo-sm">
-      <img src="assets/images/logo-sm.png" alt="small logo" />
+    <span class="logo-sm" style="line-height: 70px; white-space: nowrap; overflow: hidden; text-overflow: clip;">
+      <span class="text-white fs-16 fw-bold notranslate" translate="no">FS</span>
     </span>
   </a>
 
   <!-- Brand Logo Dark -->
-  <a href="/dashboard" hx-get="/dashboard" hx-target="#main-content" hx-swap="innerHTML" class="logo logo-dark">
-    <span class="logo-lg">
-      <img src="assets/images/logo-dark.png" alt="dark logo" />
+  <a href="/dashboard" hx-get="/dashboard" hx-target="#main-content" hx-swap="innerHTML" class="logo logo-dark"
+    style="text-decoration: none; overflow: hidden;">
+    <span class="logo-lg" style="line-height: 70px; white-space: nowrap; overflow: hidden; text-overflow: clip;">
+      <span class="text-dark fs-20 fw-bold tracking-wide notranslate" translate="no"
+        style="font-family: 'Outfit', sans-serif;">FLUXO SHOP</span>
     </span>
-    <span class="logo-sm">
-      <img src="assets/images/logo-sm.png" alt="small logo" />
+    <span class="logo-sm" style="line-height: 70px; white-space: nowrap; overflow: hidden; text-overflow: clip;">
+      <span class="text-dark fs-16 fw-bold notranslate" translate="no">FS</span>
     </span>
   </a>
 
@@ -126,9 +130,9 @@
             </li>
             {% endif %}
             {% if is_admin %}
-            <li>
+            <!-- <li>
               <a href="pages-profile.html"><i class="ri-user-line me-1"></i> Perfiles</a>
-            </li>
+            </li>-->
             {% endif %}
           </ul>
         </div>

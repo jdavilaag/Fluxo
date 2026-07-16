@@ -272,7 +272,7 @@
               </head>
               <body>
                 <div class="header text-center">
-                  <h2>FLUXO SHOOP</h2>
+                  <h2>FLUXO SHOP</h2>
                   <p>R.U.C. 20123456789</p>
                   <p>Av. Larco 123, Miraflores, Lima</p>
                   <p>Teléfono: (01) 444-5555</p>

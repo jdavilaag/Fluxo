@@ -120,12 +120,34 @@ Cada módulo expone su propio router bajo `app/routers/`. A grandes rasgos:
 > Nota: los prefijos de ruta (`/ventas`, `/productos`, etc.) son orientativos según el nombre del recurso — ajústalos a los que definiste realmente con `APIRouter(prefix=...)` en cada archivo. Para documentación interactiva completa, FastAPI genera automáticamente Swagger UI en `/docs` y ReDoc en `/redoc` al levantar el servidor.
 
 ## Capturas de pantalla
-
-
 Agrega aquí imágenes de las pantallas principales, por ejemplo:
 
+### Login
+![alt text](image-3.png)
+
 ### Dashboard
-![alt text](image-1.png)
+![alt text](image-4.png)
+
+### Autenticación
+![alt text](image-5.png)
+
+### Roles y permisos
+![alt text](image-6.png)
+
+### Inventario
+![alt text](image-7.png)
+
+### Productos
+![alt text](image-8.png)
+
+### Ajustes
+![alt text](image-9.png)
+
+### Categorías
+![alt text](image-9.png)
+
+### Proveedores
+![alt text](image-10.png)
 
 ### Punto de venta
 ![alt text](image.png)
