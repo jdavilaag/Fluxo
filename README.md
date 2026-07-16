@@ -133,9 +133,6 @@ Agrega aquí imágenes de las pantallas principales, por ejemplo:
 ### Gestión de inventario
 ![alt text](image-2.png)
 
-
-*(Pendiente: agregar capturas de las pantallas principales — dashboard, ventas, inventario, caja.)*
-
 ## Flujo de trabajo (Git)
 
 El proyecto sigue una estrategia de ramas definida para el desarrollo (feature branches → main), con integración continua planificada para automatizar pruebas y despliegue.
