@@ -21,7 +21,7 @@ def crear_ingreso(db: Session, proveedor_id: int, tipo_comprobante: str, serie: 
             fecha_compra=fecha_compra,
             total=total,
             usuario_id=usuario_id,
-            estado="activo"
+            estado="REGISTRADO"
         )
         db.add(ingreso)
         db.flush()

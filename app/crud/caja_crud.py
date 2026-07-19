@@ -5,17 +5,17 @@ from datetime import datetime
 def get_caja_abierta(db: Session, usuario_id: int):
     return db.query(Caja).filter(
         Caja.usuario_id == usuario_id,
-        Caja.estado == "abierta"
+        Caja.estado == "ABIERTA"
     ).first()
 
 def get_caja_activa(db: Session):
-    return db.query(Caja).filter(Caja.estado == "abierta").first()
+    return db.query(Caja).filter(Caja.estado == "ABIERTA").first()
 
 def abrir_caja(db: Session, usuario_id: int, monto_apertura: float):
     caja = Caja(
         usuario_id=usuario_id,
         monto_apertura=monto_apertura,
-        estado="abierta"
+        estado="ABIERTA"
     )
     db.add(caja)
     db.commit()
@@ -27,7 +27,7 @@ def cerrar_caja(db: Session, caja_id: int, monto_cierre: float):
     if caja:
         caja.monto_cierre = monto_cierre
         caja.fecha_cierre = datetime.now()
-        caja.estado = "cerrada"
+        caja.estado = "CERRADA"
         db.commit()
         db.refresh(caja)
     return caja

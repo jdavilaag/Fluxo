@@ -14,7 +14,7 @@ class VentaHdr(Base):
     subtotal = Column(Float, default=0)
     igv = Column(Float, default=0)
     total = Column(Float, default=0)
-    estado = Column(String(20), default="activo")
+    estado = Column(String(20), default="PAGADO")
     tipo_comprobante = Column(String(50), nullable=True, index=True)
     serie = Column(String(10), nullable=True, index=True)
     numero = Column(String(20), nullable=True)

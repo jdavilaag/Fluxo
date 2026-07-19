@@ -16,7 +16,7 @@ class IngresoHdr(Base):
     fecha_registro = Column(DateTime, server_default=func.now(), index=True)
     total = Column(Float, default=0)
     usuario_id = Column(Integer, ForeignKey("usuarios.usuario_id"), index=True)
-    estado = Column(String(20), default="activo")
+    estado = Column(String(20), default="REGISTRADO")
 
 class IngresoDtl(Base):
     __tablename__ = "ingresos_dtl"

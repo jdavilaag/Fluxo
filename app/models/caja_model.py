@@ -11,7 +11,7 @@ class Caja(Base):
     fecha_cierre = Column(DateTime, nullable=True)
     monto_apertura = Column(Float, default=0)
     monto_cierre = Column(Float, nullable=True)
-    estado = Column(String(20), default="abierta")
+    estado = Column(String(20), default="ABIERTA")
 
 class CajaMovimiento(Base):
     __tablename__ = "caja_movimientos"

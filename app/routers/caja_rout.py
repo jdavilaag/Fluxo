@@ -30,7 +30,7 @@ def cerrar(caja_id: int, data: CerrarCaja, db: Session = Depends(get_db), usuari
         raise HTTPException(status_code=404, detail="Caja no encontrada")
     if caja.usuario_id != usuario["id"] and usuario["rol_id"] != 1:
         raise HTTPException(status_code=403, detail="No autorizado para cerrar esta caja")
-    if caja.estado == "cerrada":
+    if caja.estado == "CERRADA":
         raise HTTPException(status_code=400, detail="La caja ya está cerrada")
     return cerrar_caja(db, caja_id, data.monto_cierre)
 
