@@ -94,8 +94,7 @@ def crear_venta(db: Session, cliente_id: int, detalles: list, metodo_pago: str,
                 producto_id=d["producto_id"],
                 lote_id=lote.id,
                 cantidad=d["cantidad"],
-                precio_venta=d["precio_venta"],
-                subtotal=d["cantidad"] * d["precio_venta"]
+                precio_venta=d["precio_venta"]
             )
             db.add(detalle)
 

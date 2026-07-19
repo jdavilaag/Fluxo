@@ -44,8 +44,7 @@ def crear_ingreso(db: Session, proveedor_id: int, tipo_comprobante: str, serie: 
                 producto_id=d["producto_id"],
                 lote_id=lote.id,
                 cantidad=d["cantidad"],
-                precio_costo=d["precio_costo"],
-                subtotal=d["cantidad"] * d["precio_costo"]
+                precio_costo=d["precio_costo"]
             )
             db.add(detalle)
 

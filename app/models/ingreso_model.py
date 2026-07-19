@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, FetchedValue
 from sqlalchemy.sql import func
 from app.conexion import Base
 
@@ -27,4 +27,4 @@ class IngresoDtl(Base):
     lote_id = Column(Integer, ForeignKey("lotes.lote_id"), nullable=True, index=True)
     cantidad = Column(Integer)
     precio_costo = Column(Float)
-    subtotal = Column(Float)
+    subtotal = Column(Float, server_default=FetchedValue())
