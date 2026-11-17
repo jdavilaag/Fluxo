@@ -53,8 +53,10 @@ app.include_router(proveedor_router)
 app.include_router(producto_router)
 app.include_router(cliente_router)
 app.include_router(caja_router)
+app.include_router(ingreso_router)
 app.include_router(venta_router)
 app.include_router(yape_router)
+app.include_router(kardex_router)
 app.include_router(comprobante_router)
 app.include_router(ajuste_router)
 app.include_router(devolucion_router)
@@ -104,6 +106,12 @@ def login_page(request: Request):
         return RedirectResponse(url="/")
     return templates.TemplateResponse(request=request, name="layouts/login.html")
 
+@app.get("/escritorio")
+def escritorio(request: Request):
+    if not request.session.get("usuario"):
+        return RedirectResponse(url="/login")
+    return templates.TemplateResponse(request=request, name="layouts/escritorio.html")
+
 @app.get("/dashboard")
 def dashboard(request: Request):
     if not request.session.get("usuario"):
@@ -111,6 +119,12 @@ def dashboard(request: Request):
     if not verificar_permiso(request, "modulo:dashboard"):
         return respuesta_no_autorizado(request)
     return templates.TemplateResponse(request=request, name="layouts/dashboard.html")
+
+@app.get("/ayuda")
+def ayuda(request: Request):
+    if not request.session.get("usuario"):
+        return RedirectResponse(url="/login")
+    return templates.TemplateResponse(request=request, name="layouts/ayuda.html")
 
 @app.get("/users")
 def users(request: Request):
@@ -161,6 +175,14 @@ def productos(request: Request):
         return respuesta_no_autorizado(request)
     return templates.TemplateResponse(request=request, name="layouts/producto.html")
 
+@app.get("/etiquetas")
+def etiquetas(request: Request):
+    if not request.session.get("usuario"):
+        return RedirectResponse(url="/login")
+    if not verificar_permiso(request, "modulo:productos"):
+        return respuesta_no_autorizado(request)
+    return templates.TemplateResponse(request=request, name="layouts/etiquetas.html")
+
 @app.get("/clientes")
 def clientes(request: Request):
     if not request.session.get("usuario"):
@@ -177,10 +199,6 @@ def caja(request: Request):
         return respuesta_no_autorizado(request)
     return templates.TemplateResponse(request=request, name="layouts/caja.html")
 
-from app.routers.ingreso_rout import router as ingreso_router
-
-app.include_router(ingreso_router)
-
 @app.get("/ingresos")
 def ingresos(request: Request):
     if not request.session.get("usuario"):
@@ -196,10 +214,6 @@ def ventas(request: Request):
     if not verificar_permiso(request, "modulo:ventas"):
         return respuesta_no_autorizado(request)
     return templates.TemplateResponse(request=request, name="layouts/ventas.html")
-
-from app.routers.kardex_rout import router as kardex_router
-
-app.include_router(kardex_router)
 
 @app.get("/kardex")
 def kardex(request: Request):

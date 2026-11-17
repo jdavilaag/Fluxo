@@ -1,52 +1,107 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
-      <div class="page-title-box">
-        <div class="page-title-right">
-          <ol class="breadcrumb m-0">
-            <li class="breadcrumb-item"><a href="javascript: void(0);">Fluxo Shop</a></li>
-            <li class="breadcrumb-item"><a href="javascript: void(0);">Informes</a></li>
-            <li class="breadcrumb-item active">Kardex</li>
-          </ol>
+      <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h4 class="page-title mb-0"><i class="ri-file-list-3-line text-primary me-1"></i> Kardex Valorizado y Trazabilidad de Stock</h4>
         </div>
-        <h4 class="page-title">Kardex de Movimientos</h4>
+        <button class="btn btn-sm btn-light border fw-semibold" onclick="cargarKardex()">
+          <i class="ri-refresh-line me-1"></i> Actualizar Kardex
+        </button>
       </div>
     </div>
   </div>
 
-  <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+  <div id="mensaje-alerta" style="position: fixed; top: 90px; right: 28px; z-index: 9999; min-width: 320px;"></div>
+
+  <!-- 3 KPIs de Kardex -->
+  <div class="row g-3 mb-3">
+    <div class="col-md-4">
+      <div class="card kpi-card accent-primary h-100 mb-0">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted text-uppercase fw-bold fs-11 d-block">Total Movimientos</span>
+              <h3 class="fw-extrabold my-1 text-dark" id="total-kardex">0</h3>
+              <small class="text-muted fs-12">Operaciones registradas en Kardex</small>
+            </div>
+            <div class="kpi-icon-box bg-primary-subtle text-primary">
+              <i class="ri-exchange-box-line"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card kpi-card accent-success h-100 mb-0">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted text-uppercase fw-bold fs-11 d-block">Entradas de Stock (+)</span>
+              <h3 class="fw-extrabold my-1 text-success" id="kpi-kardex-entradas">0</h3>
+              <small class="text-muted fs-12">Ingresos, compras y retornos</small>
+            </div>
+            <div class="kpi-icon-box bg-success-subtle text-success">
+              <i class="ri-arrow-left-down-line"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card kpi-card accent-danger h-100 mb-0">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted text-uppercase fw-bold fs-11 d-block">Salidas de Stock (-)</span>
+              <h3 class="fw-extrabold my-1 text-danger" id="kpi-kardex-salidas">0</h3>
+              <small class="text-muted fs-12">Ventas, despachos y mermas</small>
+            </div>
+            <div class="kpi-icon-box bg-danger-subtle text-danger">
+              <i class="ri-arrow-right-up-line"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Filtros -->
-  <div class="row">
+  <div class="row mb-3">
     <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="row g-3">
+      <div class="card mb-0">
+        <div class="card-body py-3">
+          <div class="row g-2 align-items-end">
             <div class="col-md-4">
-              <label class="form-label">Filtrar por Producto</label>
+              <label class="form-label mb-1">Filtrar por Producto</label>
               <select class="form-select" id="filtro-producto-kardex">
                 <option value="">Todos los productos</option>
               </select>
             </div>
-            <div class="col-md-3">
-              <label class="form-label">Tipo Movimiento</label>
+            <div class="col-md-2">
+              <label class="form-label mb-1">Tipo Movimiento</label>
               <select class="form-select" id="filtro-tipo-kardex">
                 <option value="">Todos</option>
-                <option value="ingreso">Ingreso</option>
-                <option value="salida">Salida</option>
+                <option value="ENTRADA">Entrada (+)</option>
+                <option value="SALIDA">Salida (-)</option>
               </select>
             </div>
             <div class="col-md-2">
-              <label class="form-label">Fecha Desde</label>
+              <label class="form-label mb-1">Fecha Desde</label>
               <input class="form-control" type="date" id="filtro-fecha-desde"/>
             </div>
             <div class="col-md-2">
-              <label class="form-label">Fecha Hasta</label>
+              <label class="form-label mb-1">Fecha Hasta</label>
               <input class="form-control" type="date" id="filtro-fecha-hasta"/>
             </div>
-            <div class="col-md-1 d-flex align-items-end">
-              <button class="btn btn-primary w-100" id="btn-filtrar-kardex">
-                <i class="ri-search-line"></i>
+            <div class="col-md-2 d-flex gap-1">
+              <button class="btn btn-primary flex-grow-1" id="btn-filtrar-kardex" title="Aplicar filtros">
+                <i class="ri-filter-3-line me-1"></i> Filtrar
+              </button>
+              <button class="btn btn-light border" id="btn-limpiar-kardex" title="Limpiar filtros">
+                <i class="ri-refresh-line"></i>
               </button>
             </div>
           </div>
@@ -60,16 +115,19 @@
     <div class="col-12">
       <div class="card">
         <div class="card-body p-0">
-          <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2 border-bottom">
             <div>
-              <h5 class="header-title mb-0"><i class="ri-file-list-3-line me-1"></i> Movimientos de Stock</h5>
-              <p class="text-muted mb-0 fs-13">Total: <span id="total-kardex">0</span> movimientos</p>
+              <h5 class="header-title mb-0"><i class="ri-list-check-2 text-primary me-1"></i> Auditoría Cronológica de Existencias</h5>
+              <p class="text-muted mb-0 fs-13">Seguimiento detallado de saldos anteriores y posteriores por operación</p>
             </div>
             <div class="d-flex gap-2">
-              <div class="input-group input-group-sm" style="width: 220px">
+              <div class="input-group input-group-sm" style="width: 240px">
                 <span class="input-group-text"><i class="ri-search-line"></i></span>
-                <input type="text" class="form-control" id="buscador-kardex" placeholder="Buscar..."/>
+                <input type="text" class="form-control" id="buscador-kardex" placeholder="Buscar producto, usuario, obs..."/>
               </div>
+              <button class="btn btn-sm btn-soft-primary fw-semibold" id="btn-exportar-kardex-csv" title="Exportar a Excel (CSV)">
+                <i class="ri-file-excel-2-line me-1"></i> Exportar CSV
+              </button>
               <button class="btn btn-sm btn-success" onclick="cargarKardex()">
                 <i class="ri-refresh-line"></i>
               </button>
@@ -77,18 +135,18 @@
           </div>
 
           <div class="table-responsive">
-            <table class="table table-nowrap table-hover mb-0">
+            <table class="table table-nowrap table-hover align-middle mb-0">
               <thead class="table-light">
                 <tr>
                   <th>#</th>
                   <th>Producto</th>
-                  <th>Tipo</th>
-                  <th>Cantidad</th>
-                  <th>Stock Anterior</th>
-                  <th>Stock Posterior</th>
-                  <th>Observación</th>
-                  <th>Usuario</th>
-                  <th>Fecha</th>
+                  <th>Flujo</th>
+                  <th class="text-center">Cantidad</th>
+                  <th class="text-center">Stock Anterior</th>
+                  <th class="text-center">Stock Posterior</th>
+                  <th>Observación / Referencia</th>
+                  <th>Operador</th>
+                  <th>Fecha y Hora</th>
                 </tr>
               </thead>
               <tbody id="tabla-kardex">

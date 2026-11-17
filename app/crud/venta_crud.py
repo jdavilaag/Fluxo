@@ -5,6 +5,7 @@ from app.models.lote_model import Lote
 from app.models.kardex_model import KardexMovimiento
 from app.models.caja_model import CajaMovimiento
 from app.models.comprobante_model import ComprobanteSerie
+from app.models.cliente_model import Cliente
 from app.crud.caja_crud import get_caja_activa
 from app.crud.comprobante_crud import incrementar_correlativo
 from fastapi import HTTPException
@@ -46,7 +47,7 @@ def crear_venta(db: Session, cliente_id: int, detalles: list, metodo_pago: str,
             comprobante_serie_id = comprobante_obj.id
 
             numero = incrementar_correlativo(db, tipo_comprobante, serie)
-            nro_comprobante = f"{serie}-{numero}"
+            nro_comprobante = f"{serie.upper()}-{numero}"
 
         # Crear cabecera
         venta = VentaHdr(
@@ -66,50 +67,77 @@ def crear_venta(db: Session, cliente_id: int, detalles: list, metodo_pago: str,
         db.add(venta)
         db.flush()
 
+        doc_label = nro_comprobante if nro_comprobante else f"#{venta.id}"
+
         for d in detalles:
-            # Buscar lote disponible
-            lote = db.query(Lote).filter(
+            cantidad_requerida = d["cantidad"]
+            producto = db.query(Producto).filter(Producto.id == d["producto_id"]).with_for_update().first()
+            if not producto:
+                raise HTTPException(status_code=404, detail=f"Producto ID {d['producto_id']} no encontrado")
+
+            if (producto.stock_actual or 0) < cantidad_requerida:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Stock insuficiente para {producto.nombre_producto}. Disponible: {producto.stock_actual}"
+                )
+
+            # Buscar lotes activos ordenados por FEFO/FIFO (vencimiento más próximo, luego ingreso más antiguo)
+            lotes = db.query(Lote).filter(
                 Lote.producto_id == d["producto_id"],
-                Lote.stock_lote >= d["cantidad"],
+                Lote.stock_lote > 0,
                 Lote.estado == 1
-            ).order_by(Lote.fecha_ingreso.asc()).first()
+            ).order_by(
+                Lote.fecha_vencimiento.is_(None).asc(),
+                Lote.fecha_vencimiento.asc(),
+                Lote.fecha_ingreso.asc()
+            ).with_for_update().all()
 
-            if not lote:
-                producto = db.query(Producto).filter(Producto.id == d["producto_id"]).first()
-                raise HTTPException(status_code=400, detail=f"Stock insuficiente para {producto.nombre_producto}")
+            stock_en_lotes = sum(l.stock_lote for l in lotes)
+            if stock_en_lotes < cantidad_requerida:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Stock en lotes insuficiente para {producto.nombre_producto} (Disponible en lotes: {stock_en_lotes})"
+                )
 
-            # Actualizar lote
-            lote.stock_lote -= d["cantidad"]
-            if lote.stock_lote == 0:
-                lote.estado = 0
+            restante = cantidad_requerida
+            for lote in lotes:
+                if restante <= 0:
+                    break
 
-            # Actualizar stock producto
-            producto = db.query(Producto).filter(Producto.id == d["producto_id"]).first()
-            stock_anterior = producto.stock_actual
-            producto.stock_actual -= d["cantidad"]
+                tomar = min(restante, lote.stock_lote)
+                lote.stock_lote -= tomar
+                if lote.stock_lote <= 0:
+                    lote.stock_lote = 0
+                    lote.estado = 0
 
-            # Detalle venta
-            detalle = VentaDtl(
-                venta_id=venta.id,
-                producto_id=d["producto_id"],
-                lote_id=lote.id,
-                cantidad=d["cantidad"],
-                precio_venta=d["precio_venta"]
-            )
-            db.add(detalle)
+                stock_anterior = producto.stock_actual
+                producto.stock_actual -= tomar
+                restante -= tomar
 
-            # Kardex
-            kardex = KardexMovimiento(
-                producto_id=d["producto_id"],
-                lote_id=lote.id,
-                tipo_movimiento="SALIDA",
-                cantidad=d["cantidad"],
-                stock_anterior=stock_anterior,
-                stock_posterior=producto.stock_actual,
-                usuario_id=usuario_id,
-                observacion=f"Venta #{venta.id}"
-            )
-            db.add(kardex)
+                # Detalle venta por lote consumido
+                detalle = VentaDtl(
+                    venta_id=venta.id,
+                    producto_id=d["producto_id"],
+                    lote_id=lote.id,
+                    cantidad=tomar,
+                    precio_venta=d["precio_venta"]
+                )
+                db.add(detalle)
+
+                # Kardex con trazabilidad completa
+                kardex = KardexMovimiento(
+                    producto_id=d["producto_id"],
+                    lote_id=lote.id,
+                    tipo_movimiento="SALIDA",
+                    referencia_tipo="VENTA",
+                    referencia_id=venta.id,
+                    cantidad=tomar,
+                    stock_anterior=stock_anterior,
+                    stock_posterior=producto.stock_actual,
+                    usuario_id=usuario_id,
+                    observacion=f"Venta {doc_label}"
+                )
+                db.add(kardex)
 
         # Pago
         pago = VentaPago(
@@ -127,7 +155,7 @@ def crear_venta(db: Session, cliente_id: int, detalles: list, metodo_pago: str,
             caja_id=caja.id,
             tipo="VENTA",
             monto=total,
-            descripcion=f"Venta #{venta.id}",
+            descripcion=f"Venta {doc_label}",
             referencia_id=venta.id
         )
         db.add(movimiento_caja)
@@ -138,8 +166,6 @@ def crear_venta(db: Session, cliente_id: int, detalles: list, metodo_pago: str,
     except Exception as e:
         db.rollback()
         raise e
-
-from app.models.cliente_model import Cliente
 
 def get_ventas(db: Session):
     results = db.query(

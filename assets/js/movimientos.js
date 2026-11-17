@@ -233,6 +233,38 @@
     btnLimpiar.onclick = limpiarFiltros;
   }
 
+  const btnExportarMovCsv = document.getElementById("btn-exportar-mov-csv");
+  if (btnExportarMovCsv) {
+    btnExportarMovCsv.onclick = function () {
+      const filtrados = movimientosFiltrados();
+      if (!filtrados || filtrados.length === 0) return;
+      const headers = ["#", "Fecha", "Producto", "Lote", "Tipo", "Ref Documento", "Cantidad", "Stock Anterior", "Stock Posterior", "Operador", "Observacion"];
+      const rows = filtrados.map((m, idx) => [
+        idx + 1,
+        `"${m.fecha_registro ? new Date(m.fecha_registro).toLocaleString("es-PE") : ""}"`,
+        `"${(m.producto || "").replace(/"/g, '""')}"`,
+        `"${(m.lote || "").replace(/"/g, '""')}"`,
+        m.tipo_movimiento || "",
+        `"${(m.referencia_nro || "").replace(/"/g, '""')}"`,
+        m.cantidad,
+        m.stock_anterior,
+        m.stock_posterior,
+        `"${(m.usuario || "").replace(/"/g, '""')}"`,
+        `"${(m.observacion || "").replace(/"/g, '""')}"`
+      ]);
+      const csvContent = "\uFEFF" + [headers.join(";"), ...rows.map(r => r.join(";"))].join("\r\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `movimientos_inventario_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+  }
+
   const buscador = document.getElementById("buscador-movimientos");
   if (buscador) {
     buscador.oninput = function () {

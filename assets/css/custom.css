@@ -1,0 +1,553 @@
+/* ==========================================================================
+   FLUXO SHOP - Modern POS & ERP Custom Design System
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --fluxo-primary: #3bc0c3;
+  --fluxo-primary-dark: #2aa3a6;
+  --fluxo-navy: #1a2942;
+  --fluxo-radius: 14px;
+  --fluxo-radius-sm: 10px;
+  --fluxo-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --fluxo-shadow-hover: 0 10px 25px -4px rgba(15, 23, 42, 0.1), 0 4px 10px -2px rgba(15, 23, 42, 0.05);
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+.page-title,
+.header-title,
+.pos-total-display {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* ── Cards & Containers ─────────────────────────────────────────────────── */
+.card {
+  border-radius: var(--fluxo-radius) !important;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: var(--fluxo-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-bs-theme="dark"] .card {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.widget-flat {
+  border: none !important;
+  border-radius: var(--fluxo-radius) !important;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.widget-flat:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--fluxo-shadow-hover);
+}
+
+.widget-flat.text-bg-pink {
+  background: linear-gradient(135deg, #f13c6e 0%, #ff6b93 100%) !important;
+}
+
+.widget-flat.text-bg-purple {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+}
+
+.widget-flat.text-bg-info {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%) !important;
+}
+
+.widget-flat.text-bg-primary {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important;
+}
+
+.widget-flat .widget-icon {
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #fff !important;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+/* ── Quick Actions Bar (Dashboard) ──────────────────────────────────────── */
+.quick-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 13.5px;
+  transition: all 0.18s ease;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: #fff;
+  color: #1e293b;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+[data-bs-theme="dark"] .quick-action-btn {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+.quick-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px -3px rgba(59, 192, 195, 0.2);
+  border-color: var(--fluxo-primary);
+  color: var(--fluxo-primary-dark);
+}
+
+.quick-action-btn.primary-action {
+  background: linear-gradient(135deg, #3bc0c3 0%, #2aa3a6 100%);
+  color: #fff !important;
+  border: none;
+}
+
+.quick-action-btn.primary-action:hover {
+  box-shadow: 0 6px 16px rgba(59, 192, 195, 0.4);
+  filter: brightness(1.03);
+}
+
+/* ── Sidebar Active Highlight ───────────────────────────────────────────── */
+.side-nav .side-nav-link.active-route {
+  color: #fff !important;
+  background: linear-gradient(90deg, rgba(59, 192, 195, 0.25) 0%, rgba(59, 192, 195, 0.05) 100%);
+  border-left: 3px solid var(--fluxo-primary);
+  font-weight: 600;
+}
+
+.side-nav-second-level li a.active-route {
+  color: var(--fluxo-primary) !important;
+  font-weight: 700;
+}
+
+/* ── Tables & Badges ────────────────────────────────────────────────────── */
+.table thead th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  color: #64748b;
+  border-bottom-width: 1px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.table tbody td {
+  vertical-align: middle;
+  padding-top: 11px;
+  padding-bottom: 11px;
+}
+
+.badge {
+  font-weight: 600;
+  padding: 0.4em 0.7em;
+  border-radius: 6px;
+}
+
+/* ── POS Terminal (Ventas 2-Column Layout) ──────────────────────────────── */
+.pos-nav-pills .nav-link {
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 9px 18px;
+  color: #64748b;
+  background: rgba(241, 245, 249, 0.8);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.pos-nav-pills .nav-link.active {
+  background: var(--fluxo-navy);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(26, 41, 66, 0.2);
+}
+
+.pos-checkout-panel {
+  position: sticky;
+  top: 85px;
+  border: 1px solid rgba(59, 192, 195, 0.3) !important;
+}
+
+.pos-total-box {
+  background: linear-gradient(135deg, #1a2942 0%, #243b5e 100%);
+  color: #fff;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.pos-total-display {
+  font-size: 28px;
+  font-weight: 800;
+  color: #3bc0c3;
+  line-height: 1.1;
+}
+
+.payment-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.payment-method-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  background: #fff;
+  color: #475569;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+[data-bs-theme="dark"] .payment-method-pill {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.payment-method-pill i {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+
+.payment-method-pill:hover {
+  border-color: var(--fluxo-primary);
+  color: var(--fluxo-primary-dark);
+}
+
+.payment-method-pill.active {
+  border-color: var(--fluxo-primary);
+  background: rgba(59, 192, 195, 0.12);
+  color: #0f766e;
+  box-shadow: 0 2px 8px rgba(59, 192, 195, 0.18);
+}
+
+. payment-method-pill.active-yape {
+  border-color: #74227C;
+  background: rgba(116, 34, 124, 0.1);
+  color: #74227C;
+}
+
+.cash-quick-btn {
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border: 1px dashed #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  transition: all 0.15s ease;
+}
+
+.cash-quick-btn:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.qty-stepper button {
+  border: none;
+  background: #f8fafc;
+  color: #334155;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  transition: background 0.15s;
+}
+
+.qty-stepper button:hover {
+  background: #e2e8f0;
+}
+
+.qty-stepper span {
+  min-width: 32px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ── Modals & Floating Toast Alerts ─────────────────────────────────────── */
+.modal-content {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.25);
+}
+
+#mensaje-alerta .alert,
+#mensaje-alerta-devolucion .alert,
+#mensaje-alerta-rol .alert,
+#mensaje-alerta-permisos .alert {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.18);
+  border: none;
+  animation: flujoToastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes flujoToastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   ESTILO ODOO / POS MODERNO: Modo Pantalla Completa + Escritorio de Íconos
+   ========================================================================== */
+
+/* Por defecto ocultamos la barra lateral para aprovechar el 100% de la pantalla */
+body:not(.sidebar-pinned) .leftside-menu {
+  display: none !important;
+}
+
+body:not(.sidebar-pinned) .content-page {
+  margin-left: 0 !important;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+body:not(.sidebar-pinned) .navbar-custom {
+  left: 0 !important;
+  margin-left: 0 !important;
+}
+
+.navbar-custom .logo-topbar {
+  display: flex !important;
+  align-items: center;
+  margin-right: 8px;
+}
+
+/* Botón Lanzador de Aplicaciones (9 puntos estilo Odoo) */
+.app-launcher-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1a2942 0%, #2b4268 100%);
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-weight: 700;
+  font-size: 13.5px;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 10px rgba(26, 41, 66, 0.18);
+}
+
+.app-launcher-btn:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #3bc0c3 0%, #2aa3a6 100%);
+  box-shadow: 0 5px 14px rgba(59, 192, 195, 0.35);
+}
+
+.topbar-quick-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #334155;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  text-decoration: none;
+  transition: all 0.18s ease;
+}
+
+[data-bs-theme="dark"] .topbar-quick-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+.topbar-quick-pill:hover {
+  background: rgba(59, 192, 195, 0.14);
+  border-color: var(--fluxo-primary);
+  color: var(--fluxo-primary-dark);
+  transform: translateY(-1px);
+}
+
+/* Cuadrícula de Íconos del Escritorio (Estilo Odoo / POS) */
+.odoo-desktop-section {
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.5) 100%);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 18px;
+  padding: 22px 24px;
+  margin-bottom: 24px;
+}
+
+[data-bs-theme="dark"] .odoo-desktop-section {
+  background: rgba(30, 41, 59, 0.55);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.odoo-app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+  gap: 16px;
+}
+
+.odoo-app-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 12px 16px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 14px -2px rgba(15, 23, 42, 0.05);
+  text-decoration: none !important;
+  color: #1e293b;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+[data-bs-theme="dark"] .odoo-app-tile {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+}
+
+.odoo-app-tile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 28px -6px rgba(15, 23, 42, 0.14);
+  border-color: var(--fluxo-primary);
+}
+
+.odoo-app-icon {
+  width: 62px;
+  height: 62px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  color: #fff;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 18px -4px rgba(15, 23, 42, 0.22);
+  transition: transform 0.22s ease;
+}
+
+.odoo-app-tile:hover .odoo-app-icon {
+  transform: scale(1.08) rotate(-2deg);
+}
+
+.odoo-app-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 14.5px;
+  line-height: 1.25;
+  margin-bottom: 3px;
+  color: inherit;
+}
+
+.odoo-app-desc {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.2;
+}
+
+[data-bs-theme="dark"] .odoo-app-desc {
+  color: #94a3b8;
+}
+
+.odoo-app-shortcut {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+[data-bs-theme="dark"] .odoo-app-shortcut {
+  background: #334155;
+  border-color: #475569;
+  color: #cbd5e1;
+}
+
+/* Paleta de Gradientes para Íconos de Aplicaciones */
+.tile-grad-dash { background: linear-gradient(135deg, #d946ef 0%, #9333ea 100%); }
+.tile-grad-pos { background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); }
+.tile-grad-caja { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.tile-grad-prod { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+.tile-grad-etq { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); }
+.tile-grad-compras { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+.tile-grad-clientes { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); }
+.tile-grad-prov { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); }
+.tile-grad-kardex { background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); }
+.tile-grad-mov { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+.tile-grad-dev { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); }
+.tile-grad-ajustes { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); }
+.tile-grad-cat { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
+.tile-grad-comp { background: linear-gradient(135deg, #64748b 0%, #475569 100%); }
+.tile-grad-users { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); }
+.tile-grad-roles { background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); }
+.tile-grad-ayuda { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); }
+
+/* Tarjetas KPI con borde de acento */
+.kpi-card {
+  border-left-width: 4px !important;
+}
+.kpi-card.accent-primary { border-left-color: #4f46e5 !important; }
+.kpi-card.accent-success { border-left-color: #10b981 !important; }
+.kpi-card.accent-warning { border-left-color: #f59e0b !important; }
+.kpi-card.accent-danger  { border-left-color: #ef4444 !important; }
+.kpi-card.accent-info    { border-left-color: #0ea5e9 !important; }
+
+.kpi-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.pos-total-amount {
+  font-family: 'Outfit', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #3bc0c3;
+  line-height: 1.1;
+}

@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8" />
     <title>Iniciar sesión | FLUXO SHOP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="A fully responsive admin theme which can be used to build CRM, CMS,ERP etc." name="description" />
-    <meta content="Techzaa" name="author" />
+    <meta content="Sistema de punto de venta (POS) y control de inventario Fluxo Shop." name="description" />
 
     <!-- App favicon -->
     <link rel="shortcut icon" href="/assets/images/favicon.ico">
@@ -20,6 +19,7 @@
     <!-- Icons css -->
     <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="/assets/css/custom.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body class="authentication-bg position-relative">
@@ -27,120 +27,99 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-xxl-8 col-lg-10">
-                    <div class="card overflow-hidden">
+                    <div class="card overflow-hidden border-0 shadow-lg" style="border-radius: 18px !important;">
                         <div class="row g-0">
                             <div class="col-lg-6 d-none d-lg-block p-2">
-                                <img src="/assets/images/auth-img.jpg" alt="" class="img-fluid rounded h-100">
+                                <img src="/assets/images/auth-img.jpg" alt="Fluxo Shop" class="img-fluid rounded-4 h-100" style="object-fit: cover;">
                             </div>
                             <div class="col-lg-6">
                                 <div class="d-flex flex-column h-100">
-                                    <div class="auth-brand p-4">
+                                    <div class="auth-brand p-4 pb-2">
                                         <a href="/login" class="logo-light" style="text-decoration: none;">
                                             <span class="text-white fs-22 fw-bold notranslate" translate="no" style="font-family: 'Outfit', sans-serif; letter-spacing: 0.5px;">FLUXO SHOP</span>
                                         </a>
-                                        <a href="/login" class="logo-dark" style="text-decoration: none;">
-                                            <span class="text-dark fs-22 fw-bold notranslate" translate="no" style="font-family: 'Outfit', sans-serif; letter-spacing: 0.5px;">FLUXO SHOP</span>
+                                        <a href="/login" class="logo-dark d-flex align-items-center" style="text-decoration: none;">
+                                            <span class="text-primary fs-22 fw-extrabold notranslate" translate="no" style="font-family: 'Outfit', sans-serif; letter-spacing: 0.5px;">FLUXO SHOP</span>
                                         </a>
                                     </div>
                                     <div class="p-4 my-auto">
-                                        <h4 class="fs-20">Iniciar sesión</h4>
-                                        <p class="text-muted mb-3">Introduce tu dirección de correo electrónico y
-                                            contraseña para acceder a tu cuenta.
-                                        </p>
-                                        <!-- Alert placeholder -->
+                                        <span class="badge bg-info-subtle text-info mb-2 px-2 py-1">Sistema POS & Inventario</span>
+                                        <h4 class="fs-22 fw-bold mb-1">¡Bienvenido de nuevo!</h4>
+                                        <p class="text-muted mb-4 fs-13">Ingresa tus credenciales para acceder al panel de control.</p>
                                         <div id="login-alert" class="mb-3"></div>
 
-                                        <!-- form -->
                                         <form id="login-form">
                                             <div class="mb-3">
-                                                <label for="emailaddress" class="form-label">Dirección de correo
-                                                    electrónico</label>
-                                                <input class="form-control" type="email" id="emailaddress" required=""
-                                                    placeholder="Ingresa tu correo electrónico">
+                                                <label for="emailaddress" class="form-label fw-semibold">Correo electrónico</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-light border-end-0"><i class="ri-mail-line text-muted"></i></span>
+                                                    <input class="form-control border-start-0 ps-0" type="email" id="emailaddress" required autofocus placeholder="usuario@empresa.com">
+                                                </div>
                                             </div>
-                                            <div class="mb-3">
-                                                <a href="/login" class="text-muted float-end"><small>
-                                                        ¿Olvidaste tu contraseña?</small></a>
-                                                <label for="password" class="form-label">Contraseña</label>
-                                                <input class="form-control" type="password" required="" id="password"
-                                                    placeholder="Ingresa tu contraseña">
-                                            </div>
-                                            <div class="mb-3">
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input"
-                                                        id="checkbox-signin">
-                                                    <label class="form-check-label" for="checkbox-signin">Recordarme
-                                                    </label>
+                                            <div class="mb-4">
+                                                <label for="password" class="form-label fw-semibold">Contraseña</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-light border-end-0"><i class="ri-lock-2-line text-muted"></i></span>
+                                                    <input class="form-control border-start-0 border-end-0 ps-0" type="password" required id="password" placeholder="••••••••">
+                                                    <button class="btn btn-light border border-start-0" type="button" id="toggle-login-password" tabindex="-1" title="Mostrar / ocultar contraseña">
+                                                        <i class="ri-eye-line text-muted" id="icon-login-password"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div class="mb-0 text-start">
-                                                <button class="btn btn-soft-primary w-100" type="submit"
-                                                    id="btn-login"><i class="ri-login-circle-fill me-1"></i> <span
-                                                        class="fw-bold">Iniciar
-                                                        sesión</span> </button>
-
-                                            </div>
-
-                                            <div class="text-center mt-4">
-                                                <p class="text-muted fs-16">Iniciar sesión con</p>
-                                                <div class="d-flex gap-2 justify-content-center mt-3">
-                                                    <a href="javascript: void(0);" class="btn btn-soft-primary"><i
-                                                            class="ri-facebook-circle-fill"></i></a>
-                                                    <a href="javascript: void(0);" class="btn btn-soft-danger"><i
-                                                            class="ri-google-fill"></i></a>
-                                                    <a href="javascript: void(0);" class="btn btn-soft-info"><i
-                                                            class="ri-twitter-fill"></i></a>
-                                                    <a href="javascript: void(0);" class="btn btn-soft-dark"><i
-                                                            class="ri-github-fill"></i></a>
-                                                </div>
+                                                <button class="btn btn-primary w-100 py-2 fw-bold shadow-sm" type="submit" id="btn-login" style="border-radius: 10px;">
+                                                    <i class="ri-login-circle-line me-1 align-middle fs-16"></i>
+                                                    <span>Ingresar al Sistema</span>
+                                                </button>
                                             </div>
                                         </form>
-                                        <!-- end form-->
                                     </div>
                                 </div>
-                            </div> <!-- end col -->
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- end row -->
             </div>
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="text-dark-emphasis"> ¿No tienes una cuenta?
-                        <a href="../layouts/auth-register.html"
-                            class="text-dark fw-bold ms-1 link-offset-3 text-decoration-underline"><b>Registrarse</b></a>
-                    </p>
-                </div> <!-- end col -->
-            </div>
-            <!-- end row -->
         </div>
-        <!-- end container -->
     </div>
-    <!-- end page -->
 
     <footer class="footer footer-alt fw-medium">
         <span class="text-dark">
-            <script>document.write(new Date().getFullYear())</script> © Fluxo Shop - Diseñado por JR
+            <script>document.write(new Date().getFullYear())</script> © Fluxo Shop - Diseñado por JRDA
         </span>
     </footer>
+
     <!-- Vendor js -->
-    <script src="../assets/js/vendor.min.js"></script>
+    <script src="/assets/js/vendor.min.js"></script>
 
     <!-- App js -->
-    <script src="../assets/js/app.min.js"></script>
+    <script src="/assets/js/app.min.js"></script>
 
     <script>
-        console.log("Script login cargado");
+        const toggleBtn = document.getElementById("toggle-login-password");
+        if (toggleBtn) {
+            toggleBtn.addEventListener("click", function () {
+                const pwdInput = document.getElementById("password");
+                const icon = document.getElementById("icon-login-password");
+                if (pwdInput.type === "password") {
+                    pwdInput.type = "text";
+                    icon.className = "ri-eye-off-line text-primary";
+                } else {
+                    pwdInput.type = "password";
+                    icon.className = "ri-eye-line text-muted";
+                }
+            });
+        }
 
         function mostrarAlerta(mensaje, tipo) {
             const alertDiv = document.getElementById("login-alert");
             if (alertDiv) {
                 alertDiv.innerHTML = `
-            <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
-                <i class="ri-error-warning-line me-1"></i> ${mensaje}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        `;
+                    <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+                        <i class="ri-error-warning-line me-1"></i> ${mensaje}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
             } else {
                 alert(mensaje);
             }
@@ -148,7 +127,6 @@
 
         document.getElementById("login-form").addEventListener("submit", async function (e) {
             e.preventDefault();
-            console.log("Submit detectado");
 
             const email = document.getElementById("emailaddress").value.trim();
             const password = document.getElementById("password").value;
@@ -179,7 +157,6 @@
                     btn.disabled = false;
                 }
             } catch (err) {
-                console.log("Error:", err);
                 mostrarAlerta("Error de conexión.", "danger");
                 btn.disabled = false;
             }

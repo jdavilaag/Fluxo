@@ -60,11 +60,13 @@ def crear_ingreso(db: Session, proveedor_id: int, tipo_comprobante: str, serie: 
                     producto_id=d["producto_id"],
                     lote_id=lote.id,
                     tipo_movimiento="ENTRADA",
+                    referencia_tipo="INGRESO",
+                    referencia_id=ingreso.id,
                     cantidad=d["cantidad"],
                     stock_anterior=stock_anterior,
                     stock_posterior=producto.stock_actual,
                     usuario_id=usuario_id,
-                    observacion=f"Ingreso comprobante {nro_comprobante}"
+                    observacion=f"Ingreso comprobante {nro_comprobante or f'#{ingreso.id}'}"
                 )
                 db.add(kardex)
 

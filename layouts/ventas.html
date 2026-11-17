@@ -1,247 +1,326 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
-      <div class="page-title-box">
-        <div class="page-title-right">
-          <ol class="breadcrumb m-0">
-            <li class="breadcrumb-item"><a href="javascript: void(0);">Fluxo Shop</a></li>
-            <li class="breadcrumb-item"><a href="javascript: void(0);">Ventas</a></li>
-            <li class="breadcrumb-item active">Registro de Ventas</li>
-          </ol>
+      <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h4 class="page-title mb-0"><i class="ri-shopping-bag-3-line text-primary me-1"></i> Terminal Punto de Venta (POS)</h4>
         </div>
-        <h4 class="page-title">Registro de Ventas</h4>
+        <!-- Selector de vista: POS vs Historial -->
+        <ul class="nav nav-pills bg-light p-1 rounded-3" id="ventas-tabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active py-1 px-3 fs-13 fw-semibold" id="tab-pos-btn" data-bs-toggle="pill" data-bs-target="#pane-pos" type="button" role="tab">
+              <i class="ri-store-2-line me-1"></i> Terminal POS (Nueva Venta)
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link py-1 px-3 fs-13 fw-semibold" id="tab-historial-btn" data-bs-toggle="pill" data-bs-target="#pane-historial" type="button" role="tab">
+              <i class="ri-history-line me-1"></i> Historial de Ventas
+              <span class="badge bg-primary-subtle text-primary ms-1" id="total-ventas">0</span>
+            </button>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
 
-  <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+  <div id="mensaje-alerta" style="position: fixed; top: 90px; right: 28px; z-index: 9999; min-width: 320px;"></div>
 
-  <!-- Cabecera -->
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex align-items-center mb-3">
-            <i class="ri-receipt-line fs-4 me-2 text-primary"></i>
-            <p class="text-muted mb-0 fs-13 fw-semibold">Complete los datos de la venta.</p>
-          </div>
-          <div class="row g-3">
-            <div class="col-md-5">
-              <label class="form-label">Cliente <span class="text-danger">*</span></label>
-              <select class="form-select" id="vta_cliente">
-                <option value="">Seleccione un cliente</option>
-              </select>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Método de Pago <span class="text-danger">*</span></label>
-              <select class="form-select" id="vta_metodo_pago">
-                <option value="EFECTIVO">Efectivo</option>
-                <option value="TARJETA">Tarjeta</option>
-                <option value="TRANSFERENCIA">Transferencia</option>
-                <option value="YAPE">Yape</option>
-                <option value="PLIN">Plin</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label">Aplicar IGV (18%)</label>
-              <div class="form-check form-switch mt-2">
-                <input class="form-check-input" type="checkbox" id="vta_igv" />
-                <label class="form-check-label">Incluir IGV</label>
-              </div>
-            </div>
-            <div class="col-md-3" id="div-proveedor-pago" style="display: none;">
-              <label class="form-label">Pasarela / Proveedor</label>
-              <select class="form-select" id="vta_proveedor_pago">
-                <option value="OTRO">Otro / Transferencia</option>
-                <option value="CULQI">Culqi</option>
-                <option value="MERCADO_PAGO">Mercado Pago</option>
-                <option value="STRIPE">Stripe</option>
-              </select>
-            </div>
-            <div class="col-md-4" id="div-transaccion-pago" style="display: none;">
-              <label class="form-label">ID Transacción API / Ref.</label>
-              <input class="form-control" type="text" id="vta_id_transaccion_api" placeholder="Ej. TXN-123456" />
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Tipo Comprobante <span class="text-danger">*</span></label>
-              <select class="form-select" id="vta_tipo_comprobante">
-                <option value="BOLETA">Boleta de Venta</option>
-                <option value="FACTURA">Factura</option>
-                <option value="TICKET">Ticket</option>
-              </select>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Serie <span class="text-danger">*</span></label>
-              <select class="form-select" id="vta_serie">
-                <option value="">Seleccione serie</option>
-              </select>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Correlativo</label>
-              <input class="form-control" type="text" id="vta_numero" readonly placeholder="00000000" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Detalle -->
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex align-items-center mb-3">
-            <i class="ri-list-check fs-4 me-2 text-primary"></i>
-            <p class="text-muted mb-0 fs-13 fw-semibold">Agregue los productos a vender.</p>
-          </div>
-
-          <!-- Agregar producto -->
-          <div class="row g-3 mb-3 pb-3 border-bottom">
-            <div class="col-md-5">
-              <label class="form-label">Producto <span class="text-danger">*</span></label>
-              <select class="form-select" id="dtl_vta_producto">
-                <option value="">Seleccione un producto</option>
-              </select>
-            </div>
-            <div class="col-md-2">
-              <label class="form-label">Stock disponible</label>
-              <input class="form-control" type="text" id="dtl_vta_stock" readonly placeholder="0" />
-            </div>
-            <div class="col-md-2">
-              <label class="form-label">Cantidad <span class="text-danger">*</span></label>
-              <input class="form-control" type="number" id="dtl_vta_cantidad" placeholder="0" min="1" />
-            </div>
-            <div class="col-md-2">
-              <label class="form-label">Precio Venta</label>
-              <div class="input-group">
-                <span class="input-group-text">S/</span>
-                <input class="form-control" type="number" id="dtl_vta_precio" placeholder="0.00" readonly />
-              </div>
-            </div>
-            <div class="col-md-1 d-flex align-items-end">
-              <button class="btn btn-success w-100" type="button" id="btn-agregar-vta">
-                <i class="ri-add-line"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Tabla detalle -->
-          <div class="table-responsive">
-            <table class="table table-nowrap table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>#</th>
-                  <th>Producto</th>
-                  <th>Cantidad</th>
-                  <th>Precio Venta</th>
-                  <th>Subtotal</th>
-                  <th class="text-center">Quitar</th>
-                </tr>
-              </thead>
-              <tbody id="tabla-vta-detalle">
-                <tr id="fila-vacia-vta">
-                  <td colspan="6" class="text-center py-3 text-muted">No hay productos agregados.</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr class="table-light">
-                  <td colspan="3" class="text-end fw-semibold">Subtotal:</td>
-                  <td colspan="3" class="fw-bold" id="vta-subtotal">S/ 0.00</td>
-                </tr>
-                <tr class="table-light" id="fila-igv" style="display:none">
-                  <td colspan="3" class="text-end fw-semibold">IGV (18%):</td>
-                  <td colspan="3" class="fw-bold text-warning" id="vta-igv">S/ 0.00</td>
-                </tr>
-                <tr class="table-light">
-                  <td colspan="3" class="text-end fw-semibold fs-16">Total:</td>
-                  <td colspan="3" class="fw-bold text-primary fs-16" id="vta-total">S/ 0.00</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-
-          <!-- Pago -->
-          <div class="row g-3 mt-3 pt-3 border-top">
-            <div class="col-md-3">
-              <label class="form-label">Monto Recibido <span class="text-danger">*</span></label>
-              <div class="input-group">
-                <span class="input-group-text">S/</span>
-                <input class="form-control" type="number" id="vta_monto_pago" placeholder="0.00" min="0" step="0.01" />
-              </div>
-            </div>
-            <div class="col-md-3 d-flex align-items-end">
-              <div>
-                <label class="form-label">Vuelto</label>
-                <div class="input-group">
-                  <span class="input-group-text">S/</span>
-                  <input class="form-control" type="text" id="vta_vuelto" readonly placeholder="0.00" />
+  <div class="tab-content" id="ventas-tabs-content">
+    <!-- ==================== PESTAÑA 1: TERMINAL POS 2 COLUMNAS ==================== -->
+    <div class="tab-pane fade show active" id="pane-pos" role="tabpanel">
+      <div class="row g-3">
+        <!-- COLUMNA IZQUIERDA (7 col): Búsqueda de Productos + Carrito -->
+        <div class="col-xl-7 col-lg-7">
+          <div class="card h-100 mb-0">
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center">
+                  <div class="bg-primary-subtle text-primary rounded-3 p-2 me-2 d-flex align-items-center justify-content-center">
+                    <i class="ri-barcode-box-line fs-20"></i>
+                  </div>
+                  <div>
+                    <h5 class="header-title mb-0">Catálogo y Carrito de Venta</h5>
+                    <small class="text-muted">Escanee código de barras o seleccione el producto a agregar</small>
+                  </div>
                 </div>
               </div>
+
+              <!-- Buscador rápido por código de barras o texto -->
+              <div class="mb-3">
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-primary">
+                    <i class="ri-qr-scan-2-line fs-18"></i>
+                  </span>
+                  <input type="text" class="form-control border-start-0" id="pos-barcode-input" placeholder="Escanear código de barras o buscar producto rápido (Enter para agregar)..." autocomplete="off" />
+                </div>
+              </div>
+
+              <!-- Selector manual de producto -->
+              <div class="row g-2 mb-3 pb-3 border-bottom align-items-end">
+                <div class="col-md-5">
+                  <label class="form-label mb-1">Producto <span class="text-danger">*</span></label>
+                  <select class="form-select" id="dtl_vta_producto">
+                    <option value="">Seleccione un producto</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label mb-1">Stock</label>
+                  <input class="form-control bg-light text-center fw-bold" type="text" id="dtl_vta_stock" readonly placeholder="0" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label mb-1">Cantidad <span class="text-danger">*</span></label>
+                  <input class="form-control text-center fw-semibold" type="number" id="dtl_vta_cantidad" placeholder="1" min="1" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label mb-1">Precio</label>
+                  <div class="input-group">
+                    <span class="input-group-text px-2">S/</span>
+                    <input class="form-control bg-light px-2" type="number" id="dtl_vta_precio" placeholder="0.00" readonly />
+                  </div>
+                </div>
+                <div class="col-md-1">
+                  <button class="btn btn-success w-100" type="button" id="btn-agregar-vta" title="Agregar al carrito">
+                    <i class="ri-add-line fs-18"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tabla carrito de compras -->
+              <div class="table-responsive flex-grow-1" style="min-height: 280px;">
+                <table class="table table-nowrap table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th style="width: 40px;">#</th>
+                      <th>Producto</th>
+                      <th class="text-center" style="width: 140px;">Cantidad</th>
+                      <th class="text-end">P. Unit.</th>
+                      <th class="text-end">Subtotal</th>
+                      <th class="text-center" style="width: 60px;">Quitar</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-vta-detalle">
+                    <tr id="fila-vacia-vta">
+                      <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="ri-shopping-cart-line fs-36 d-block mb-2 opacity-50"></i>
+                        El carrito está vacío. Seleccione o escanee un producto para comenzar.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div class="col-12 d-flex gap-2">
-              <button class="btn btn-primary fw-semibold px-4" type="button" id="btn-guardar-venta">
-                <i class="ri-save-line me-1"></i> Registrar Venta
-              </button>
-              <button class="btn btn-light fw-semibold px-4" type="button" id="btn-limpiar-venta">
-                <i class="ri-refresh-line me-1"></i> Limpiar
-              </button>
+          </div>
+        </div>
+
+        <!-- COLUMNA DERECHA (5 col): Panel Sticky de Facturación y Cobro -->
+        <div class="col-xl-5 col-lg-5">
+          <div class="card pos-checkout-panel mb-0">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                <div class="d-flex align-items-center">
+                  <i class="ri-File-list-3-line fs-20 me-2 text-primary"></i>
+                  <h5 class="header-title mb-0">Datos de Comprobante y Pago</h5>
+                </div>
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" id="vta_igv" />
+                  <label class="form-check-label fs-12 fw-semibold" for="vta_igv">IGV (18%)</label>
+                </div>
+              </div>
+
+              <!-- Cliente y Comprobante -->
+              <div class="row g-2 mb-3">
+                <div class="col-12">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label class="form-label mb-0">Cliente <span class="text-danger">*</span></label>
+                    <button type="button" class="btn btn-link btn-sm p-0 text-primary fw-semibold text-decoration-none fs-12" id="btn-nuevo-cliente-pos">
+                      <i class="ri-user-add-line me-1"></i>+ Nuevo Cliente Rápido
+                    </button>
+                  </div>
+                  <select class="form-select" id="vta_cliente">
+                    <option value="">Seleccione un cliente</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label mb-1">Comprobante <span class="text-danger">*</span></label>
+                  <select class="form-select" id="vta_tipo_comprobante">
+                    <option value="BOLETA">Boleta</option>
+                    <option value="FACTURA">Factura</option>
+                    <option value="TICKET">Ticket</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label mb-1">Serie <span class="text-danger">*</span></label>
+                  <select class="form-select" id="vta_serie">
+                    <option value="">Serie</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label mb-1">Correlativo</label>
+                  <input class="form-control bg-light fw-semibold text-center" type="text" id="vta_numero" readonly placeholder="00000000" />
+                </div>
+              </div>
+
+              <!-- Método de Pago Visual + Select Sincronizado -->
+              <div class="mb-3">
+                <label class="form-label mb-1">Método de Pago <span class="text-danger">*</span></label>
+                <div class="d-flex gap-1 flex-wrap mb-2" id="pos-payment-pills">
+                  <div class="payment-method-pill active" data-method="EFECTIVO">
+                    <i class="ri-money-dollar-circle-line text-success"></i>Efectivo
+                  </div>
+                  <div class="payment-method-pill" data-method="YAPE">
+                    <i class="ri-qr-code-line" style="color: #74227C;"></i>Yape QR
+                  </div>
+                  <div class="payment-method-pill" data-method="PLIN">
+                    <i class="ri-smartphone-line text-info"></i>Plin
+                  </div>
+                  <div class="payment-method-pill" data-method="TARJETA">
+                    <i class="ri-bank-card-line text-primary"></i>Tarjeta
+                  </div>
+                  <div class="payment-method-pill" data-method="TRANSFERENCIA">
+                    <i class="ri-bank-line text-secondary"></i>Transf.
+                  </div>
+                </div>
+                <!-- Select original mantenido para compatibilidad total -->
+                <select class="form-select d-none" id="vta_metodo_pago">
+                  <option value="EFECTIVO">Efectivo</option>
+                  <option value="TARJETA">Tarjeta</option>
+                  <option value="TRANSFERENCIA">Transferencia</option>
+                  <option value="YAPE">Yape</option>
+                  <option value="PLIN">Plin</option>
+                </select>
+              </div>
+
+              <!-- Campos adicionales para pagos digitales -->
+              <div class="row g-2 mb-3">
+                <div class="col-md-6" id="div-proveedor-pago" style="display: none;">
+                  <label class="form-label mb-1">Pasarela / Proveedor</label>
+                  <select class="form-select form-select-sm" id="vta_proveedor_pago">
+                    <option value="OTRO">Otro / Directo</option>
+                    <option value="CULQI">Culqi</option>
+                    <option value="MERCADO_PAGO">Mercado Pago</option>
+                    <option value="STRIPE">Stripe</option>
+                  </select>
+                </div>
+                <div class="col-md-6" id="div-transaccion-pago" style="display: none;">
+                  <label class="form-label mb-1">Ref. / Nro Operación</label>
+                  <input class="form-control form-control-sm" type="text" id="vta_id_transaccion_api" placeholder="Ej. OP-123456" />
+                </div>
+              </div>
+
+              <!-- Caja oscura de Resumen de Totales -->
+              <div class="pos-total-box mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="text-white-50 fs-13">Subtotal:</span>
+                  <span class="fw-semibold fs-14" id="vta-subtotal">S/ 0.00</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2" id="fila-igv" style="display:none !important;">
+                  <span class="text-warning fs-13">IGV (18%):</span>
+                  <span class="fw-semibold text-warning fs-14" id="vta-igv">S/ 0.00</span>
+                </div>
+                <div class="border-top border-secondary pt-2 mt-1 d-flex justify-content-between align-items-baseline">
+                  <span class="text-uppercase fw-bold fs-12 tracking-wider text-white-50">Total a Pagar</span>
+                  <span class="pos-total-amount" id="vta-total">S/ 0.00</span>
+                </div>
+              </div>
+
+              <!-- Botones rápidos de efectivo y cálculo de vuelto -->
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <label class="form-label mb-0">Monto Recibido <span class="text-danger">*</span></label>
+                  <div class="d-flex gap-1">
+                    <button type="button" class="cash-quick-btn" data-cash="exacto">Exacto</button>
+                    <button type="button" class="cash-quick-btn" data-cash="10">S/ 10</button>
+                    <button type="button" class="cash-quick-btn" data-cash="20">S/ 20</button>
+                    <button type="button" class="cash-quick-btn" data-cash="50">S/ 50</button>
+                    <button type="button" class="cash-quick-btn" data-cash="100">S/ 100</button>
+                  </div>
+                </div>
+                <div class="row g-2">
+                  <div class="col-6">
+                    <div class="input-group">
+                      <span class="input-group-text fw-bold">S/</span>
+                      <input class="form-control fw-bold fs-15" type="number" id="vta_monto_pago" placeholder="0.00" min="0" step="0.01" />
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input-group">
+                      <span class="input-group-text bg-light text-muted">Vuelto S/</span>
+                      <input class="form-control bg-light fw-bold fs-15" type="text" id="vta_vuelto" readonly placeholder="0.00" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botones de Acción Principal -->
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary fw-bold py-2 flex-grow-1 fs-15" type="button" id="btn-guardar-venta">
+                  <i class="ri-check-double-line me-1"></i> Cobrar y Emitir Comprobante
+                </button>
+                <button class="btn btn-light fw-semibold py-2 px-3" type="button" id="btn-limpiar-venta" title="Limpiar terminal">
+                  <i class="ri-refresh-line"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Historial -->
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body p-0">
-          <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <div>
-              <h5 class="header-title mb-0"><i class="ri-receipt-line me-1"></i> Historial de Ventas</h5>
-              <p class="text-muted mb-0 fs-13">Total: <span id="total-ventas">0</span> ventas registradas</p>
-            </div>
-            <div class="d-flex gap-2 align-items-center">
-              <div class="input-group input-group-sm" style="width: 220px">
-                <span class="input-group-text"><i class="ri-search-line"></i></span>
-                <input type="text" class="form-control" id="buscador-vta" placeholder="Buscar venta..." />
+    <!-- ==================== PESTAÑA 2: HISTORIAL DE VENTAS ==================== -->
+    <div class="tab-pane fade" id="pane-historial" role="tabpanel">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body p-0">
+              <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                  <h5 class="header-title mb-0"><i class="ri-receipt-line me-1 text-primary"></i> Historial de Ventas Emitidas</h5>
+                  <p class="text-muted mb-0 fs-13">Consulta, reimpresión de tickets y detalle de pagos</p>
+                </div>
+                <div class="d-flex gap-2 align-items-center">
+                  <div class="input-group input-group-sm" style="width: 250px">
+                    <span class="input-group-text"><i class="ri-search-line"></i></span>
+                    <input type="text" class="form-control" id="buscador-vta" placeholder="Buscar cliente o comprobante..." />
+                  </div>
+                  <button class="btn btn-sm btn-soft-primary fw-semibold" id="btn-exportar-ventas-csv" title="Exportar a Excel (CSV)">
+                    <i class="ri-file-excel-2-line me-1"></i> Exportar CSV
+                  </button>
+                  <button class="btn btn-sm btn-success" onclick="cargarVentas()" title="Actualizar listado">
+                    <i class="ri-refresh-line"></i>
+                  </button>
+                </div>
               </div>
-              <button class="btn btn-sm btn-success" onclick="cargarVentas()">
-                <i class="ri-refresh-line"></i>
-              </button>
+
+              <div class="table-responsive">
+                <table class="table table-nowrap table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Comprobante</th>
+                      <th>Cliente</th>
+                      <th>Fecha</th>
+                      <th>Subtotal</th>
+                      <th>IGV</th>
+                      <th>Total</th>
+                      <th>Estado</th>
+                      <th class="text-center">Detalle / Ticket</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-ventas">
+                    <tr>
+                      <td colspan="9" class="text-center py-4 text-muted">
+                        <i class="ri-loader-4-line me-1"></i> Cargando ventas...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="p-3 d-flex justify-content-between align-items-center">
+                <small class="text-muted" id="info-paginacion-vta">Mostrando 0 de 0</small>
+                <div class="d-flex gap-1" id="controles-paginacion-vta"></div>
+              </div>
             </div>
-          </div>
-
-          <div class="table-responsive">
-            <table class="table table-nowrap table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>#</th>
-                  <th>Comprobante</th>
-                  <th>Cliente</th>
-                  <th>Fecha</th>
-                  <th>Subtotal</th>
-                  <th>IGV</th>
-                  <th>Total</th>
-                  <th>Estado</th>
-                  <th class="text-center">Detalle</th>
-                </tr>
-              </thead>
-              <tbody id="tabla-ventas">
-                <tr>
-                  <td colspan="8" class="text-center py-4 text-muted">
-                    <i class="ri-loader-4-line me-1"></i> Cargando ventas...
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="p-3 d-flex justify-content-between align-items-center">
-            <small class="text-muted" id="info-paginacion-vta">Mostrando 0 de 0</small>
-            <div class="d-flex gap-1" id="controles-paginacion-vta"></div>
           </div>
         </div>
       </div>
@@ -298,6 +377,60 @@
           </button>
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Registro Rápido de Cliente desde POS -->
+  <div class="modal fade" id="modalNuevoClientePOS" tabindex="-1" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="ri-user-add-line text-primary me-2"></i>Registro Rápido de Cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info-subtle text-info border-info-subtle py-2 px-3 mb-3 fs-12 d-flex justify-content-between align-items-center">
+            <span><i class="ri-magic-line me-1"></i> Ingrese DNI/RUC o Correo para autocompletar</span>
+            <span id="pos-cli-autofill-badge" class="badge bg-info text-white" style="display: none;"></span>
+          </div>
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label class="form-label mb-1">DNI / RUC <span class="text-danger">*</span></label>
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control" id="pos_cli_documento" placeholder="8 u 11 dígitos" maxlength="11" autocomplete="off" />
+                <button class="btn btn-soft-primary" type="button" id="btn-pos-buscar-doc" title="Buscar DNI/RUC">
+                  <i class="ri-search-eye-line"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label mb-1">Correo Electrónico</label>
+              <input type="email" class="form-control form-control-sm" id="pos_cli_email" placeholder="correo@ejemplo.com" autocomplete="off" />
+            </div>
+            <div class="col-12">
+              <label class="form-label mb-1">Nombres / Razón Social <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="pos_cli_nombres" placeholder="Nombre completo o empresa" autocomplete="off" />
+            </div>
+            <div class="col-md-5">
+              <label class="form-label mb-1">Teléfono</label>
+              <input type="text" class="form-control form-control-sm" id="pos_cli_telefono" placeholder="Celular" autocomplete="off" />
+            </div>
+            <div class="col-md-7">
+              <label class="form-label mb-1">Dirección</label>
+              <input type="text" class="form-control form-control-sm" id="pos_cli_direccion" placeholder="Dirección" autocomplete="off" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light py-2">
+          <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-sm btn-primary fw-semibold px-3" id="btn-guardar-cliente-pos">
+            <i class="ri-save-line me-1"></i> Guardar y Seleccionar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal Pago QR Dinámico Yape -->
   <div class="modal fade" id="modalYapeQR" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-modal="true">
@@ -355,19 +488,6 @@
       </div>
     </div>
   </div>
-      </div>
-    </div>
-  </div>
 
-  <script>
-    if (typeof cargarVentas === "undefined") {
-      var s = document.createElement("script");
-      s.src = "/assets/js/venta.js?t=" + Date.now();
-      document.body.appendChild(s);
-    } else {
-      cargarClientes();
-      cargarProductosVenta();
-      cargarVentas();
-    }
-  </script>
+  </div>
 </div>

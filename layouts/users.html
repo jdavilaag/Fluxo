@@ -2,8 +2,8 @@
   <!-- start page title -->
   <div class="row">
     <div class="col-12">
-      <div class="page-title-box d-flex justify-content-between align-items-center">
-        <h4 class="page-title">Gestión de Usuarios</h4>
+      <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h4 class="page-title mb-0"><i class="ri-shield-user-line text-primary me-1"></i> Administración de Usuarios</h4>
         <button class="btn btn-primary fw-semibold" id="btn-nuevo-usuario">
           <i class="ri-user-add-line me-1"></i> Nuevo Usuario
         </button>
@@ -21,15 +21,22 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+          <div id="mensaje-alerta" style="position: fixed; top: 90px; right: 28px; z-index: 9999; min-width: 320px;"></div>
+          <div class="alert alert-info-subtle text-info border-info-subtle py-2 px-3 mb-3 fs-12 d-flex align-items-center justify-content-between">
+            <span><i class="ri-magic-line me-1"></i> <strong>Autocompletado inteligente:</strong> Ingrese primero el <strong>Email</strong> para autocompletar el nombre del usuario automáticamente.</span>
+            <span id="usr-autofill-status" class="badge bg-info text-white" style="display: none;"></span>
+          </div>
           <div class="row g-3">
             <div class="col-md-6">
-              <label for="usr_nombre" class="form-label">Nombre Completo <span class="text-danger">*</span></label>
-              <input class="form-control" type="text" id="usr_nombre" placeholder="Ingrese nombre completo" required autocomplete="off"/>
+              <label for="usr_email" class="form-label">Email <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted"><i class="ri-mail-line"></i></span>
+                <input class="form-control" type="email" id="usr_email" placeholder="nombre.apellido@empresa.com" required autocomplete="off"/>
+              </div>
             </div>
             <div class="col-md-6">
-              <label for="usr_email" class="form-label">Email <span class="text-danger" autocomplete="off">*</span></label>
-              <input class="form-control" type="email" id="usr_email" placeholder="Ingrese email" required autocomplete="off"/>
+              <label for="usr_nombre" class="form-label">Nombre Completo <span class="text-danger">*</span></label>
+              <input class="form-control" type="text" id="usr_nombre" placeholder="Se autocompleta al ingresar el correo" required autocomplete="off"/>
             </div>
             <div class="col-md-4">
               <label for="usr_pass" class="form-label">Contraseña <span class="text-danger">*</span></label>

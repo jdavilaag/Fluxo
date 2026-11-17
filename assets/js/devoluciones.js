@@ -36,6 +36,12 @@
       if (res.ok) {
         todasDevoluciones = await res.json();
         document.getElementById("total-devoluciones").textContent = todasDevoluciones.length;
+        const devVentas = todasDevoluciones.filter(d => d.tipo_devolucion === "VENTA" && d.estado === "REGISTRADO").length;
+        const devCompras = todasDevoluciones.filter(d => d.tipo_devolucion === "COMPRA" && d.estado === "REGISTRADO").length;
+        const elVta = document.getElementById("kpi-dev-ventas");
+        const elCmp = document.getElementById("kpi-dev-compras");
+        if (elVta) elVta.textContent = devVentas;
+        if (elCmp) elCmp.textContent = devCompras;
         paginaActual = 1;
         renderTabla();
       } else {

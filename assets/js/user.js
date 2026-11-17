@@ -272,6 +272,31 @@
     };
   }
 
+  const inpEmailUsr = document.getElementById("usr_email");
+  if (inpEmailUsr) {
+    inpEmailUsr.addEventListener("blur", async function () {
+      const email = this.value.trim();
+      if (!email || !email.includes("@")) return;
+      try {
+        const res = await fetch(`/auth/autocompletar-email?email=${encodeURIComponent(email)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const inpNombre = document.getElementById("usr_nombre");
+        const badge = document.getElementById("usr-autofill-status");
+        if (inpNombre && !inpNombre.value.trim() && (data.nombre || data.nombre_sugerido)) {
+          inpNombre.value = data.nombre || data.nombre_sugerido;
+          if (badge) {
+            badge.textContent = data.encontrado ? `Datos de ${data.origen}` : "Nombre autocompletado";
+            badge.style.display = "inline-block";
+            setTimeout(() => { badge.style.display = "none"; }, 4000);
+          }
+        }
+      } catch {
+        // Silencioso
+      }
+    });
+  }
+
   const buscador = document.getElementById("buscador");
   if (buscador) {
     buscador.oninput = function () {

@@ -1,183 +1,175 @@
 <div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
-            <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
-                <h5 class="text-white m-0">Theme Settings</h5>
-                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
+    <h5 class="text-white m-0">Configuración de Tema</h5>
+    <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+  </div>
+
+  <div class="offcanvas-body p-0">
+    <div data-simplebar class="h-100">
+      <div class="p-3">
+        <h5 class="mb-3 fs-16 fw-bold">Esquema de Color</h5>
+
+        <div class="row">
+          <div class="col-4">
+            <div class="form-check form-switch card-switch mb-1">
+              <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-light" value="light">
+              <label class="form-check-label" for="layout-color-light">
+                <img src="assets/images/layouts/light.png" alt="Claro" class="img-fluid">
+              </label>
+            </div>
+            <h5 class="font-14 text-center text-muted mt-2">Claro</h5>
+          </div>
+
+          <div class="col-4">
+            <div class="form-check form-switch card-switch mb-1">
+              <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-dark" value="dark">
+              <label class="form-check-label" for="layout-color-dark">
+                <img src="assets/images/layouts/dark.png" alt="Oscuro" class="img-fluid">
+              </label>
+            </div>
+            <h5 class="font-14 text-center text-muted mt-2">Oscuro</h5>
+          </div>
+        </div>
+
+        <div id="layout-width">
+          <h5 class="my-3 fs-16 fw-bold">Modo de Diseño</h5>
+
+          <div class="row">
+            <div class="col-4">
+              <div class="form-check form-switch card-switch mb-1">
+                <input class="form-check-input" type="checkbox" name="data-layout-mode" id="layout-mode-fluid" value="fluid">
+                <label class="form-check-label" for="layout-mode-fluid">
+                  <img src="assets/images/layouts/light.png" alt="Fluido" class="img-fluid">
+                </label>
+              </div>
+              <h5 class="font-14 text-center text-muted mt-2">Fluido</h5>
             </div>
 
-            <div class="offcanvas-body p-0">
-                <div data-simplebar class="h-100">
-                    <div class="p-3">
-                        <h5 class="mb-3 fs-16 fw-bold">Color Scheme</h5>
-
-                        <div class="row">
-                            <div class="col-4">
-                                <div class="form-check form-switch card-switch mb-1">
-                                    <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-light" value="light">
-                                    <label class="form-check-label" for="layout-color-light">
-                                        <img src="assets/images/layouts/light.png" alt="" class="img-fluid">
-                                    </label>
-                                </div>
-                                <h5 class="font-14 text-center text-muted mt-2">Light</h5>
-                            </div>
-
-                            <div class="col-4">
-                                <div class="form-check form-switch card-switch mb-1">
-                                    <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-dark" value="dark">
-                                    <label class="form-check-label" for="layout-color-dark">
-                                        <img src="assets/images/layouts/dark.png" alt="" class="img-fluid">
-                                    </label>
-                                </div>
-                                <h5 class="font-14 text-center text-muted mt-2">Dark</h5>
-                            </div>
-                        </div>
-
-                        <div id="layout-width">
-                            <h5 class="my-3 fs-16 fw-bold">Layout Mode</h5>
-
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-check form-switch card-switch mb-1">
-                                        <input class="form-check-input" type="checkbox" name="data-layout-mode" id="layout-mode-fluid" value="fluid">
-                                        <label class="form-check-label" for="layout-mode-fluid">
-                                            <img src="assets/images/layouts/light.png" alt="" class="img-fluid">
-                                        </label>
-                                    </div>
-                                    <h5 class="font-14 text-center text-muted mt-2">Fluid</h5>
-                                </div>
-
-                                <div class="col-4">
-                                    <div id="layout-boxed">
-                                        <div class="form-check form-switch card-switch mb-1">
-                                            <input class="form-check-input" type="checkbox" name="data-layout-mode" id="layout-mode-boxed" value="boxed">
-                                            <label class="form-check-label" for="layout-mode-boxed">
-                                                <img src="assets/images/layouts/boxed.png" alt="" class="img-fluid">
-                                            </label>
-                                        </div>
-                                        <h5 class="font-14 text-center text-muted mt-2">Boxed</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h5 class="my-3 fs-16 fw-bold">Topbar Color</h5>
-
-                        <div class="row">
-                            <div class="col-4">
-                                <div class="form-check form-switch card-switch mb-1">
-                                    <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-light" value="light">
-                                    <label class="form-check-label" for="topbar-color-light">
-                                        <img src="assets/images/layouts/light.png" alt="" class="img-fluid">
-                                    </label>
-                                </div>
-                                <h5 class="font-14 text-center text-muted mt-2">Light</h5>
-                            </div>
-
-                            <div class="col-4">
-                                <div class="form-check form-switch card-switch mb-1">
-                                    <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-dark" value="dark">
-                                    <label class="form-check-label" for="topbar-color-dark">
-                                        <img src="assets/images/layouts/topbar-dark.png" alt="" class="img-fluid">
-                                    </label>
-                                </div>
-                                <h5 class="font-14 text-center text-muted mt-2">Dark</h5>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h5 class="my-3 fs-16 fw-bold">Menu Color</h5>
-
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-check form-switch card-switch mb-1">
-                                        <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-light" value="light">
-                                        <label class="form-check-label" for="leftbar-color-light">
-                                            <img src="assets/images/layouts/sidebar-light.png" alt="" class="img-fluid">
-                                        </label>
-                                    </div>
-                                    <h5 class="font-14 text-center text-muted mt-2">Light</h5>
-                                </div>
-
-                                <div class="col-4">
-                                    <div class="form-check form-switch card-switch mb-1">
-                                        <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-dark" value="dark">
-                                        <label class="form-check-label" for="leftbar-color-dark">
-                                            <img src="assets/images/layouts/light.png" alt="" class="img-fluid">
-                                        </label>
-                                    </div>
-                                    <h5 class="font-14 text-center text-muted mt-2">Dark</h5>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="sidebar-size">
-                            <h5 class="my-3 fs-16 fw-bold">Sidebar Size</h5>
-
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-check form-switch card-switch mb-1">
-                                        <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-default" value="default">
-                                        <label class="form-check-label" for="leftbar-size-default">
-                                            <img src="assets/images/layouts/light.png" alt="" class="img-fluid">
-                                        </label>
-                                    </div>
-                                    <h5 class="font-14 text-center text-muted mt-2">Default</h5>
-                                </div>
-
-                                <div class="col-4">
-                                    <div class="form-check form-switch card-switch mb-1">
-                                        <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-compact" value="compact">
-                                        <label class="form-check-label" for="leftbar-size-compact">
-                                            <img src="assets/images/layouts/compact.png" alt="" class="img-fluid">
-                                        </label>
-                                    </div>
-                                    <h5 class="font-14 text-center text-muted mt-2">Compact</h5>
-                                </div>
-
-                                <div class="col-4">
-                                    <div class="form-check form-switch card-switch mb-1">
-                                        <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-small" value="condensed">
-                                        <label class="form-check-label" for="leftbar-size-small">
-                                            <img src="assets/images/layouts/sm.png" alt="" class="img-fluid">
-                                        </label>
-                                    </div>
-                                    <h5 class="font-14 text-center text-muted mt-2">Condensed</h5>
-                                </div>
-
-
-                                <div class="col-4">
-                                    <div class="form-check form-switch card-switch mb-1">
-                                        <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-full" value="full">
-                                        <label class="form-check-label" for="leftbar-size-full">
-                                            <img src="assets/images/layouts/full.png" alt="" class="img-fluid">
-                                        </label>
-                                    </div>
-                                    <h5 class="font-14 text-center text-muted mt-2">Full Layout</h5>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="layout-position">
-                            <h5 class="my-3 fs-16 fw-bold">Layout Position</h5>
-
-                            <div class="btn-group checkbox" role="group">
-                                <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed" value="fixed">
-                                <label class="btn btn-soft-primary w-sm" for="layout-position-fixed">Fixed</label>
-
-                                <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-scrollable" value="scrollable">
-                                <label class="btn btn-soft-primary w-sm ms-0" for="layout-position-scrollable">Scrollable</label>
-                            </div>
-                        </div>
-                    </div>
+            <div class="col-4">
+              <div id="layout-boxed">
+                <div class="form-check form-switch card-switch mb-1">
+                  <input class="form-check-input" type="checkbox" name="data-layout-mode" id="layout-mode-boxed" value="boxed">
+                  <label class="form-check-label" for="layout-mode-boxed">
+                    <img src="assets/images/layouts/boxed.png" alt="Encajonado" class="img-fluid">
+                  </label>
                 </div>
+                <h5 class="font-14 text-center text-muted mt-2">Encajonado</h5>
+              </div>
             </div>
-            <div class="offcanvas-footer border-top p-3 text-center">
-                <div class="row">
-                    <div class="col-6">
-                        <button type="button" class="btn btn-light w-100" id="reset-layout">Reset</button>
-                    </div>
-                    <div class="col-6">
-                        <a href="https://1.envato.market/velonic" target="_blank" role="button" class="btn btn-primary w-100">Buy Now</a>
-                    </div>
-                </div>
+          </div>
+        </div>
+
+        <h5 class="my-3 fs-16 fw-bold">Color de Barra Superior</h5>
+
+        <div class="row">
+          <div class="col-4">
+            <div class="form-check form-switch card-switch mb-1">
+              <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-light" value="light">
+              <label class="form-check-label" for="topbar-color-light">
+                <img src="assets/images/layouts/light.png" alt="Claro" class="img-fluid">
+              </label>
             </div>
-        </div>  
+            <h5 class="font-14 text-center text-muted mt-2">Claro</h5>
+          </div>
+
+          <div class="col-4">
+            <div class="form-check form-switch card-switch mb-1">
+              <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-dark" value="dark">
+              <label class="form-check-label" for="topbar-color-dark">
+                <img src="assets/images/layouts/topbar-dark.png" alt="Oscuro" class="img-fluid">
+              </label>
+            </div>
+            <h5 class="font-14 text-center text-muted mt-2">Oscuro</h5>
+          </div>
+        </div>
+
+        <div>
+          <h5 class="my-3 fs-16 fw-bold">Color del Menú</h5>
+
+          <div class="row">
+            <div class="col-4">
+              <div class="form-check form-switch card-switch mb-1">
+                <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-light" value="light">
+                <label class="form-check-label" for="leftbar-color-light">
+                  <img src="assets/images/layouts/sidebar-light.png" alt="Claro" class="img-fluid">
+                </label>
+              </div>
+              <h5 class="font-14 text-center text-muted mt-2">Claro</h5>
+            </div>
+
+            <div class="col-4">
+              <div class="form-check form-switch card-switch mb-1">
+                <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-dark" value="dark">
+                <label class="form-check-label" for="leftbar-color-dark">
+                  <img src="assets/images/layouts/light.png" alt="Oscuro" class="img-fluid">
+                </label>
+              </div>
+              <h5 class="font-14 text-center text-muted mt-2">Oscuro</h5>
+            </div>
+          </div>
+        </div>
+
+        <div id="sidebar-size">
+          <h5 class="my-3 fs-16 fw-bold">Tamaño del Menú Lateral</h5>
+
+          <div class="row">
+            <div class="col-4">
+              <div class="form-check form-switch card-switch mb-1">
+                <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-default" value="default">
+                <label class="form-check-label" for="leftbar-size-default">
+                  <img src="assets/images/layouts/light.png" alt="Por defecto" class="img-fluid">
+                </label>
+              </div>
+              <h5 class="font-14 text-center text-muted mt-2">Por defecto</h5>
+            </div>
+
+            <div class="col-4">
+              <div class="form-check form-switch card-switch mb-1">
+                <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-compact" value="compact">
+                <label class="form-check-label" for="leftbar-size-compact">
+                  <img src="assets/images/layouts/compact.png" alt="Compacto" class="img-fluid">
+                </label>
+              </div>
+              <h5 class="font-14 text-center text-muted mt-2">Compacto</h5>
+            </div>
+
+            <div class="col-4">
+              <div class="form-check form-switch card-switch mb-1">
+                <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-small" value="condensed">
+                <label class="form-check-label" for="leftbar-size-small">
+                  <img src="assets/images/layouts/sm.png" alt="Condensado" class="img-fluid">
+                </label>
+              </div>
+              <h5 class="font-14 text-center text-muted mt-2">Condensado</h5>
+            </div>
+
+            <div class="col-4">
+              <div class="form-check form-switch card-switch mb-1">
+                <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-full" value="full">
+                <label class="form-check-label" for="leftbar-size-full">
+                  <img src="assets/images/layouts/full.png" alt="Completo" class="img-fluid">
+                </label>
+              </div>
+              <h5 class="font-14 text-center text-muted mt-2">Completo</h5>
+            </div>
+          </div>
+        </div>
+
+        <div id="layout-position">
+          <h5 class="my-3 fs-16 fw-bold">Posición del Diseño</h5>
+
+          <div class="btn-group checkbox" role="group">
+            <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed" value="fixed">
+            <label class="btn btn-soft-primary w-sm" for="layout-position-fixed">Fijo</label>
+
+            <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-scrollable" value="scrollable">
+            <label class="btn btn-soft-primary w-sm ms-0" for="layout-position-scrollable">Desplazable</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="offcanvas-footer border-top p-3 text-center">
+    <button type="button" class="btn btn-light w-100" id="reset-layout">Restablecer valores</button>
+  </div>
+</div>

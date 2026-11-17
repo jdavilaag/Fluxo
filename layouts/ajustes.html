@@ -1,50 +1,66 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
-      <div class="page-title-box">
-        <div class="page-title-right">
-          <ol class="breadcrumb m-0">
-            <li class="breadcrumb-item"><a href="javascript: void(0);">Fluxo Shop</a></li>
-            <li class="breadcrumb-item"><a href="javascript: void(0);">Inventario</a></li>
-            <li class="breadcrumb-item active">Ajustes de Inventario</li>
-          </ol>
+      <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h4 class="page-title mb-0"><i class="ri-equalizer-line text-primary me-1"></i> Ajustes de Inventario y Mermas</h4>
         </div>
-        <h4 class="page-title">Ajustes de Inventario</h4>
+        <button class="btn btn-primary fw-semibold" id="btn-nuevo-ajuste">
+          <i class="ri-add-circle-line me-1"></i> Solicitar Ajuste de Stock
+        </button>
       </div>
     </div>
   </div>
 
-  <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+  <div id="mensaje-alerta" style="position: fixed; top: 90px; right: 28px; z-index: 9999; min-width: 320px;"></div>
 
-  <!-- Tarjetas de Resumen -->
-  <div class="row">
+  <!-- Tarjetas de Resumen Modernas -->
+  <div class="row g-3 mb-3">
     <div class="col-md-4">
-      <div class="card tilebox-one">
+      <div class="card kpi-card accent-primary h-100 mb-0">
         <div class="card-body">
-          <i class="ri-equalizer-line float-end text-muted fs-24"></i>
-          <h6 class="text-muted text-uppercase mt-0">Total Ajustes</h6>
-          <h3 class="my-3" id="contador-total-ajustes">0</h3>
-          <span class="text-muted">Solicitudes registradas</span>
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h6 class="text-muted text-uppercase fw-bold fs-11 mt-0 mb-1">Total Ajustes</h6>
+              <h3 class="my-1 fw-extrabold text-dark" id="contador-total-ajustes">0</h3>
+              <span class="text-muted fs-12">Solicitudes registradas</span>
+            </div>
+            <div class="kpi-icon-box bg-primary-subtle text-primary">
+              <i class="ri-equalizer-line"></i>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card tilebox-one">
+      <div class="card kpi-card accent-warning h-100 mb-0">
         <div class="card-body">
-          <i class="ri-time-line float-end text-warning fs-24"></i>
-          <h6 class="text-muted text-uppercase mt-0">Ajustes Pendientes</h6>
-          <h3 class="my-3" id="contador-pendientes-ajustes">0</h3>
-          <span class="text-muted">Esperando aprobación</span>
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h6 class="text-muted text-uppercase fw-bold fs-11 mt-0 mb-1">Ajustes Pendientes</h6>
+              <h3 class="my-1 fw-extrabold text-warning" id="contador-pendientes-ajustes">0</h3>
+              <span class="text-muted fs-12">Esperando aprobación de jefatura</span>
+            </div>
+            <div class="kpi-icon-box bg-warning-subtle text-warning">
+              <i class="ri-time-line"></i>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card tilebox-one">
+      <div class="card kpi-card accent-success h-100 mb-0">
         <div class="card-body">
-          <i class="ri-checkbox-circle-line float-end text-success fs-24"></i>
-          <h6 class="text-muted text-uppercase mt-0">Aprobados / Rechazados</h6>
-          <h3 class="my-3"><span id="contador-aprobados-ajustes">0</span> / <span id="contador-rechazados-ajustes">0</span></h3>
-          <span class="text-muted">Solicitudes procesadas</span>
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h6 class="text-muted text-uppercase fw-bold fs-11 mt-0 mb-1">Aprobados / Rechazados</h6>
+              <h3 class="my-1 fw-extrabold"><span class="text-success" id="contador-aprobados-ajustes">0</span> <span class="text-muted fw-normal">/</span> <span class="text-danger" id="contador-rechazados-ajustes">0</span></h3>
+              <span class="text-muted fs-12">Solicitudes auditadas</span>
+            </div>
+            <div class="kpi-icon-box bg-success-subtle text-success">
+              <i class="ri-checkbox-circle-line"></i>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -99,10 +115,7 @@
               <p class="text-muted mb-0 fs-13">Lista de ajustes solicitados en el sistema</p>
             </div>
             <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-success" id="btn-nuevo-ajuste">
-                <i class="ri-add-line me-1"></i> Solicitar Ajuste
-              </button>
-              <button class="btn btn-sm btn-light" onclick="cargarAjustes()">
+              <button class="btn btn-sm btn-success" onclick="cargarAjustes()" title="Actualizar">
                 <i class="ri-refresh-line"></i>
               </button>
             </div>

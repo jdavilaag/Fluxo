@@ -16,7 +16,8 @@
 
   function setFechaHoy() {
     const hoy = new Date().toISOString().split("T")[0];
-    document.getElementById("ing_fecha_compra").value = hoy;
+    const el = document.getElementById("ing_fecha_compra");
+    if (el) el.value = hoy;
   }
 
   async function cargarProveedores() {
@@ -26,24 +27,22 @@
       const select = document.getElementById("ing_proveedor");
       select.innerHTML = '<option value="">Seleccione un proveedor</option>';
       todosProveedores.filter(p => p.estado == 1).forEach(p => {
-        select.innerHTML += `<option value="${p.id}">${p.razon_social}</option>`;
+        select.innerHTML += `<option value="${p.id}">${p.razon_social} (${p.ruc || "-"})</option>`;
       });
     } catch { console.error("Error al cargar proveedores"); }
   }
 
-async function cargarProductos() {
+  async function cargarProductos() {
     try {
       const res = await fetch("/productos/");
       todosProductos = await res.json();
-      //console.log("Productos cargados:", todosProductos);
       const select = document.getElementById("dtl_producto");
       select.innerHTML = '<option value="">Seleccione un producto</option>';
-      todosProductos.filter(p => p.estado == 1).forEach(p => {  // ←  filtro
-        select.innerHTML += `<option value="${p.id}" data-precio="${p.precio_compra}" data-vencimiento="${p.maneja_vencimiento}">${p.nombre_producto}</option>`;
+      todosProductos.filter(p => p.estado == 1).forEach(p => {
+        select.innerHTML += `<option value="${p.id}" data-precio="${p.precio_compra}" data-vencimiento="${p.maneja_vencimiento}">${p.nombre_producto} (Stock actual: ${p.stock_actual})</option>`;
       });
     } catch { console.error("Error al cargar productos"); }
-}
-
+  }
 
   async function cargarIngresos() {
     try {
@@ -83,10 +82,10 @@ async function cargarProductos() {
       tbody.innerHTML = pagina.map((ing, i) => `
         <tr>
           <td>${inicio + i + 1}</td>
-          <td>${ing.proveedor_nombre}</td>
-          <td>${ing.tipo_comprobante} ${ing.nro_comprobante || ""}</td>
+          <td class="fw-semibold text-dark">${ing.proveedor_nombre}</td>
+          <td><span class="badge bg-primary-subtle text-primary me-1">${ing.tipo_comprobante}</span>${ing.nro_comprobante || "-"}</td>
           <td>${ing.fecha_compra ? new Date(ing.fecha_compra).toLocaleDateString("es-PE") : "-"}</td>
-          <td>S/ ${parseFloat(ing.total).toFixed(2)}</td>
+          <td class="fw-bold text-dark">S/ ${parseFloat(ing.total).toFixed(2)}</td>
           <td><span class="badge bg-success-subtle text-success">${ing.estado}</span></td>
           <td class="text-center">
             <button class="btn btn-sm btn-soft-info" onclick="verDetalle(${ing.id})" title="Ver detalle">
@@ -109,8 +108,19 @@ async function cargarProductos() {
 
   function renderDetalles() {
     const tbody = document.getElementById("tabla-detalle");
+    const badgeItems = document.getElementById("ing-items-badge");
+    if (badgeItems) {
+      badgeItems.textContent = `${detalles.length} ${detalles.length === 1 ? "ítem" : "ítems"}`;
+    }
+
     if (detalles.length === 0) {
-      tbody.innerHTML = `<tr id="fila-vacia"><td colspan="7" class="text-center py-3 text-muted">No hay productos agregados.</td></tr>`;
+      tbody.innerHTML = `
+        <tr id="fila-vacia">
+          <td colspan="7" class="text-center py-5 text-muted">
+            <i class="ri-inbox-unarchive-line fs-36 d-block mb-2 opacity-50"></i>
+            No hay artículos en la orden de ingreso.
+          </td>
+        </tr>`;
       document.getElementById("total-ingreso").textContent = "S/ 0.00";
       return;
     }
@@ -118,11 +128,17 @@ async function cargarProductos() {
     tbody.innerHTML = detalles.map((d, i) => `
       <tr>
         <td>${i + 1}</td>
-        <td>${d.nombre_producto}</td>
-        <td>${d.cantidad}</td>
-        <td>S/ ${parseFloat(d.precio_costo).toFixed(2)}</td>
-        <td>S/ ${parseFloat(d.subtotal).toFixed(2)}</td>
-        <td>${d.fecha_vencimiento || "-"}</td>
+        <td class="fw-semibold text-dark">${d.nombre_producto}</td>
+        <td class="text-center">
+          <div class="qty-stepper mx-auto">
+            <button type="button" onclick="cambiarCantidadDetalleIngreso(${i}, -1)">-</button>
+            <span>${d.cantidad}</span>
+            <button type="button" onclick="cambiarCantidadDetalleIngreso(${i}, 1)">+</button>
+          </div>
+        </td>
+        <td class="text-end">S/ ${parseFloat(d.precio_costo).toFixed(2)}</td>
+        <td class="text-end fw-bold text-dark">S/ ${parseFloat(d.subtotal).toFixed(2)}</td>
+        <td class="text-center">${d.fecha_vencimiento ? `<span class="badge bg-warning-subtle text-warning">${d.fecha_vencimiento}</span>` : "-"}</td>
         <td class="text-center">
           <button class="btn btn-sm btn-soft-danger" onclick="quitarDetalle(${i})">
             <i class="ri-delete-bin-line"></i>
@@ -132,6 +148,19 @@ async function cargarProductos() {
 
     const total = detalles.reduce((acc, d) => acc + d.subtotal, 0);
     document.getElementById("total-ingreso").textContent = `S/ ${total.toFixed(2)}`;
+  }
+
+  function cambiarCantidadDetalleIngreso(index, delta) {
+    const item = detalles[index];
+    if (!item) return;
+    const nueva = item.cantidad + delta;
+    if (nueva <= 0) {
+      quitarDetalle(index);
+      return;
+    }
+    item.cantidad = nueva;
+    item.subtotal = Math.round(nueva * item.precio_costo * 100) / 100;
+    renderDetalles();
   }
 
   function quitarDetalle(index) {
@@ -149,10 +178,10 @@ async function cargarProductos() {
         return `
           <tr>
             <td>${i + 1}</td>
-            <td>${prod ? prod.nombre_producto : d.producto_id}</td>
+            <td class="fw-semibold">${prod ? prod.nombre_producto : d.producto_id}</td>
             <td>${d.cantidad}</td>
             <td>S/ ${parseFloat(d.precio_costo).toFixed(2)}</td>
-            <td>S/ ${parseFloat(d.subtotal).toFixed(2)}</td>
+            <td class="fw-bold">S/ ${parseFloat(d.subtotal).toFixed(2)}</td>
           </tr>`;
       }).join("");
 
@@ -174,11 +203,12 @@ async function cargarProductos() {
     document.getElementById("dtl_cantidad").value = "";
     document.getElementById("dtl_precio").value = "";
     document.getElementById("dtl_vencimiento").value = "";
+    document.getElementById("dtl_vencimiento").disabled = true;
     detalles = [];
     renderDetalles();
-    cargarProveedores();  // ← agrega esto
-    cargarProductos();    // ← agrega esto
-}
+    cargarProveedores();
+    cargarProductos();
+  }
 
   function mostrarAlerta(mensaje, tipo) {
     document.getElementById("mensaje-alerta").innerHTML = `
@@ -186,10 +216,12 @@ async function cargarProductos() {
         ${mensaje}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>`;
-    setTimeout(() => document.getElementById("mensaje-alerta").innerHTML = "", 5000);
+    setTimeout(() => {
+      const el = document.getElementById("mensaje-alerta");
+      if (el) el.innerHTML = "";
+    }, 5000);
   }
 
-  // Auto-llenar precio al seleccionar producto
   const selectProducto = document.getElementById("dtl_producto");
   if (selectProducto) {
     selectProducto.onchange = function () {
@@ -197,13 +229,15 @@ async function cargarProductos() {
       const precio = opt.getAttribute("data-precio");
       if (precio) document.getElementById("dtl_precio").value = precio;
 
+      const cantInput = document.getElementById("dtl_cantidad");
+      if (precio && !cantInput.value) cantInput.value = 1;
+
       const vencimiento = opt.getAttribute("data-vencimiento");
       document.getElementById("dtl_vencimiento").disabled = vencimiento != "1";
       if (vencimiento != "1") document.getElementById("dtl_vencimiento").value = "";
     };
   }
 
-  // Auto-formatear serie a mayúsculas
   const ingSerie = document.getElementById("ing_serie");
   if (ingSerie) {
     ingSerie.oninput = function () {
@@ -211,7 +245,6 @@ async function cargarProductos() {
     };
   }
 
-  // Relleno de ceros a la izquierda para número de 8 dígitos
   const ingNumero = document.getElementById("ing_numero");
   if (ingNumero) {
     ingNumero.onblur = function () {
@@ -238,7 +271,7 @@ async function cargarProductos() {
       const vencimiento = document.getElementById("dtl_vencimiento").value;
 
       if (!productoId || !cantidad || !precio) {
-        mostrarAlerta("Seleccione producto, cantidad y precio.", "danger"); return;
+        mostrarAlerta("Seleccione producto, cantidad y precio de costo.", "danger"); return;
       }
       if (cantidad <= 0) {
         mostrarAlerta("La cantidad debe ser mayor a 0.", "danger"); return;
@@ -309,7 +342,7 @@ async function cargarProductos() {
 
         const data = await res.json();
         if (res.ok) {
-          mostrarAlerta("Ingreso registrado correctamente.", "success");
+          mostrarAlerta("Ingreso de mercadería registrado correctamente.", "success");
           limpiarFormulario();
           cargarIngresos();
         } else {
@@ -328,9 +361,13 @@ async function cargarProductos() {
     };
   }
 
+  window.iniciarIngreso = iniciarIngreso;
   window.cargarIngresos = cargarIngresos;
+  window.cargarProveedores = cargarProveedores;
+  window.cargarProductos = cargarProductos;
   window.verDetalle = verDetalle;
   window.quitarDetalle = quitarDetalle;
+  window.cambiarCantidadDetalleIngreso = cambiarCantidadDetalleIngreso;
 
   iniciarIngreso();
 })();

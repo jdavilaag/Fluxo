@@ -2,10 +2,10 @@
   <!-- start page title -->
   <div class="row">
     <div class="col-12">
-      <div class="page-title-box d-flex justify-content-between align-items-center">
-        <h4 class="page-title">Gestión de Proveedores</h4>
+      <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h4 class="page-title mb-0"><i class="ri-truck-line text-primary me-1"></i> Directorio de Proveedores</h4>
         <button class="btn btn-primary fw-semibold" id="btn-nuevo-proveedor">
-          <i class="ri-truck-line me-1"></i> Nuevo Proveedor
+          <i class="ri-add-circle-line me-1"></i> Nuevo Proveedor
         </button>
       </div>
     </div>
@@ -21,19 +21,31 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+          <div id="mensaje-alerta" style="position: fixed; top: 90px; right: 28px; z-index: 9999; min-width: 320px;"></div>
+          <div class="alert alert-info-subtle text-info border-info-subtle py-2 px-3 mb-3 fs-12 d-flex align-items-center justify-content-between">
+            <span><i class="ri-magic-line me-1"></i> <strong>Autocompletado activo:</strong> Ingrese el <strong>RUC (11 dígitos)</strong> o el <strong>Correo Electrónico</strong> para rellenar Razón Social y Dirección.</span>
+            <span id="prov-autofill-status" class="badge bg-info text-white" style="display: none;"></span>
+          </div>
           <div class="row g-3">
-            <div class="col-md-3">
-              <label for="prov_ruc" class="form-label">RUC <span class="text-danger">*</span></label>
-              <input class="form-control" type="text" id="prov_ruc" placeholder="Ingrese RUC (11 dígitos)" maxlength="11" autocomplete="off"/>
+            <div class="col-md-4">
+              <label for="prov_ruc" class="form-label">RUC (11 dígitos) <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input class="form-control" type="text" id="prov_ruc" placeholder="Ej: 20100070970" maxlength="11" autocomplete="off"/>
+                <button class="btn btn-soft-primary" type="button" id="btn-buscar-ruc-prov" title="Consultar RUC en SUNAT">
+                  <i class="ri-search-eye-line"></i>
+                </button>
+              </div>
             </div>
-            <div class="col-md-5">
-              <label for="prov_razon_social" class="form-label">Razón Social <span class="text-danger">*</span></label>
-              <input class="form-control" type="text" id="prov_razon_social" placeholder="Ingrese razón social" autocomplete="off"/>
+            <div class="col-md-4">
+              <label for="prov_email" class="form-label">Correo Electrónico (Autocompletar)</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted"><i class="ri-mail-line"></i></span>
+                <input class="form-control" type="email" id="prov_email" placeholder="ventas@proveedor.com" autocomplete="off"/>
+              </div>
             </div>
             <div class="col-md-2">
               <label for="prov_telefono" class="form-label">Teléfono</label>
-              <input class="form-control" type="text" id="prov_telefono" placeholder="Ingrese teléfono" autocomplete="off"/>
+              <input class="form-control" type="text" id="prov_telefono" placeholder="Teléfono" autocomplete="off"/>
             </div>
             <div class="col-md-2">
               <label for="prov_estado" class="form-label">Estado</label>
@@ -42,13 +54,13 @@
                 <option value="0">Inactivo</option>
               </select>
             </div>
-            <div class="col-md-5">
-              <label for="prov_email" class="form-label">Email</label>
-              <input class="form-control" type="email" id="prov_email" placeholder="Ingrese email" autocomplete="off"/>
+            <div class="col-md-6">
+              <label for="prov_razon_social" class="form-label">Razón Social <span class="text-danger">*</span></label>
+              <input class="form-control" type="text" id="prov_razon_social" placeholder="Se autocompleta o ingrese razón social" autocomplete="off"/>
             </div>
-            <div class="col-md-7">
-              <label for="prov_direccion" class="form-label">Dirección</label>
-              <input class="form-control" type="text" id="prov_direccion" placeholder="Ingrese dirección" autocomplete="off"/>
+            <div class="col-md-6">
+              <label for="prov_direccion" class="form-label">Dirección Fiscal</label>
+              <input class="form-control" type="text" id="prov_direccion" placeholder="Dirección fiscal del proveedor" autocomplete="off"/>
             </div>
           </div>
         </div>

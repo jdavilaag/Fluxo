@@ -2,66 +2,83 @@
   <!-- start page title -->
   <div class="row">
     <div class="col-12">
-      <div class="page-title-box">
-        <h4 class="page-title">Reporte General de Movimientos de Inventario</h4>
+      <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h4 class="page-title mb-0"><i class="ri-bar-chart-box-line text-primary me-1"></i> Reporte General de Movimientos de Inventario</h4>
+        </div>
+        <button class="btn btn-sm btn-light border fw-semibold" onclick="cargarMovimientos()">
+          <i class="ri-refresh-line me-1"></i> Actualizar Reporte
+        </button>
       </div>
     </div>
   </div>
   <!-- end page title -->
 
-  <!-- Panel de Estadísticas (Aesthetics) -->
-  <div class="row">
-    <div class="col-md-3">
-      <div class="card card-body shadow-sm border rounded-3 p-3 mb-4 bg-white">
-        <div class="d-flex align-items-center">
-          <div class="avatar-lg bg-success-subtle rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
-            <i class="ri-arrow-left-down-line text-success fs-28"></i>
-          </div>
-          <div>
-            <h5 class="text-muted text-uppercase fs-12 mb-1 fw-semibold">Total Entradas</h5>
-            <h3 class="my-1 fw-bold text-success" id="stat-total-entradas">0.00</h3>
+  <!-- Panel de Estadísticas (KPIs) -->
+  <div class="row g-3 mb-3">
+    <div class="col-xl-3 col-md-6">
+      <div class="card kpi-card accent-success h-100 mb-0">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted text-uppercase fs-11 fw-bold d-block">Total Entradas</span>
+              <h3 class="my-1 fw-extrabold text-success" id="stat-total-entradas">0.00</h3>
+              <small class="text-muted fs-12">Unidades ingresadas</small>
+            </div>
+            <div class="kpi-icon-box bg-success-subtle text-success">
+              <i class="ri-arrow-left-down-line"></i>
+            </div>
           </div>
         </div>
       </div>
     </div>
     
-    <div class="col-md-3">
-      <div class="card card-body shadow-sm border rounded-3 p-3 mb-4 bg-white">
-        <div class="d-flex align-items-center">
-          <div class="avatar-lg bg-danger-subtle rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
-            <i class="ri-arrow-right-up-line text-danger fs-28"></i>
-          </div>
-          <div>
-            <h5 class="text-muted text-uppercase fs-12 mb-1 fw-semibold">Total Salidas</h5>
-            <h3 class="my-1 fw-bold text-danger" id="stat-total-salidas">0.00</h3>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="card card-body shadow-sm border rounded-3 p-3 mb-4 bg-white">
-        <div class="d-flex align-items-center">
-          <div class="avatar-lg bg-warning-subtle rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
-            <i class="ri-equalizer-line text-warning fs-28"></i>
-          </div>
-          <div>
-            <h5 class="text-muted text-uppercase fs-12 mb-1 fw-semibold">Total Ajustes</h5>
-            <h3 class="my-1 fw-bold text-warning" id="stat-total-ajustes">0</h3>
+    <div class="col-xl-3 col-md-6">
+      <div class="card kpi-card accent-danger h-100 mb-0">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted text-uppercase fs-11 fw-bold d-block">Total Salidas</span>
+              <h3 class="my-1 fw-extrabold text-danger" id="stat-total-salidas">0.00</h3>
+              <small class="text-muted fs-12">Unidades despachadas</small>
+            </div>
+            <div class="kpi-icon-box bg-danger-subtle text-danger">
+              <i class="ri-arrow-right-up-line"></i>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="col-md-3">
-      <div class="card card-body shadow-sm border rounded-3 p-3 mb-4 bg-white">
-        <div class="d-flex align-items-center">
-          <div class="avatar-lg bg-info-subtle rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
-            <i class="ri-file-list-3-line text-info fs-28"></i>
+    <div class="col-xl-3 col-md-6">
+      <div class="card kpi-card accent-warning h-100 mb-0">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted text-uppercase fs-11 fw-bold d-block">Total Ajustes</span>
+              <h3 class="my-1 fw-extrabold text-warning" id="stat-total-ajustes">0</h3>
+              <small class="text-muted fs-12">Ajustes aplicados</small>
+            </div>
+            <div class="kpi-icon-box bg-warning-subtle text-warning">
+              <i class="ri-equalizer-line"></i>
+            </div>
           </div>
-          <div>
-            <h5 class="text-muted text-uppercase fs-12 mb-1 fw-semibold">Operaciones</h5>
-            <h3 class="my-1 fw-bold text-info" id="stat-total-registros">0</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+      <div class="card kpi-card accent-info h-100 mb-0">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted text-uppercase fs-11 fw-bold d-block">Operaciones</span>
+              <h3 class="my-1 fw-extrabold text-info" id="stat-total-registros">0</h3>
+              <small class="text-muted fs-12">Registros filtrados</small>
+            </div>
+            <div class="kpi-icon-box bg-info-subtle text-info">
+              <i class="ri-file-list-3-line"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -138,6 +155,9 @@
                 <span class="input-group-text"><i class="ri-search-line"></i></span>
                 <input type="text" class="form-control" id="buscador-movimientos" placeholder="Buscar producto u observ..."/>
               </div>
+              <button class="btn btn-sm btn-soft-primary fw-semibold" id="btn-exportar-mov-csv" title="Exportar a Excel (CSV)">
+                <i class="ri-file-excel-2-line me-1"></i> Exportar CSV
+              </button>
               <button class="btn btn-sm btn-success" onclick="cargarMovimientos()">
                 <i class="ri-refresh-line"></i>
               </button>

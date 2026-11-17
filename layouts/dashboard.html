@@ -1,238 +1,240 @@
-<div class="container-fluid">
+<div class="container-fluid pt-3">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+      <h4 class="mb-0 fw-extrabold"><i class="ri-pie-chart-2-line text-primary me-1"></i> Dashboard Ejecutivo</h4>
+      <span class="text-muted fs-13">Indicadores financieros, inventario y actividad comercial en tiempo real</span>
+    </div>
+    <a href="/" hx-get="/" hx-select="#vista-escritorio-principal" hx-target="#main-content" hx-swap="innerHTML" class="btn btn-sm btn-light border fw-semibold">
+      <i class="ri-apps-2-line text-primary me-1"></i> Volver al Escritorio
+    </a>
+  </div>
 
-                        <!-- start page title -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                    <div class="page-title-right">
-                                        <ol class="breadcrumb m-0">
-                                            <li class="breadcrumb-item"><a href="javascript: void(0);">FLUXO SHOP</a></li>
-                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboards</a></li>
-                                            <li class="breadcrumb-item active">Welcome!</li>
-                                        </ol>
-                                    </div>
-                                    <h4 class="page-title">Welcome!</h4>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end page title -->
+  <!-- Tarjetas KPI Principales -->
+  <div class="row">
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card widget-flat text-bg-purple">
+        <div class="card-body">
+          <div class="float-end">
+            <i class="ri-wallet-3-line widget-icon"></i>
+          </div>
+          <h6 class="text-uppercase mt-0 text-white-50 fw-bold fs-12" title="Ingresos">Ingresos Acumulados</h6>
+          <h2 class="my-2 text-white fw-bold" id="dash-ingresos">S/. 0.00</h2>
+          <p class="mb-0 text-white-50 fs-13">
+            <i class="ri-line-chart-line me-1"></i><span class="text-nowrap">Facturación neta registrada</span>
+          </p>
+        </div>
+      </div>
+    </div>
 
-                        <div class="row">
-                            <div class="col-xxl-3 col-sm-6">
-                                <div class="card widget-flat text-bg-pink">
-                                    <div class="card-body">
-                                        <div class="float-end">
-                                            <i class="ri-group-2-line widget-icon"></i>
-                                        </div>
-                                        <h6 class="text-uppercase mt-0" title="Clientes">Clientes Activos</h6>
-                                        <h2 class="my-2" id="dash-clientes">-</h2>
-                                        <p class="mb-0">
-                                            <span class="text-nowrap">Clientes registrados en el sistema</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div> <!-- end col-->
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card widget-flat text-bg-info">
+        <div class="card-body">
+          <div class="float-end">
+            <i class="ri-shopping-basket-2-line widget-icon"></i>
+          </div>
+          <h6 class="text-uppercase mt-0 text-white-50 fw-bold fs-12" title="Ventas">Ventas Realizadas</h6>
+          <h2 class="my-2 text-white fw-bold" id="dash-ventas">0</h2>
+          <p class="mb-0 text-white-50 fs-13">
+            <i class="ri-file-list-3-line me-1"></i><span class="text-nowrap">Comprobantes emitidos</span>
+          </p>
+        </div>
+      </div>
+    </div>
 
-                            <div class="col-xxl-3 col-sm-6">
-                                <div class="card widget-flat text-bg-purple">
-                                    <div class="card-body">
-                                        <div class="float-end">
-                                            <i class="ri-wallet-2-line widget-icon"></i>
-                                        </div>
-                                        <h6 class="text-uppercase mt-0" title="Ingresos">Ingresos Totales</h6>
-                                        <h2 class="my-2" id="dash-ingresos">-</h2>
-                                        <p class="mb-0">
-                                            <span class="text-nowrap">Total de ingresos en Soles (S/.)</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div> <!-- end col-->
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card widget-flat text-bg-primary">
+        <div class="card-body">
+          <div class="float-end">
+            <i class="ri-store-2-line widget-icon"></i>
+          </div>
+          <h6 class="text-uppercase mt-0 text-white-50 fw-bold fs-12" title="Productos">Productos Activos</h6>
+          <h2 class="my-2 text-white fw-bold" id="dash-productos">0</h2>
+          <p class="mb-0 text-white-50 fs-13">
+            <i class="ri-checkbox-circle-line me-1"></i><span class="text-nowrap">Disponibles en catálogo</span>
+          </p>
+        </div>
+      </div>
+    </div>
 
-                            <div class="col-xxl-3 col-sm-6">
-                                <div class="card widget-flat text-bg-info">
-                                    <div class="card-body">
-                                        <div class="float-end">
-                                            <i class="ri-shopping-basket-line widget-icon"></i>
-                                        </div>
-                                        <h6 class="text-uppercase mt-0" title="Ventas">Ventas Realizadas</h6>
-                                        <h2 class="my-2" id="dash-ventas">-</h2>
-                                        <p class="mb-0">
-                                            <span class="text-nowrap">Comprobantes de venta emitidos</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div> <!-- end col-->
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card widget-flat text-bg-pink">
+        <div class="card-body">
+          <div class="float-end">
+            <i class="ri-group-2-line widget-icon"></i>
+          </div>
+          <h6 class="text-uppercase mt-0 text-white-50 fw-bold fs-12" title="Clientes">Clientes Activos</h6>
+          <h2 class="my-2 text-white fw-bold" id="dash-clientes">0</h2>
+          <p class="mb-0 text-white-50 fs-13">
+            <i class="ri-user-heart-line me-1"></i><span class="text-nowrap">Cartera de clientes</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                            <div class="col-xxl-3 col-sm-6">
-                                <div class="card widget-flat text-bg-primary">
-                                    <div class="card-body">
-                                        <div class="float-end">
-                                            <i class="ri-store-2-line widget-icon"></i>
-                                        </div>
-                                        <h6 class="text-uppercase mt-0" title="Productos">Productos Activos</h6>
-                                        <h2 class="my-2" id="dash-productos">-</h2>
-                                        <p class="mb-0">
-                                            <span class="text-nowrap">Productos en catálogo activo</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div> <!-- end col-->
-                        </div>
+  <!-- Gráficos Principales -->
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+              <h5 class="header-title mb-0">Reporte de Ventas Semanales</h5>
+              <small class="text-muted">Evolución de ingresos y número de operaciones (últimos 7 días)</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span id="dash-semana-variacion" class="badge bg-light text-muted">0.0% vs sem. ant.</span>
+              <div class="card-widgets">
+                <a data-bs-toggle="collapse" href="#weeklysales-collapse" role="button" aria-expanded="true" aria-controls="weeklysales-collapse"><i class="ri-subtract-line"></i></a>
+              </div>
+            </div>
+          </div>
 
-                        <div class="row">
-                            <div class="col-lg-8">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="card-widgets">
-                                            <a href="javascript:;" data-bs-toggle="reload"><i class="ri-refresh-line"></i></a>
-                                            <a data-bs-toggle="collapse" href="#weeklysales-collapse" role="button" aria-expanded="false" aria-controls="weeklysales-collapse"><i class="ri-subtract-line"></i></a>
-                                        </div>
-                                        <h5 class="header-title mb-0">Reporte de Ventas Semanales</h5>
+          <div id="weeklysales-collapse" class="collapse pt-2 show">
+            <div dir="ltr">
+              <div id="revenue-chart" class="apex-charts" data-colors="#3bc0c3,#1a2942,#d1d7d973"></div>
+            </div>
 
-                                        <div id="weeklysales-collapse" class="collapse pt-3 show">
-                                            <div dir="ltr">
-                                                <div id="revenue-chart" class="apex-charts" data-colors="#3bc0c3,#1a2942,#d1d7d973"></div>
-                                            </div>
-    
-                                            <div class="row text-center">
-                                                <div class="col">
-                                                    <p class="text-muted mt-3">Semana Actual</p>
-                                                    <h3 class=" mb-0">
-                                                        <span id="dash-semana-actual">S/. 0.00</span>
-                                                    </h3>
-                                                </div>
-                                                <div class="col">
-                                                    <p class="text-muted mt-3">Semana Anterior</p>
-                                                    <h3 class=" mb-0">
-                                                        <span id="dash-semana-anterior">S/. 0.00</span>
-                                                    </h3>
-                                                </div>
-                                                <div class="col">
-                                                    <p class="text-muted mt-3">Ticket Promedio</p>
-                                                    <h3 class=" mb-0">
-                                                        <span id="dash-ticket-promedio">S/. 0.00</span>
-                                                    </h3>
-                                                </div>
-                                                <div class="col">
-                                                    <p class="text-muted mt-3">Nuevos Clientes</p>
-                                                    <h3 class=" mb-0">
-                                                        <span id="dash-nuevos-clientes">0</span>
-                                                    </h3>
-                                                </div>
-                                            </div>
-                                        </div>
+            <div class="row text-center border-top pt-3 mt-2 g-2">
+              <div class="col-6 col-sm-3">
+                <p class="text-muted mb-1 fs-12 text-uppercase fw-semibold">Semana Actual</p>
+                <h4 class="mb-0 fw-bold text-primary">
+                  <span id="dash-semana-actual">S/. 0.00</span>
+                </h4>
+              </div>
+              <div class="col-6 col-sm-3">
+                <p class="text-muted mb-1 fs-12 text-uppercase fw-semibold">Semana Anterior</p>
+                <h4 class="mb-0 fw-bold">
+                  <span id="dash-semana-anterior">S/. 0.00</span>
+                </h4>
+              </div>
+              <div class="col-6 col-sm-3">
+                <p class="text-muted mb-1 fs-12 text-uppercase fw-semibold">Ticket Promedio</p>
+                <h4 class="mb-0 fw-bold text-success">
+                  <span id="dash-ticket-promedio">S/. 0.00</span>
+                </h4>
+              </div>
+              <div class="col-6 col-sm-3">
+                <p class="text-muted mb-1 fs-12 text-uppercase fw-semibold">Nuevos Clientes</p>
+                <h4 class="mb-0 fw-bold text-info">
+                  <span id="dash-nuevos-clientes">0</span>
+                </h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-                                    </div> <!-- end card-body-->
-                                </div> <!-- end card-->
-                            </div> <!-- end col-->
-                            <div class="col-lg-4">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="card-widgets">
-                                            <a href="javascript:;" data-bs-toggle="reload"><i class="ri-refresh-line"></i></a>
-                                            <a data-bs-toggle="collapse" href="#yearly-sales-collapse" role="button" aria-expanded="false" aria-controls="yearly-sales-collapse"><i class="ri-subtract-line"></i></a>
-                                        </div>
-                                        <h5 class="header-title mb-0">Tendencia de Ingresos Mensuales</h5>
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-widgets">
+            <a data-bs-toggle="collapse" href="#yearly-sales-collapse" role="button" aria-expanded="true" aria-controls="yearly-sales-collapse"><i class="ri-subtract-line"></i></a>
+          </div>
+          <h5 class="header-title mb-0">Tendencia de Ingresos Mensuales</h5>
+          <small class="text-muted">Últimos 6 meses</small>
 
-                                        <div id="yearly-sales-collapse" class="collapse pt-3 show">
-                                            <div dir="ltr">
-                                                <div id="yearly-sales-chart" class="apex-charts" data-colors="#3bc0c3,#1a2942,#d1d7d973"></div>
-                                            </div>
-                                            <div class="row text-center">
-                                                <div class="col">
-                                                    <p class="text-muted mt-3 mb-2">Este Mes</p>
-                                                    <h4 class="mb-0" id="dash-mes-actual">S/. 0.00</h4>
-                                                </div>
-                                                <div class="col">
-                                                    <p class="text-muted mt-3 mb-2">Mes Anterior</p>
-                                                    <h4 class="mb-0" id="dash-mes-anterior">S/. 0.00</h4>
-                                                </div>
-                                                <div class="col">
-                                                    <p class="text-muted mt-3 mb-2">Acumulado Anual</p>
-                                                    <h4 class="mb-0" id="dash-acumulado-anual">S/. 0.00</h4>
-                                                </div>
-                                            </div>
-                                        </div>
+          <div id="yearly-sales-collapse" class="collapse pt-3 show">
+            <div dir="ltr">
+              <div id="yearly-sales-chart" class="apex-charts" data-colors="#3bc0c3,#1a2942,#d1d7d973"></div>
+            </div>
+            <div class="row text-center border-top pt-3 mt-2">
+              <div class="col">
+                <p class="text-muted mb-1 fs-12">Este Mes</p>
+                <h5 class="mb-0 fw-bold text-primary" id="dash-mes-actual">S/. 0.00</h5>
+              </div>
+              <div class="col">
+                <p class="text-muted mb-1 fs-12">Mes Anterior</p>
+                <h5 class="mb-0 fw-bold" id="dash-mes-anterior">S/. 0.00</h5>
+              </div>
+              <div class="col">
+                <p class="text-muted mb-1 fs-12">Anual</p>
+                <h5 class="mb-0 fw-bold text-success" id="dash-acumulado-anual">S/. 0.00</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-                                    </div> <!-- end card-body-->
-                                </div> <!-- end card-->
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-grow-1 overflow-hidden">
+              <p class="text-uppercase fw-bold text-muted text-truncate mb-1 fs-12">Método de Pago Preferido</p>
+              <h4 class="fs-20 fw-bold text-dark mb-0" id="dash-pago-destacado">Sin datos</h4>
+              <small class="text-muted">Distribución por monto cobrado</small>
+            </div>
+            <div class="flex-shrink-0">
+              <div id="us-share-chart" class="apex-charts" dir="ltr"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-grow-1 overflow-hidden">
-                                                <h4 class="fs-20 fw-semibold" id="dash-pago-destacado">-</h4>
-                                                <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Métodos de Pago</p>
-                                            </div>
-                                            <div class="flex-shrink-0">
-                                                <div id="us-share-chart" class="apex-charts" dir="ltr"></div>
-                                            </div>
-                                        </div>
-                                    </div><!-- end card body -->
-                                </div> <!-- end card-->
-                            </div> <!-- end col-->
+  <!-- Tablas Inferiores: Stock Crítico y Últimas Ventas -->
+  <div class="row">
+    <div class="col-xl-4">
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="header-title mb-0"><i class="ri-alarm-warning-line text-warning me-1"></i>Productos con Bajo Stock</h5>
+              <small class="text-muted">Requieren reabastecimiento pronto</small>
+            </div>
+            <div class="card-widgets">
+              <a data-bs-toggle="collapse" href="#low-stock-collapse" role="button" aria-expanded="true" aria-controls="low-stock-collapse"><i class="ri-subtract-line"></i></a>
+            </div>
+          </div>
 
-                        </div>
-                        <!-- end row -->
+          <div id="low-stock-collapse" class="collapse show">
+            <div class="card-body py-0 mb-2" style="height: 310px; overflow-y: auto;">
+              <ul class="list-group list-group-flush" id="dash-bajo-stock-lista">
+                <li class="list-group-item text-center text-muted py-4">Cargando productos...</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-                        <div class="row">
-                            <div class="col-xl-4">
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="p-3">
-                                            <div class="card-widgets">
-                                                <a href="javascript:;" data-bs-toggle="reload"><i class="ri-refresh-line"></i></a>
-                                                <a data-bs-toggle="collapse" href="#low-stock-collapse" role="button" aria-expanded="false" aria-controls="low-stock-collapse"><i class="ri-subtract-line"></i></a>
-                                            </div>
-                                            <h5 class="header-title mb-0">Productos con Bajo Stock</h5>
-                                        </div>
-    
-                                        <div id="low-stock-collapse" class="collapse show">
-                                            <div class="card-body py-0 mb-3" style="height: 320px; overflow-y: auto;">
-                                                <ul class="list-group list-group-flush" id="dash-bajo-stock-lista">
-                                                    <li class="list-group-item text-center text-muted py-3">Cargando productos...</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end card-->
-                            </div> <!-- end col-->
+    <div class="col-xl-8">
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="header-title mb-0"><i class="ri-receipt-line text-primary me-1"></i>Últimas Ventas Realizadas</h5>
+              <small class="text-muted">Operaciones más recientes en punto de venta</small>
+            </div>
+            <a href="/ventas" hx-get="/ventas" hx-target="#main-content" hx-swap="innerHTML" class="btn btn-sm btn-soft-primary fw-semibold">
+              Ver todas <i class="ri-arrow-right-s-line align-middle"></i>
+            </a>
+          </div>
 
-                            <div class="col-xl-8">
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="p-3">
-                                            <div class="card-widgets">
-                                                <a href="javascript:;" data-bs-toggle="reload"><i class="ri-refresh-line"></i></a>
-                                                <a data-bs-toggle="collapse" href="#recent-sales-collapse" role="button" aria-expanded="false" aria-controls="recent-sales-collapse"><i class="ri-subtract-line"></i></a>
-                                            </div>
-                                            <h5 class="header-title mb-0">Últimas Ventas Realizadas</h5>
-                                        </div>
-    
-                                        <div id="recent-sales-collapse" class="collapse show">
-                                            <div class="table-responsive" style="height: 320px; overflow-y: auto;">
-                                                <table class="table table-nowrap table-hover mb-0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Nro. Comprobante</th>
-                                                            <th>Fecha / Hora</th>
-                                                            <th>Cliente</th>
-                                                            <th>Total</th>
-                                                            <th>Estado</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="dash-recent-sales-body">
-                                                        <tr>
-                                                            <td colspan="5" class="text-center text-muted">Cargando ventas...</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>        
-                                        </div>
-                                    </div>                           
-                                </div> <!-- end card-->
-                            </div> <!-- end col-->
-                        </div>
-                        <!-- end row -->
-
-                    </div>
+          <div id="recent-sales-collapse" class="collapse show">
+            <div class="table-responsive" style="height: 310px; overflow-y: auto;">
+              <table class="table table-nowrap table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Nro. Comprobante</th>
+                    <th>Fecha / Hora</th>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-recent-sales-body">
+                  <tr>
+                    <td colspan="5" class="text-center text-muted py-4">Cargando ventas...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

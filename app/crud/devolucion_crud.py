@@ -6,6 +6,8 @@ from app.models.lote_model import Lote
 from app.models.kardex_model import KardexMovimiento
 from app.models.venta_model import VentaHdr
 from app.models.ingreso_model import IngresoHdr
+from app.models.caja_model import CajaMovimiento
+from app.crud.caja_crud import get_caja_activa
 from app.schema.devolucion_schem import DevolucionRegistro
 from fastapi import HTTPException
 from decimal import Decimal
@@ -103,6 +105,7 @@ def crear_devolucion(db: Session, data: DevolucionRegistro, usuario_id: int):
         db.flush()
 
         # Process items
+        total_devolucion = Decimal("0.00")
         for item in data.items:
             prod = db.query(Producto).filter(Producto.id == item.producto_id).first()
             if not prod:
@@ -116,6 +119,7 @@ def crear_devolucion(db: Session, data: DevolucionRegistro, usuario_id: int):
 
             cantidad_dec = Decimal(str(item.cantidad))
             subtotal_dec = Decimal(str(item.cantidad * item.precio_unitario))
+            total_devolucion += subtotal_dec
 
             # Check stock changes
             stock_anterior = prod.stock_actual
@@ -176,6 +180,19 @@ def crear_devolucion(db: Session, data: DevolucionRegistro, usuario_id: int):
             )
             db.add(kardex)
 
+        # Si es devolución de venta y hay caja activa, registrar el egreso en caja
+        if data.tipo_devolucion == "VENTA" and total_devolucion > 0:
+            caja_activa = get_caja_activa(db)
+            if caja_activa:
+                mov_caja = CajaMovimiento(
+                    caja_id=caja_activa.id,
+                    tipo="DEVOLUCION",
+                    monto=float(total_devolucion),
+                    descripcion=f"Devolución de Venta #{hdr.id}",
+                    referencia_id=hdr.id
+                )
+                db.add(mov_caja)
+
         db.commit()
         db.refresh(hdr)
         return get_devolucion_by_id(db, hdr.id)
@@ -192,8 +209,10 @@ def anular_devolucion(db: Session, id: int, usuario_id: int):
             raise HTTPException(status_code=400, detail="Esta devolución ya está anulada")
 
         details = db.query(DevolucionDtl).filter(DevolucionDtl.devolucion_hdr_id == id).all()
+        total_anulado = Decimal("0.00")
 
         for dtl in details:
+            total_anulado += Decimal(str(dtl.subtotal or (dtl.cantidad * dtl.precio_unitario)))
             prod = db.query(Producto).filter(Producto.id == dtl.producto_id).first()
             if not prod:
                 continue
@@ -250,6 +269,18 @@ def anular_devolucion(db: Session, id: int, usuario_id: int):
                 referencia_id=hdr.id
             )
             db.add(kardex)
+
+        if hdr.tipo_devolucion == "VENTA" and total_anulado > 0:
+            caja_activa = get_caja_activa(db)
+            if caja_activa:
+                mov_caja = CajaMovimiento(
+                    caja_id=caja_activa.id,
+                    tipo="INGRESO",
+                    monto=float(total_anulado),
+                    descripcion=f"Anulación de Devolución #{hdr.id}",
+                    referencia_id=hdr.id
+                )
+                db.add(mov_caja)
 
         hdr.estado = "ANULADO"
         db.commit()

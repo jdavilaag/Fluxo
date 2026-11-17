@@ -1,0 +1,286 @@
+<div class="container-fluid pt-3" id="vista-etiquetas-qr">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+      <h4 class="mb-0 fw-extrabold">
+        <i class="ri-qr-code-line text-primary me-1"></i> Centro de Etiquetas QR y Códigos de Barras (SKU)
+      </h4>
+      <span class="text-muted fs-13">Generación de códigos SKU, códigos QR de almacén y códigos de barras para lectura en POS</span>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <button type="button" class="btn btn-sm btn-warning fw-semibold" id="btn-autogenerar-skus-masivo" title="Asignar SKU automático a todos los productos que no tienen código">
+        <i class="ri-magic-line me-1"></i> Autogenerar SKUs Faltantes
+      </button>
+      <a href="/" hx-get="/" hx-select="#vista-escritorio-principal" hx-target="#main-content" hx-swap="innerHTML" class="btn btn-sm btn-light border fw-semibold">
+        <i class="ri-apps-2-line text-primary me-1"></i> Volver al Escritorio
+      </a>
+    </div>
+  </div>
+
+  <!-- ==================== TARJETAS KPI DE ETIQUETADO ==================== -->
+  <div class="row g-3 mb-3">
+    <div class="col-xl-3 col-sm-6">
+      <div class="card kpi-card accent-primary mb-0">
+        <div class="card-body py-3 d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-muted text-uppercase fw-bold fs-11 d-block">Total Productos</span>
+            <h3 class="fw-extrabold mb-0 mt-1 text-dark" id="etq-kpi-total">0</h3>
+            <small class="text-muted fs-12">Activos en almacén</small>
+          </div>
+          <div class="kpi-icon-box bg-primary-subtle text-primary">
+            <i class="ri-box-3-line"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+      <div class="card kpi-card accent-success mb-0">
+        <div class="card-body py-3 d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-muted text-uppercase fw-bold fs-11 d-block">Mapeados con SKU / Código</span>
+            <h3 class="fw-extrabold mb-0 mt-1 text-success" id="etq-kpi-con-codigo">0</h3>
+            <small class="text-muted fs-12">Listos para escanear</small>
+          </div>
+          <div class="kpi-icon-box bg-success-subtle text-success">
+            <i class="ri-qr-scan-2-line"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+      <div class="card kpi-card accent-warning mb-0">
+        <div class="card-body py-3 d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-muted text-uppercase fw-bold fs-11 d-block">Sin Código Asignado</span>
+            <h3 class="fw-extrabold mb-0 mt-1 text-warning" id="etq-kpi-sin-codigo">0</h3>
+            <small class="text-muted fs-12">Requieren generar SKU</small>
+          </div>
+          <div class="kpi-icon-box bg-warning-subtle text-warning">
+            <i class="ri-error-warning-line"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+      <div class="card kpi-card accent-info mb-0">
+        <div class="card-body py-3 d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-muted text-uppercase fw-bold fs-11 d-block">Etiquetas en Cola</span>
+            <h3 class="fw-extrabold mb-0 mt-1 text-info" id="etq-kpi-cola">0</h3>
+            <small class="text-muted fs-12">Listas para imprimir</small>
+          </div>
+          <div class="kpi-icon-box bg-info-subtle text-info">
+            <i class="ri-printer-cloud-line"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="etq-alerta-container"></div>
+
+  <div class="row g-3">
+    <!-- ==================== COLUMNA IZQUIERDA: CATÁLOGO Y ASIGNACIÓN DE SKU ==================== -->
+    <div class="col-xl-7">
+      <div class="card mb-0">
+        <div class="card-body p-0 d-flex flex-column">
+          <div class="p-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h5 class="header-title mb-0"><i class="ri-barcode-box-line text-primary me-1"></i>1. Productos del Almacén y Asignación de SKU</h5>
+              <small class="text-muted">Genera códigos SKU/EAN y envía productos a la cola de impresión de etiquetas</small>
+            </div>
+            <div class="d-flex gap-1">
+              <button type="button" class="btn btn-xs btn-soft-primary fw-semibold" id="btn-agregar-todos-stock">
+                <i class="ri-stack-line me-1"></i> Cargar según Stock Actual
+              </button>
+            </div>
+          </div>
+
+          <!-- Barra de búsqueda y filtros -->
+          <div class="p-3 bg-light border-bottom">
+            <div class="row g-2">
+              <div class="col-md-5">
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text bg-white"><i class="ri-search-line text-muted"></i></span>
+                  <input type="text" class="form-control" id="etq-buscador" placeholder="Buscar producto o código SKU..." autocomplete="off" />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <select class="form-select form-select-sm" id="etq-filtro-categoria">
+                  <option value="">Todas las categorías</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select class="form-select form-select-sm" id="etq-filtro-estado-codigo">
+                  <option value="TODOS">Todos los productos</option>
+                  <option value="CON_CODIGO">Con SKU / Código</option>
+                  <option value="SIN_CODIGO">Sin Código (Pendientes)</option>
+                  <option value="CON_STOCK">Con Stock &gt; 0</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabla de productos -->
+          <div class="table-responsive flex-grow-1">
+            <table class="table table-hover table-nowrap align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 45px;">#</th>
+                  <th>Producto / Categoría</th>
+                  <th style="min-width: 190px;">Código SKU / Barras</th>
+                  <th class="text-center">Stock</th>
+                  <th class="text-end">Precio</th>
+                  <th class="text-center">Etiquetar</th>
+                </tr>
+              </thead>
+              <tbody id="etq-tabla-productos">
+                <tr>
+                  <td colspan="6" class="text-center py-4 text-muted">
+                    <i class="ri-loader-4-line me-1"></i> Cargando catálogo de almacén...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pie de Paginación -->
+          <div class="p-3 border-top bg-light d-flex justify-content-between align-items-center flex-wrap gap-2 mt-auto">
+            <small class="text-muted fw-medium" id="etq-info-paginacion">Mostrando 0 de 0 productos</small>
+            <div class="d-flex gap-1" id="etq-controles-paginacion"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== COLUMNA DERECHA: VISTA PREVIA EN VIVO Y COLA DE IMPRESIÓN ==================== -->
+    <div class="col-xl-5">
+      <!-- Tarjeta de Diseño y Vista Previa de Etiqueta -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+            <div>
+              <h5 class="header-title mb-0"><i class="ri-qr-code-fill text-primary me-1"></i>2. Diseño y Vista Previa de Etiqueta</h5>
+              <small class="text-muted">Personaliza el formato antes de enviar a la impresora</small>
+            </div>
+            <span class="badge bg-primary-subtle text-primary" id="etq-preview-sku-badge">Vista Previa</span>
+          </div>
+
+          <!-- Lienzo de Vista Previa de la Etiqueta -->
+          <div class="bg-light rounded-4 p-3 border text-center mb-3 d-flex align-items-center justify-content-center" style="min-height: 210px;">
+            <div id="etq-live-preview-card" class="bg-white border shadow-sm rounded-3 p-3 text-center mx-auto" style="width: 270px; color: #000;">
+              <div id="etq-prev-empresa" class="fw-extrabold text-uppercase" style="font-size: 11px; letter-spacing: 1px; border-bottom: 1px dashed #ccc; padding-bottom: 3px; margin-bottom: 5px;">
+                FLUXO SHOP
+              </div>
+              <div id="etq-prev-nombre" class="fw-bold text-truncate" style="font-size: 13px; line-height: 1.2;">
+                Seleccione un producto
+              </div>
+              <div id="etq-prev-cat" class="text-muted" style="font-size: 10px; margin-bottom: 6px;">
+                Categoría • UND
+              </div>
+
+              <!-- Contenedor visual QR y/o Barcode -->
+              <div class="d-flex align-items-center justify-content-center gap-2 my-2 flex-wrap" id="etq-prev-codes-wrapper">
+                <div id="etq-prev-qr-container" class="p-1 bg-white" style="display: inline-block;"></div>
+                <div id="etq-prev-barcode-container" class="bg-white" style="display: none;">
+                  <svg id="etq-prev-barcode-svg" style="max-width: 100%; height: auto; display: block;"></svg>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center border-top pt-1 mt-1">
+                <span class="font-monospace fw-bold" style="font-size: 11px;" id="etq-prev-sku-text">SKU-00000</span>
+                <span class="fw-extrabold" style="font-size: 13px;" id="etq-prev-precio">S/ 0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controles de configuración de etiqueta -->
+          <div class="row g-2">
+            <div class="col-sm-6">
+              <label class="form-label mb-1 fs-12 fw-semibold">Tipo de Código en Etiqueta</label>
+              <select class="form-select form-select-sm" id="etq-cfg-tipo">
+                <option value="QR" selected>Código QR (2D Almacén / POS)</option>
+                <option value="BARCODE">Código de Barras (1D Code-128)</option>
+                <option value="AMBOS">Híbrido (QR + Código de Barras)</option>
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label mb-1 fs-12 fw-semibold">Formato de Papel / Impresora</label>
+              <select class="form-select form-select-sm" id="etq-cfg-papel">
+                <option value="TERMICA_1" selected>Rollo Térmico 50x30mm (1 col)</option>
+                <option value="TERMICA_2">Rollo Térmico Doble (2 cols)</option>
+                <option value="A4_3X7">Hoja A4 Adhesiva (3 x 7 = 21 etq.)</option>
+                <option value="A4_4X10">Hoja A4 Compacta (4 x 10 = 40 etq.)</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label mb-1 fs-12 fw-semibold">Datos Codificados dentro del QR</label>
+              <select class="form-select form-select-sm" id="etq-cfg-qr-modo">
+                <option value="SOLO_SKU" selected>Solo Código SKU / Barras (Ideal para escanear directo en Ventas POS)</option>
+                <option value="FICHA">Ficha de Almacén (SKU + Nombre + Categoría + Precio)</option>
+              </select>
+            </div>
+            <div class="col-12 pt-1">
+              <div class="d-flex flex-wrap gap-3">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="etq-cfg-show-empresa" checked />
+                  <label class="form-check-label fs-12" for="etq-cfg-show-empresa">Mostrar Empresa</label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="etq-cfg-show-precio" checked />
+                  <label class="form-check-label fs-12" for="etq-cfg-show-precio">Mostrar Precio (S/)</label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="etq-cfg-show-cat" checked />
+                  <label class="form-check-label fs-12" for="etq-cfg-show-cat">Mostrar Categoría</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Cola de Impresión -->
+      <div class="card mb-0">
+        <div class="card-body p-0">
+          <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="header-title mb-0"><i class="ri-printer-line text-primary me-1"></i>3. Cola de Impresión de Etiquetas</h5>
+              <small class="text-muted">Define cuántas etiquetas imprimir por cada producto</small>
+            </div>
+            <button type="button" class="btn btn-xs btn-soft-danger" id="btn-vaciar-cola-etq" title="Vaciar cola">
+              <i class="ri-delete-bin-line me-1"></i> Vaciar
+            </button>
+          </div>
+
+          <div class="table-responsive" style="max-height: 230px; overflow-y: auto;">
+            <table class="table table-sm table-nowrap align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="ps-3">Producto / SKU</th>
+                  <th class="text-center" style="width: 130px;">Copias</th>
+                  <th class="text-center pe-3">Quitar</th>
+                </tr>
+              </thead>
+              <tbody id="etq-tabla-cola">
+                <tr>
+                  <td colspan="3" class="text-center py-4 text-muted fs-13">
+                    No hay etiquetas en cola. Haz clic en <strong>+1</strong> o <strong>+Stock</strong> en la lista izquierda.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="p-3 bg-light border-top d-flex gap-2">
+            <button type="button" class="btn btn-primary fw-bold flex-grow-1 py-2" id="btn-imprimir-lote-etiquetas">
+              <i class="ri-printer-fill me-1"></i> Imprimir Etiquetas (<span id="etq-btn-total-count">0</span>)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

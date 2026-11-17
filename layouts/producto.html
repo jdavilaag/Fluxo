@@ -1,16 +1,93 @@
 <div class="container-fluid">
-  <!-- start page title -->
+  <!-- Cabecera -->
   <div class="row">
     <div class="col-12">
-      <div class="page-title-box d-flex justify-content-between align-items-center">
-        <h4 class="page-title">Gestión de Productos</h4>
-        <button class="btn btn-primary fw-semibold" id="btn-nuevo-producto">
-          <i class="ri-box-3-line me-1"></i> Nuevo Producto
-        </button>
+      <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h4 class="page-title mb-0"><i class="ri-box-3-line text-primary me-1"></i> Catálogo y Control de Productos</h4>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="/ingresos" hx-get="/ingresos" hx-target="#main-content" hx-swap="innerHTML" class="btn btn-soft-success fw-semibold">
+            <i class="ri-inbox-archive-line me-1"></i> Abastecer Stock
+          </a>
+          <button class="btn btn-primary fw-semibold" id="btn-nuevo-producto">
+            <i class="ri-add-circle-line me-1"></i> Nuevo Producto
+          </button>
+        </div>
       </div>
     </div>
   </div>
-  <!-- end page title -->
+
+  <!-- 4 Tarjetas KPI de Estado de Inventario -->
+  <div class="row g-3 mb-3">
+    <div class="col-xl-3 col-md-6">
+      <div class="card kpi-card accent-primary h-100 mb-0">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted text-uppercase fw-bold fs-11 d-block">Total Catálogo</span>
+              <h3 class="fw-extrabold my-1 text-dark" id="total-productos">0</h3>
+              <small class="text-muted fs-12">Artículos registrados</small>
+            </div>
+            <div class="kpi-icon-box bg-primary-subtle text-primary">
+              <i class="ri-box-3-line"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+      <div class="card kpi-card accent-success h-100 mb-0">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted text-uppercase fw-bold fs-11 d-block">Stock Óptimo</span>
+              <h3 class="fw-extrabold my-1 text-success" id="kpi-prod-optimo">0</h3>
+              <small class="text-muted fs-12">Sobre el mínimo requerido</small>
+            </div>
+            <div class="kpi-icon-box bg-success-subtle text-success">
+              <i class="ri-checkbox-circle-line"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+      <div class="card kpi-card accent-warning h-100 mb-0">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted text-uppercase fw-bold fs-11 d-block">Stock Bajo (Alerta)</span>
+              <h3 class="fw-extrabold my-1 text-warning" id="kpi-prod-bajo">0</h3>
+              <small class="text-muted fs-12">Requieren reposición</small>
+            </div>
+            <div class="kpi-icon-box bg-warning-subtle text-warning">
+              <i class="ri-alert-line"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+      <div class="card kpi-card accent-danger h-100 mb-0">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted text-uppercase fw-bold fs-11 d-block">Agotados (0 Stock)</span>
+              <h3 class="fw-extrabold my-1 text-danger" id="kpi-prod-agotado">0</h3>
+              <small class="text-muted fs-12">Sin unidades para venta</small>
+            </div>
+            <div class="kpi-icon-box bg-danger-subtle text-danger">
+              <i class="ri-close-circle-line"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal Registro/Edición de Producto -->
   <div class="modal fade" id="modalProducto" tabindex="-1" aria-labelledby="modalProductoLabel" aria-hidden="true">
@@ -21,7 +98,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div id="mensaje-alerta" style="position: fixed; top: 150px; right: 30px; z-index: 9999; min-width: 300px;"></div>
+          <div id="mensaje-alerta" style="position: fixed; top: 90px; right: 28px; z-index: 9999; min-width: 320px;"></div>
           <div class="row g-3">
             <div class="col-md-6">
               <label for="prod_nombre" class="form-label">Nombre Producto <span class="text-danger">*</span></label>
@@ -35,7 +112,12 @@
             </div>
             <div class="col-md-3">
               <label for="prod_codigo" class="form-label">Código de Barras</label>
-              <input class="form-control" type="text" id="prod_codigo" placeholder="Ingrese código de barras" autocomplete="off"/>
+              <div class="input-group">
+                <input class="form-control" type="text" id="prod_codigo" placeholder="Escanee o genere código" autocomplete="off"/>
+                <button class="btn btn-soft-primary" type="button" id="btn-generar-codigo-prod" title="Generar código de barras EAN-13 automático">
+                  <i class="ri-barcode-line"></i>
+                </button>
+              </div>
             </div>
             <div class="col-md-3">
               <label for="prod_precio_compra" class="form-label">Precio Compra <span class="text-danger">*</span></label>
@@ -73,10 +155,16 @@
                 <option value="0">Inactivo</option>
               </select>
             </div>
+            <div class="col-12">
+              <div id="prod-margen-info" class="p-2 px-3 rounded-3 bg-light border fs-13 d-flex justify-content-between align-items-center flex-wrap gap-2" style="display: none !important;">
+                <span id="prod-margen-texto" class="fw-semibold text-muted">Ingrese Precio de Compra y Precio de Venta para calcular la rentabilidad.</span>
+                <span id="prod-margen-badge" class="badge bg-secondary">0%</span>
+              </div>
+            </div>
             <div class="col-12 mt-2">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="prod_vencimiento"/>
-                <label for="prod_vencimiento" class="form-check-label fw-semibold">El producto tiene fecha de vencimiento</label>
+                <label for="prod_vencimiento" class="form-check-label fw-semibold">El producto maneja lotes con fecha de vencimiento</label>
               </div>
             </div>
           </div>
@@ -98,38 +186,45 @@
     <div class="col-12">
       <div class="card">
         <div class="card-body p-0">
-          <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2 border-bottom">
             <div>
-              <h5 class="header-title mb-0"><i class="ri-box-3-line me-1"></i> Lista de Productos</h5>
-              <p class="text-muted mb-0 fs-13">Total: <span id="total-productos">0</span> productos registrados</p>
+              <h5 class="header-title mb-0"><i class="ri-list-check-2 text-primary me-1"></i> Inventario General de Productos</h5>
+              <p class="text-muted mb-0 fs-13">Monitoreo semafórico de existencias, costos y precios de venta</p>
             </div>
-            <div class="d-flex gap-2 align-items-center">
+            <div class="d-flex gap-2 align-items-center flex-wrap">
               <div class="input-group input-group-sm" style="width: 220px">
                 <span class="input-group-text"><i class="ri-search-line"></i></span>
-                <input type="text" class="form-control" id="buscador-prod" placeholder="Buscar producto..."/>
+                <input type="text" class="form-control" id="buscador-prod" placeholder="Nombre o código barras..."/>
               </div>
-              <select class="form-select form-select-sm" id="filtro-estado-prod" style="width: 130px">
-                <option value="">Todos</option>
+              <select class="form-select form-select-sm" id="filtro-nivel-stock-prod" style="width: 155px">
+                <option value="">Todos los stocks</option>
+                <option value="OPTIMO">Stock Óptimo</option>
+                <option value="BAJO">Stock Bajo</option>
+                <option value="AGOTADO">Agotados (0)</option>
+              </select>
+              <select class="form-select form-select-sm" id="filtro-estado-prod" style="width: 120px">
+                <option value="">Estado: Todos</option>
                 <option value="1">Activos</option>
                 <option value="0">Inactivos</option>
               </select>
-              <button class="btn btn-sm btn-success" onclick="cargarProductos()">
+              <button class="btn btn-sm btn-success" onclick="cargarProductos()" title="Actualizar">
                 <i class="ri-refresh-line"></i>
               </button>
             </div>
           </div>
 
           <div class="table-responsive">
-            <table class="table table-nowrap table-hover mb-0">
+            <table class="table table-nowrap table-hover align-middle mb-0">
               <thead class="table-light">
                 <tr>
                   <th style="width: 50px">#</th>
-                  <th>Nombre</th>
+                  <th>Producto</th>
                   <th>Categoría</th>
                   <th>Código</th>
                   <th>P. Compra</th>
                   <th>P. Venta</th>
-                  <th>Stock</th>
+                  <th>Nivel de Stock</th>
+                  <th>Mín.</th>
                   <th>Unidad</th>
                   <th>Estado</th>
                   <th style="width: 100px" class="text-center">Acciones</th>
@@ -137,7 +232,7 @@
               </thead>
               <tbody id="tabla-productos">
                 <tr>
-                  <td colspan="10" class="text-center py-4 text-muted">
+                  <td colspan="11" class="text-center py-4 text-muted">
                     <i class="ri-loader-4-line me-1"></i> Cargando productos...
                   </td>
                 </tr>

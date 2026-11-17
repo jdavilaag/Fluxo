@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
+from app.dependencies import require_auth
 import uuid
 import random
+import time
 import io
 import qrcode
 
@@ -10,22 +12,39 @@ router = APIRouter(
     tags=["yape"]
 )
 
+YAPE_TOKEN_TTL_SECONDS = 1800  # 30 minutos
 yape_payments = {}
 
+def limpiar_tokens_expirados():
+    ahora = time.time()
+    expirados = [
+        t for t, info in yape_payments.items()
+        if ahora - info.get("creado_en", ahora) > YAPE_TOKEN_TTL_SECONDS
+    ]
+    for t in expirados:
+        yape_payments.pop(t, None)
+
 @router.get("/crear-token")
-def yape_crear_token(monto: float):
+def yape_crear_token(monto: float, usuario: dict = Depends(require_auth)):
+    if monto <= 0:
+        raise HTTPException(status_code=400, detail="El monto debe ser mayor a 0")
+    limpiar_tokens_expirados()
     token = str(uuid.uuid4())
     yape_payments[token] = {
-        "monto": monto,
+        "monto": round(monto, 2),
         "estado": "PENDIENTE",
-        "codigo_referencia": None
+        "codigo_referencia": None,
+        "creado_en": time.time()
     }
     return {"token": token}
 
 @router.get("/qr/{token}")
-def get_yape_qr(token: str, monto: float, request: Request):
+def get_yape_qr(token: str, monto: float, request: Request, usuario: dict = Depends(require_auth)):
+    limpiar_tokens_expirados()
+    pago = yape_payments.get(token)
+    monto_real = pago["monto"] if pago else monto
     base_url = str(request.base_url).rstrip("/")
-    redirect_url = f"{base_url}/yape/pay-confirm?token={token}&monto={monto}"
+    redirect_url = f"{base_url}/yape/pay-confirm?token={token}&monto={monto_real}"
     
     qr = qrcode.QRCode(
         version=1,
@@ -45,7 +64,8 @@ def get_yape_qr(token: str, monto: float, request: Request):
     return StreamingResponse(buf, media_type="image/png")
 
 @router.get("/status/{token}")
-def yape_status(token: str):
+def yape_status(token: str, usuario: dict = Depends(require_auth)):
+    limpiar_tokens_expirados()
     pago = yape_payments.get(token)
     if not pago:
         return {"pagado": False, "codigo_referencia": None}
@@ -56,9 +76,12 @@ def yape_status(token: str):
 
 @router.post("/confirmar/{token}")
 def yape_confirmar(token: str):
+    limpiar_tokens_expirados()
     pago = yape_payments.get(token)
     if not pago:
-        raise HTTPException(status_code=404, detail="Token no encontrado")
+        raise HTTPException(status_code=404, detail="Token no encontrado o expirado")
+    if pago["estado"] == "PAGADO":
+        return {"success": True, "codigo_referencia": pago["codigo_referencia"]}
     ref = f"YAP-{random.randint(100000, 999999)}"
     pago["estado"] = "PAGADO"
     pago["codigo_referencia"] = ref
@@ -66,9 +89,11 @@ def yape_confirmar(token: str):
 
 @router.get("/pay-confirm", response_class=HTMLResponse)
 def yape_pay_confirm(token: str, monto: float):
+    pago = yape_payments.get(token)
+    monto_mostrar = pago["monto"] if pago else monto
     return f"""
     <!DOCTYPE html>
-    <html>
+    <html lang="es">
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -77,7 +102,7 @@ def yape_pay_confirm(token: str, monto: float):
       <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
       <style>
         body {{
-          background-color: #74227C; /* Color Yape */
+          background-color: #74227C;
           color: #fff;
           font-family: 'Outfit', sans-serif;
           display: flex;
@@ -112,7 +137,7 @@ def yape_pay_confirm(token: str, monto: float):
           color: #74227C;
         }}
         .btn-yape {{
-          background-color: #00D1C4; /* Botón turquesa de Yape */
+          background-color: #00D1C4;
           border: none;
           color: #74227C;
           font-weight: bold;
@@ -141,7 +166,7 @@ def yape_pay_confirm(token: str, monto: float):
         
         <div class="amount-box">
           <span class="d-block text-muted text-uppercase fs-11 fw-semibold">MONTO A PAGAR</span>
-          <span class="amount">S/ {monto:.2f}</span>
+          <span class="amount">S/ {monto_mostrar:.2f}</span>
         </div>
 
         <button class="btn btn-yape mb-3" id="btn-confirmar">
@@ -163,7 +188,7 @@ def yape_pay_confirm(token: str, monto: float):
                 document.getElementById('card-content').innerHTML = `
                   <div class="success-icon"><i class="ri-checkbox-circle-fill"></i></div>
                   <h3 class="fw-bold" style="color: #74227C;">¡Yapeo Exitoso!</h3>
-                  <p class="text-muted">Se ha enviado el pago de <strong>S/ {monto:.2f}</strong> a FLUXO SHOP.</p>
+                  <p class="text-muted">Se ha enviado el pago de <strong>S/ {monto_mostrar:.2f}</strong> a FLUXO SHOP.</p>
                   <div class="alert alert-success mt-2 py-2 fs-13">
                     <strong>Ref:</strong> ${{data.codigo_referencia}}
                   </div>

@@ -41,6 +41,18 @@
         if (totalSpan) {
           totalSpan.textContent = todosMovimientos.length;
         }
+        let entradas = 0;
+        let salidas = 0;
+        todosMovimientos.forEach(m => {
+          const t = (m.tipo_movimiento || "").toLowerCase();
+          if (t === "ingreso" || t === "entrada") entradas++;
+          else if (t === "salida") salidas++;
+        });
+        const elEnt = document.getElementById("kpi-kardex-entradas");
+        const elSal = document.getElementById("kpi-kardex-salidas");
+        if (elEnt) elEnt.textContent = entradas;
+        if (elSal) elSal.textContent = salidas;
+
         paginaActual = 1;
         renderTabla();
       } else {
@@ -75,12 +87,13 @@
         coincideTipo = true;
       } else {
         const mTipo = m.tipo_movimiento ? m.tipo_movimiento.toLowerCase() : "";
-        if (tipo === "ingreso") {
+        const filtroTipo = tipo.toLowerCase();
+        if (filtroTipo === "ingreso" || filtroTipo === "entrada") {
           coincideTipo = (mTipo === "ingreso" || mTipo === "entrada");
-        } else if (tipo === "salida") {
+        } else if (filtroTipo === "salida") {
           coincideTipo = (mTipo === "salida");
         } else {
-          coincideTipo = (mTipo === tipo.toLowerCase());
+          coincideTipo = (mTipo === filtroTipo);
         }
       }
 
@@ -125,8 +138,8 @@
       tbody.innerHTML = pagina.map((m, i) => {
         let badgeTipo = "";
         const tipo = m.tipo_movimiento ? m.tipo_movimiento.toLowerCase() : "";
-        if (tipo === "ingreso") {
-          badgeTipo = '<span class="badge bg-success-subtle text-success"><i class="ri-arrow-left-down-line me-1"></i>Ingreso</span>';
+        if (tipo === "ingreso" || tipo === "entrada") {
+          badgeTipo = '<span class="badge bg-success-subtle text-success"><i class="ri-arrow-left-down-line me-1"></i>Entrada</span>';
         } else if (tipo === "salida") {
           badgeTipo = '<span class="badge bg-danger-subtle text-danger"><i class="ri-arrow-right-up-line me-1"></i>Salida</span>';
         } else {
@@ -213,6 +226,51 @@
   if (btnFiltrar) {
     btnFiltrar.onclick = function () {
       paginaActual = 1; renderTabla();
+    };
+  }
+
+  const btnLimpiar = document.getElementById("btn-limpiar-kardex");
+  if (btnLimpiar) {
+    btnLimpiar.onclick = function () {
+      ["filtro-producto-kardex", "filtro-tipo-kardex", "filtro-fecha-desde", "filtro-fecha-hasta", "buscador-kardex"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+      paginaActual = 1;
+      renderTabla();
+    };
+  }
+
+  const btnExportarKardexCsv = document.getElementById("btn-exportar-kardex-csv");
+  if (btnExportarKardexCsv) {
+    btnExportarKardexCsv.onclick = function () {
+      const filtrados = movimientosFiltrados();
+      if (!filtrados || filtrados.length === 0) {
+        mostrarAlerta("No hay movimientos para exportar.", "warning");
+        return;
+      }
+      const headers = ["#", "Producto", "Tipo", "Cantidad", "Stock Anterior", "Stock Posterior", "Observacion", "Usuario", "Fecha"];
+      const rows = filtrados.map((m, idx) => [
+        idx + 1,
+        `"${(m.producto || "").replace(/"/g, '""')}"`,
+        m.tipo_movimiento || "",
+        m.cantidad,
+        m.stock_anterior,
+        m.stock_posterior,
+        `"${(m.observacion || "").replace(/"/g, '""')}"`,
+        `"${(m.usuario || "").replace(/"/g, '""')}"`,
+        `"${m.fecha_registro ? new Date(m.fecha_registro).toLocaleString("es-PE") : ""}"`
+      ]);
+      const csvContent = "\uFEFF" + [headers.join(";"), ...rows.map(r => r.join(";"))].join("\r\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `kardex_stock_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     };
   }
 

@@ -1,0 +1,160 @@
+{% set user = request.session.get("usuario") %}
+{% set is_admin = user and user.get("rol_id") == 1 %}
+{% set user_perms = user.get("permisos", []) if user else [] %}
+<div class="container-fluid py-4" id="vista-escritorio-principal">
+  <div class="odoo-desktop-section mx-auto" style="max-width: 1400px;">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+      <div>
+        <h3 class="mb-1 fw-extrabold d-flex align-items-center gap-2">
+          <i class="ri-apps-2-fill text-primary"></i> Escritorio Principal
+        </h3>
+        <p class="text-muted fs-14 mb-0">
+          Bienvenido, <strong>{{ user.get('nombre', 'Usuario') if user else 'Usuario' }}</strong>. Selecciona una aplicación para comenzar o usa los atajos rápidos (<kbd class="bg-light text-dark border">F2</kbd> POS, <kbd class="bg-light text-dark border">F4</kbd> Productos, <kbd class="bg-light text-dark border">F8</kbd> Caja).
+        </p>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <div class="input-group" style="width: 280px;">
+          <span class="input-group-text bg-white border-end-0"><i class="ri-search-2-line text-primary"></i></span>
+          <input type="text" class="form-control border-start-0" id="filtro-modulos-escritorio" placeholder="Buscar aplicación..." autocomplete="off" />
+        </div>
+      </div>
+    </div>
+
+    <div class="odoo-app-grid" id="grid-escritorio-principal">
+      {% if is_admin or 'modulo:dashboard' in user_perms %}
+      <a href="/dashboard" hx-get="/dashboard" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="dashboard analitica metricas graficos reportes estadisticas resumen">
+        <div class="odoo-app-icon tile-grad-dash"><i class="ri-pie-chart-2-line"></i></div>
+        <div class="odoo-app-title">Dashboard</div>
+        <div class="odoo-app-desc">Métricas y analítica en vivo</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:ventas' in user_perms %}
+      <a href="/ventas" hx-get="/ventas" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="ventas pos terminal facturacion boleta factura cobrar">
+        <span class="odoo-app-shortcut">F2</span>
+        <div class="odoo-app-icon tile-grad-pos"><i class="ri-shopping-bag-3-line"></i></div>
+        <div class="odoo-app-title">Terminal POS</div>
+        <div class="odoo-app-desc">Nueva venta e historial</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:caja' in user_perms %}
+      <a href="/caja" hx-get="/caja" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="caja chica arqueo turno efectivo apertura cierre">
+        <span class="odoo-app-shortcut">F8</span>
+        <div class="odoo-app-icon tile-grad-caja"><i class="ri-safe-2-line"></i></div>
+        <div class="odoo-app-title">Control de Caja</div>
+        <div class="odoo-app-desc">Apertura, flujo y arqueo</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:productos' in user_perms %}
+      <a href="/productos" hx-get="/productos" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="productos catalogo stock precios codigo barras">
+        <span class="odoo-app-shortcut">F4</span>
+        <div class="odoo-app-icon tile-grad-prod"><i class="ri-box-3-line"></i></div>
+        <div class="odoo-app-title">Productos</div>
+        <div class="odoo-app-desc">Catálogo y existencias</div>
+      </a>
+
+      <a href="/?modulo=etiquetas" hx-get="/?modulo=etiquetas" hx-select="#vista-etiquetas-qr" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="etiquetas qr sku codigo barras impresion almacen mapeo">
+        <div class="odoo-app-icon tile-grad-etq"><i class="ri-qr-code-line"></i></div>
+        <div class="odoo-app-title">Etiquetas QR / SKU</div>
+        <div class="odoo-app-desc">Códigos QR y barras</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:ingresos' in user_perms %}
+      <a href="/ingresos" hx-get="/ingresos" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="compras ingresos abastecer lotes proveedores">
+        <div class="odoo-app-icon tile-grad-compras"><i class="ri-shopping-cart-2-line"></i></div>
+        <div class="odoo-app-title">Compras / Ingresos</div>
+        <div class="odoo-app-desc">Abastecer mercadería</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:clientes' in user_perms %}
+      <a href="/clientes" hx-get="/clientes" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="clientes dni ruc directorio">
+        <div class="odoo-app-icon tile-grad-clientes"><i class="ri-user-heart-line"></i></div>
+        <div class="odoo-app-title">Clientes</div>
+        <div class="odoo-app-desc">Consulta DNI y RUC</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:proveedores' in user_perms %}
+      <a href="/proveedor" hx-get="/proveedor" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="proveedores ruc distribuidores">
+        <div class="odoo-app-icon tile-grad-prov"><i class="ri-truck-line"></i></div>
+        <div class="odoo-app-title">Proveedores</div>
+        <div class="odoo-app-desc">Directorio de compras</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:devoluciones' in user_perms %}
+      <a href="/devoluciones" hx-get="/devoluciones" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="devoluciones retornos anulaciones">
+        <div class="odoo-app-icon tile-grad-dev"><i class="ri-refund-2-line"></i></div>
+        <div class="odoo-app-title">Devoluciones</div>
+        <div class="odoo-app-desc">Retornos de venta/compra</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:ajustes' in user_perms %}
+      <a href="/ajustes" hx-get="/ajustes" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="ajustes stock mermas inventario">
+        <div class="odoo-app-icon tile-grad-ajustes"><i class="ri-equalizer-line"></i></div>
+        <div class="odoo-app-title">Ajustes de Stock</div>
+        <div class="odoo-app-desc">Mermas y autorizaciones</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:categorias' in user_perms %}
+      <a href="/categorias" hx-get="/categorias" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="categorias clasificacion familias">
+        <div class="odoo-app-icon tile-grad-cat"><i class="ri-price-tag-3-line"></i></div>
+        <div class="odoo-app-title">Categorías</div>
+        <div class="odoo-app-desc">Familias de productos</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'reporte:kardex' in user_perms %}
+      <a href="/kardex" hx-get="/kardex" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="kardex valorizado trazabilidad">
+        <div class="odoo-app-icon tile-grad-kardex"><i class="ri-file-list-3-line"></i></div>
+        <div class="odoo-app-title">Kardex</div>
+        <div class="odoo-app-desc">Trazabilidad de saldos</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'reporte:movimientos' in user_perms %}
+      <a href="/movimientos" hx-get="/movimientos" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="movimientos reporte inventario entradas salidas">
+        <div class="odoo-app-icon tile-grad-mov"><i class="ri-bar-chart-box-line"></i></div>
+        <div class="odoo-app-title">Movimientos</div>
+        <div class="odoo-app-desc">Reporte general stock</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:comprobantes' in user_perms %}
+      <a href="/comprobantes" hx-get="/comprobantes" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="series comprobantes correlativos boleta factura ticket">
+        <div class="odoo-app-icon tile-grad-comp"><i class="ri-file-settings-line"></i></div>
+        <div class="odoo-app-title">Correlativos</div>
+        <div class="odoo-app-desc">Series de facturación</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:usuarios' in user_perms %}
+      <a href="/users" hx-get="/users" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="usuarios personal cuentas">
+        <div class="odoo-app-icon tile-grad-users"><i class="ri-shield-user-line"></i></div>
+        <div class="odoo-app-title">Usuarios</div>
+        <div class="odoo-app-desc">Gestión de personal</div>
+      </a>
+      {% endif %}
+
+      {% if is_admin or 'modulo:roles' in user_perms %}
+      <a href="/roles" hx-get="/roles" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="roles permisos accesos">
+        <div class="odoo-app-icon tile-grad-roles"><i class="ri-key-2-line"></i></div>
+        <div class="odoo-app-title">Roles y Permisos</div>
+        <div class="odoo-app-desc">Seguridad por módulo</div>
+      </a>
+      {% endif %}
+
+      <a href="/ayuda" hx-get="/ayuda" hx-target="#main-content" hx-swap="innerHTML" class="odoo-app-tile desktop-tile-item" data-keywords="ayuda soporte manual guia">
+        <div class="odoo-app-icon tile-grad-ayuda"><i class="ri-question-line"></i></div>
+        <div class="odoo-app-title">Centro de Ayuda</div>
+        <div class="odoo-app-desc">Guía y soporte del sistema</div>
+      </a>
+    </div>
+  </div>
+</div>

@@ -46,7 +46,7 @@ FLUXO_ERP/
 
 ## Base de datos
 
-El esquema cuenta con 19 tablas normalizadas (convención `tablename_id` para llaves foráneas), cubriendo ventas, inventario, devoluciones, cajas y comprobantes electrónicos (`comprobante_series`).
+El esquema cuenta con 20 tablas definidas por los modelos de `app/models`, cubriendo ventas, inventario, devoluciones, cajas y comprobantes electrónicos (`comprobante_series`). El archivo `FLUXO.sql` crea la base y las tablas, e incluye los roles, permisos y series de comprobantes iniciales. No recupera datos anteriores ni crea usuarios o registros de prueba.
 
 ## Instalación
 
@@ -78,14 +78,15 @@ El esquema cuenta con 19 tablas normalizadas (convención `tablename_id` para ll
 
 4. Configurar variables de entorno (`.env`):
    ```
-   DATABASE_URL=mysql+pymysql://usuario:password@localhost/fluxo_db
+   DB_HOST=localhost
+   DB_PORT=3306
+   DB_USER=root
+   DB_PASSWORD=tu_clave
+   DB_NAME=fluxo
    SECRET_KEY=tu_clave_secreta
    ```
 
-5. Ejecutar migraciones:
-   ```bash
-   alembic upgrade head
-   ```
+5. Ejecutar `FLUXO.sql` en MySQL Workbench o en otro cliente MySQL para crear la base y sus tablas.
 
 6. Iniciar el servidor:
    ```bash

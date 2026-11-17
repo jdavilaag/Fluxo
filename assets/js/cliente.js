@@ -214,6 +214,105 @@
     };
   }
 
+  function mostrarBadgeAutofill(texto, clase) {
+    const badge = document.getElementById("cli-autofill-status");
+    if (!badge) return;
+    badge.textContent = texto;
+    badge.className = `badge ${clase || "bg-info text-white"}`;
+    badge.style.display = "inline-block";
+    setTimeout(() => { badge.style.display = "none"; }, 4000);
+  }
+
+  async function autocompletarPorDocumentoCliente(doc) {
+    const numero = (doc || "").trim();
+    if (numero.length !== 8 && numero.length !== 11) return;
+    mostrarBadgeAutofill("Consultando documento...", "bg-primary text-white");
+    try {
+      const res = await fetch(`/auth/consultar-documento?numero=${encodeURIComponent(numero)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.encontrado) {
+        const inpNombre = document.getElementById("cli_nombres");
+        const inpDir = document.getElementById("cli_direccion");
+        const inpTel = document.getElementById("cli_telefono");
+        const inpEmail = document.getElementById("cli_email");
+        if (data.nombre && (!inpNombre.value.trim() || !modoEdicion)) inpNombre.value = data.nombre;
+        if (data.direccion && !inpDir.value.trim()) inpDir.value = data.direccion;
+        if (data.telefono && !inpTel.value.trim()) inpTel.value = data.telefono;
+        if (data.email && !inpEmail.value.trim()) inpEmail.value = data.email;
+        mostrarBadgeAutofill(
+          data.fuente === "SUNAT_RENIEC" ? `Datos obtenidos de ${data.tipo}` : "Datos recuperados del sistema",
+          "bg-success text-white"
+        );
+      } else {
+        mostrarBadgeAutofill("Documento sin padrón externo", "bg-secondary text-white");
+      }
+    } catch {
+      // Silencioso en autocompletado
+    }
+  }
+
+  async function autocompletarPorEmailCliente(emailVal) {
+    const email = (emailVal || "").trim();
+    if (!email || !email.includes("@")) return;
+    try {
+      const res = await fetch(`/auth/autocompletar-email?email=${encodeURIComponent(email)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const inpNombre = document.getElementById("cli_nombres");
+      const inpDoc = document.getElementById("cli_documento");
+      const inpTel = document.getElementById("cli_telefono");
+      const inpDir = document.getElementById("cli_direccion");
+
+      if (data.encontrado) {
+        if (data.nombre && !inpNombre.value.trim()) inpNombre.value = data.nombre;
+        if (data.documento && !inpDoc.value.trim()) inpDoc.value = data.documento;
+        if (data.telefono && !inpTel.value.trim()) inpTel.value = data.telefono;
+        if (data.direccion && !inpDir.value.trim()) inpDir.value = data.direccion;
+        mostrarBadgeAutofill(`Autocompletado desde ${data.origen}`, "bg-success text-white");
+      } else if (data.nombre_sugerido && !inpNombre.value.trim()) {
+        inpNombre.value = data.nombre_sugerido;
+        mostrarBadgeAutofill("Nombre sugerido desde correo", "bg-info text-white");
+      }
+    } catch {
+      // Silencioso
+    }
+  }
+
+  const inpDocCli = document.getElementById("cli_documento");
+  if (inpDocCli) {
+    inpDocCli.addEventListener("input", function () {
+      this.value = this.value.replace(/\D/g, "");
+      if (this.value.length === 8 || this.value.length === 11) {
+        autocompletarPorDocumentoCliente(this.value);
+      }
+    });
+  }
+
+  const btnBuscarDocCli = document.getElementById("btn-buscar-doc-cli");
+  if (btnBuscarDocCli) {
+    btnBuscarDocCli.onclick = function () {
+      const doc = document.getElementById("cli_documento")?.value || "";
+      if (doc.length !== 8 && doc.length !== 11) {
+        mostrarAlerta("Ingrese un DNI (8 dígitos) o RUC (11 dígitos) para consultar.", "warning");
+        return;
+      }
+      autocompletarPorDocumentoCliente(doc);
+    };
+  }
+
+  const inpEmailCli = document.getElementById("cli_email");
+  if (inpEmailCli) {
+    inpEmailCli.addEventListener("blur", function () {
+      autocompletarPorEmailCliente(this.value);
+    });
+    inpEmailCli.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === "Tab") {
+        autocompletarPorEmailCliente(this.value);
+      }
+    });
+  }
+
   const buscador = document.getElementById("buscador-cli");
   if (buscador) {
     buscador.oninput = function () {

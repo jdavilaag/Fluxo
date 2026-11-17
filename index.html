@@ -1,29 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <title>FLUXO SHOP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
-      content="A fully responsive admin theme which can be used to build CRM, CMS,ERP etc."
+      content="Sistema de punto de venta (POS) y control de inventario Fluxo Shop."
       name="description"
     />
-    <meta content="Techzaa" name="author" />
 
     <!-- App favicon -->
     <link rel="shortcut icon" href="assets/images/favicon.ico" />
 
-    <!-- Daterangepicker css -->
-    <link
-      rel="stylesheet"
-      href="assets/vendor/daterangepicker/daterangepicker.css"
-    />
-
-    <!-- Vector Map css -->
-    <link
-      rel="stylesheet"
-      href="assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css"
-    />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -40,67 +28,45 @@
       id="app-style"
     />
 
-    <!-- Icons css 
-        <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />-->
     <link
       href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
       rel="stylesheet"
+    />
+    <link
+      href="assets/css/custom.css"
+      rel="stylesheet"
+      type="text/css"
     />
 
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
   </head>
 
   <body>
-    <!-- Begin page -->
     <div class="wrapper">
-      <!-- ========== Topbar Start ========== -->
       {% include 'layouts/navbar.html' %}
-      <!-- ========== Topbar End ========== -->
-
-      <!-- ========== Left Sidebar Start ========== -->
       {% include 'layouts/sidebar.html' %}
-      <!-- ========== Left Sidebar End ========== -->
-
-      <!-- ============================================================== -->
-      <!-- Start Page Content here -->
-      <!-- ============================================================== -->
-      <!-- start page title -->
-      {% include 'layouts/star-page.html' %}
-      <!-- end page title -->
 
       <div class="content-page">
         <div class="content" id="main-content" hx-ext="load-scripts">
-          <!-- Start Content-->
-          {% include 'layouts/dashboard.html' %}
-          <!-- container -->
+          {% if request.query_params.get('modulo') == 'etiquetas' %}
+            {% include 'layouts/etiquetas.html' %}
+          {% else %}
+            {% include 'layouts/escritorio.html' %}
+          {% endif %}
         </div>
-        <!-- content -->
       </div>
-
-      <!-- ============================================================== -->
-      <!-- End Page content -->
-      <!-- ============================================================== -->
     </div>
-    <!-- END wrapper -->
-    <!-- Footer Start -->
+
     {% include 'layouts/footer.html' %}
-    <!-- end Footer -->
-    <!-- Theme Settings -->
     {% include 'layouts/settings.html' %}
 
     <!-- Vendor js -->
     <script src="assets/js/vendor.min.js"></script>
-
-    <!-- Daterangepicker js -->
-    <script src="assets/vendor/daterangepicker/moment.min.js"></script>
-    <script src="assets/vendor/daterangepicker/daterangepicker.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
     <!-- Apex Charts js -->
     <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
-
-    <!-- Vector Map js -->
-    <script src="assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js"></script>
 
     <!-- Dashboard App js -->
     <script src="assets/js/pages/dashboard.js"></script>

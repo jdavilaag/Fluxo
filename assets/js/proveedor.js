@@ -214,6 +214,100 @@
     };
   }
 
+  function mostrarBadgeAutofillProv(texto, clase) {
+    const badge = document.getElementById("prov-autofill-status");
+    if (!badge) return;
+    badge.textContent = texto;
+    badge.className = `badge ${clase || "bg-info text-white"}`;
+    badge.style.display = "inline-block";
+    setTimeout(() => { badge.style.display = "none"; }, 4000);
+  }
+
+  async function autocompletarPorRucProveedor(rucVal) {
+    const ruc = (rucVal || "").trim();
+    if (ruc.length !== 11) return;
+    mostrarBadgeAutofillProv("Consultando RUC...", "bg-primary text-white");
+    try {
+      const res = await fetch(`/auth/consultar-documento?numero=${encodeURIComponent(ruc)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.encontrado) {
+        const inpRazon = document.getElementById("prov_razon_social");
+        const inpDir = document.getElementById("prov_direccion");
+        const inpTel = document.getElementById("prov_telefono");
+        const inpEmail = document.getElementById("prov_email");
+        if (data.nombre && (!inpRazon.value.trim() || !modoEdicion)) inpRazon.value = data.nombre;
+        if (data.direccion && !inpDir.value.trim()) inpDir.value = data.direccion;
+        if (data.telefono && !inpTel.value.trim()) inpTel.value = data.telefono;
+        if (data.email && !inpEmail.value.trim()) inpEmail.value = data.email;
+        mostrarBadgeAutofillProv(
+          data.fuente === "SUNAT_RENIEC" ? "Datos obtenidos de SUNAT" : "Datos recuperados del sistema",
+          "bg-success text-white"
+        );
+      } else {
+        mostrarBadgeAutofillProv("RUC sin coincidencia externa", "bg-secondary text-white");
+      }
+    } catch {
+      // Silencioso
+    }
+  }
+
+  async function autocompletarPorEmailProveedor(emailVal) {
+    const email = (emailVal || "").trim();
+    if (!email || !email.includes("@")) return;
+    try {
+      const res = await fetch(`/auth/autocompletar-email?email=${encodeURIComponent(email)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const inpRazon = document.getElementById("prov_razon_social");
+      const inpRuc = document.getElementById("prov_ruc");
+      const inpTel = document.getElementById("prov_telefono");
+      const inpDir = document.getElementById("prov_direccion");
+
+      if (data.encontrado) {
+        if (data.nombre && !inpRazon.value.trim()) inpRazon.value = data.nombre;
+        if (data.documento && data.documento.length === 11 && !inpRuc.value.trim()) inpRuc.value = data.documento;
+        if (data.telefono && !inpTel.value.trim()) inpTel.value = data.telefono;
+        if (data.direccion && !inpDir.value.trim()) inpDir.value = data.direccion;
+        mostrarBadgeAutofillProv(`Autocompletado desde ${data.origen}`, "bg-success text-white");
+      } else if (data.nombre_sugerido && !inpRazon.value.trim()) {
+        inpRazon.value = data.nombre_sugerido;
+        mostrarBadgeAutofillProv("Nombre sugerido desde correo", "bg-info text-white");
+      }
+    } catch {
+      // Silencioso
+    }
+  }
+
+  const inpRucProv = document.getElementById("prov_ruc");
+  if (inpRucProv) {
+    inpRucProv.addEventListener("input", function () {
+      this.value = this.value.replace(/\D/g, "");
+      if (this.value.length === 11) {
+        autocompletarPorRucProveedor(this.value);
+      }
+    });
+  }
+
+  const btnBuscarRucProv = document.getElementById("btn-buscar-ruc-prov");
+  if (btnBuscarRucProv) {
+    btnBuscarRucProv.onclick = function () {
+      const ruc = document.getElementById("prov_ruc")?.value || "";
+      if (ruc.length !== 11) {
+        mostrarAlerta("Ingrese un RUC válido de 11 dígitos para consultar.", "warning");
+        return;
+      }
+      autocompletarPorRucProveedor(ruc);
+    };
+  }
+
+  const inpEmailProv = document.getElementById("prov_email");
+  if (inpEmailProv) {
+    inpEmailProv.addEventListener("blur", function () {
+      autocompletarPorEmailProveedor(this.value);
+    });
+  }
+
   const buscador = document.getElementById("buscador-prov");
   if (buscador) {
     buscador.oninput = function () {

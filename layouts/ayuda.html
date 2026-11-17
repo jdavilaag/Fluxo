@@ -1,0 +1,68 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box">
+        <h4 class="page-title">Ayuda del sistema</h4>
+        <p class="text-muted mb-0">Guía rápida para usar los módulos de Fluxo Shop.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title"><i class="ri-store-2-line me-1 text-primary"></i> 1. Configura el inventario</h5>
+          <ol class="mb-0">
+            <li class="mb-2">Crea las <a href="/categorias" hx-get="/categorias" hx-target="#main-content" hx-swap="innerHTML">categorías</a> para organizar tus productos.</li>
+            <li class="mb-2">Registra tus <a href="/proveedor" hx-get="/proveedor" hx-target="#main-content" hx-swap="innerHTML">proveedores</a>.</li>
+            <li>Agrega los <a href="/productos" hx-get="/productos" hx-target="#main-content" hx-swap="innerHTML">productos</a>, con su unidad, precios y stock mínimo.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title"><i class="ri-inbox-archive-line me-1 text-success"></i> 2. Registra compras e ingresos</h5>
+          <p>En <a href="/ingresos" hx-get="/ingresos" hx-target="#main-content" hx-swap="innerHTML">Ingresos</a>, registra la compra y sus productos. El ingreso aumenta el stock y registra los lotes; incluye vencimientos cuando corresponda.</p>
+          <p class="mb-0">Usa <a href="/kardex" hx-get="/kardex" hx-target="#main-content" hx-swap="innerHTML">Kardex</a> para consultar los movimientos de cada producto.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title"><i class="ri-shopping-bag-3-line me-1 text-info"></i> 3. Atiende una venta</h5>
+          <ol class="mb-0">
+            <li class="mb-2">Abre una caja en <a href="/caja" hx-get="/caja" hx-target="#main-content" hx-swap="innerHTML">Caja</a> antes de vender.</li>
+            <li class="mb-2">Si lo necesitas, registra al cliente en <a href="/clientes" hx-get="/clientes" hx-target="#main-content" hx-swap="innerHTML">Clientes</a>.</li>
+            <li>Registra la operación en <a href="/ventas" hx-get="/ventas" hx-target="#main-content" hx-swap="innerHTML">Ventas</a>, eligiendo productos, cantidades y forma de pago.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title"><i class="ri-bar-chart-box-line me-1 text-warning"></i> 4. Controla la operación</h5>
+          <ul class="mb-0">
+            <li class="mb-2"><a href="/ajustes" hx-get="/ajustes" hx-target="#main-content" hx-swap="innerHTML">Ajustes de stock</a>: registra diferencias o mermas de inventario.</li>
+            <li class="mb-2"><a href="/movimientos" hx-get="/movimientos" hx-target="#main-content" hx-swap="innerHTML">Movimientos</a>: revisa entradas, salidas y ajustes.</li>
+            <li><a href="/comprobantes" hx-get="/comprobantes" hx-target="#main-content" hx-swap="innerHTML">Comprobantes</a>: administra las series disponibles.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="alert alert-info mb-0" role="note">
+        <i class="ri-information-line me-1"></i>
+        Las opciones visibles dependen de los permisos de tu usuario. Si no encuentras un módulo, solicita acceso al administrador del sistema.
+      </div>
+    </div>
+  </div>
+</div>
